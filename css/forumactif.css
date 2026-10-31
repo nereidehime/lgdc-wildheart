@@ -157,6 +157,36 @@
 /* le cadre de la colonne est porté par #page-body : il continue ainsi sous les publicités de Forumactif
    jusqu'aux top-sites, qui le ferment */
 .lgdc-fa-page #page-body { border-inline: 2px solid var(--line); }
-.lgdc-fa-page #page-body .lgdc-col { border-inline: 0; }
+.lgdc-fa-page #page-body :is(.lgdc-col, .lgdc-forum) { border-inline: 0; }
 .lgdc.lgdc-fa-aff { padding: 0; }
 .lgdc-fa-page #page-footer.lgdc-foot { padding-top: 0; }
+
+/* ---------- LISTE DES SUJETS (viewforum_body, topics_list_box) ----------
+   les morceaux natifs gardés autour des lignes de la maquette */
+.lgdc-fa-viewforum .lgdc-forum-description { margin-top: 14px; max-width: 60ch; color: var(--on-dark-soft); font-size: 12px; line-height: 20px; }
+.lgdc-fa-crumbs a + a::before { content: "/"; margin-right: 8px; color: var(--on-dark-soft); }
+.lgdc-fa-viewforum .lgdc-topic__row { grid-template-columns: minmax(0, 1fr) 144px 200px; }
+.lgdc-fa-viewforum .lgdc-announcements .lgdc-topic__row { grid-template-columns: 32px minmax(0, 1fr) 144px 200px; }
+.lgdc-fa-viewforum .lgdc-topic__main input { margin-right: 8px; }
+.lgdc-fa-viewforum .lgdc-topic__author { color: var(--ink-soft); }
+.lgdc-fa-viewforum .lgdc-topic__desc { display: block; margin-top: 6px; color: var(--ink-soft); font-size: 11px; line-height: 18px; }
+.lgdc-fa-viewforum .lgdc-topic__pages:empty, .lgdc-fa-viewforum .lgdc-topic__meta > img { display: none; }
+.lgdc-fa-viewforum .lgdc-topic__last > img { width: 38px; height: 44px; }
+.lgdc-topics__empty { padding: 30px 26px; color: var(--ink-soft); font-size: 12px; }
+.lgdc-fa-viewforum .lgdc-forum-pagination:empty { display: none; }
+.lgdc-fa-viewforum .lgdc-forum-actions { margin-left: auto; }
+.lgdc-fa-watch:empty { display: none; }
+.lgdc-fa-watch a { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 14px; border: 2px solid var(--line); border-radius: 5px; background: var(--b1); color: var(--ink-strong); font: 800 10px/16px var(--sans); letter-spacing: .3px; text-transform: uppercase; }
+.lgdc-fa-sort { position: relative; }
+.lgdc-fa-sort summary { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 14px; border: 2px solid var(--line); border-radius: 5px; background: var(--b1); color: var(--ink-strong); font: 800 10px/16px var(--sans); letter-spacing: .3px; text-transform: uppercase; cursor: pointer; list-style: none; }
+.lgdc-fa-sort summary::-webkit-details-marker { display: none; }
+.lgdc-fa-sort[open] summary { border-color: var(--a2); }
+.lgdc-fa-sort form { position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 5; display: grid; gap: 10px; min-width: 240px; padding: 16px; background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font-size: 12px; }
+.lgdc-fa-sort select { width: 100%; margin-top: 6px; }
+.lgdc-fa-sort input[type="submit"], .lgdc-fa-jump input[type="submit"] { min-height: 34px; padding: 6px 14px; color: #fff; background: var(--a1); border: 0; border-radius: 5px; font: 800 10px/16px var(--sans); text-transform: uppercase; cursor: pointer; }
+.lgdc-fa-forum-foot { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 24px; align-items: center; padding-top: 22px; border-top: 2px solid var(--b3); }
+.lgdc-fa-forum-foot #users_here { margin: 0; color: var(--ink-soft); }
+.lgdc-fa-jump { display: flex; align-items: center; gap: 10px; }
+.lgdc-fa-jump label { display: flex; align-items: center; gap: 10px; color: var(--ink-soft); }
+.lgdc-fa-jump select { max-width: 260px; min-height: 34px; }
+.lgdc-fa-modtools { grid-column: 1 / -1; color: var(--ink-soft); font-size: 11px; line-height: 18px; }

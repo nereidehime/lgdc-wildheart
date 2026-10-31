@@ -15,9 +15,8 @@
     { forum: '11', presentation: '22', key: 'hetre', colors: ['#b07a4f', '#c99566'] },
     { forum: '12', presentation: '23', key: 'orchidee', colors: ['#c2a24f', '#d1b46a'] },
     { forum: '13', presentation: '24', key: 'brouillard', colors: ['#8a99a4', '#7fa39a'] },
-    // Solitaires : pas de territoire. Mettre le numéro de leur sous-forum de présentations dès qu’il existe ;
-    // en attendant, il est reconnu à son nom.
-    { forum: null, presentation: null, name: /solitaire/i, key: 'solitaires', sym: 'solitaires', colors: ['#a39c92', '#857e74'] }
+    // Solitaires : pas de territoire, seulement leur sous-forum de présentations
+    { forum: null, presentation: '1', key: 'solitaires', sym: 'solitaires', colors: ['#a39c92', '#857e74'] }
   ];
 
   function presentationOf(link) {
