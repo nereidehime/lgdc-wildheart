@@ -165,4 +165,90 @@
   var admin = page.querySelector('.lgdc-fa-profile-admin');
   if (!admin.textContent.trim() && !admin.querySelector('a, button')) admin.remove();
   raw.remove();
+
+  /* Édition sur place : un crayon par champ modifiable, puis Valider ou Annuler.
+     Même envoi que le script natif de Forumactif (U_AJAX_PROFILE), qui répond { id: html } ou « error : … ». */
+  var ajax = page.dataset.ajax;
+  if (!ajax || !window.jQuery) return;
+  function tool(label, icon, className) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = className;
+    b.setAttribute('aria-label', label);
+    b.title = label;
+    b.innerHTML = '<i class="ph-light ' + icon + '" aria-hidden="true"></i>';
+    return b;
+  }
+  function close(field) {
+    field.classList.remove('is-editing');
+    field.querySelector('.field_editable').classList.add('invisible');
+    field.querySelector('.field_uneditable').classList.remove('invisible');
+    var error = field.querySelector('.lgdc-prof__error');
+    if (error) error.remove();
+  }
+  function shown(field, html) {
+    var box = field.querySelector('.field_uneditable');
+    box.innerHTML = html;
+    var text = clean(box.textContent);
+    if (!text) box.textContent = '—';
+    else if (field.closest('.lgdc-prof__quote') && !/^«/.test(text)) box.textContent = '« ' + text + ' »';
+    if (field.classList.contains('lgdc-prof__dispo')) field.classList.toggle('is-off', /indispo|^non|pas dispo|occup/i.test(text));
+  }
+  function save(field) {
+    var content = [];
+    field.querySelectorAll('.field_editable [name]').forEach(function (input) {
+      if (/radio|checkbox/.test(input.type) && !input.checked) return;
+      content.push([input.name, input.value]);
+    });
+    field.classList.add('is-saving');
+    window.jQuery.post(ajax, {
+      id: field.id.substring(8), user: page.dataset.user, active: page.dataset.active,
+      content: JSON.stringify(content), tid: page.dataset.tid
+    }, function (data) {
+      field.classList.remove('is-saving');
+      Object.keys(data).forEach(function (id) {
+        var target = document.getElementById('field_id' + id);
+        if (!target) return;
+        var item = String(data[id]);
+        if (item.indexOf('error : ') === 0) {
+          var error = target.querySelector('.lgdc-prof__error') || document.createElement('p');
+          error.className = 'lgdc-micro lgdc-prof__error';
+          error.textContent = item.substring(8);
+          target.querySelector('.lgdc-prof__editbar').before(error);
+        } else { shown(target, item); close(target); }
+      });
+    }, 'json').fail(function () {
+      field.classList.remove('is-saving');
+      var error = field.querySelector('.lgdc-prof__error') || document.createElement('p');
+      error.className = 'lgdc-micro lgdc-prof__error';
+      error.textContent = 'L’enregistrement a échoué, réessaie.';
+      field.querySelector('.lgdc-prof__editbar').before(error);
+    });
+  }
+  page.querySelectorAll('[id^="field_id"]').forEach(function (field) {
+    var editor = field.querySelector('.field_editable');
+    if (!editor || !field.querySelector('.field_uneditable')) return;
+    field.classList.add('lgdc-prof__editable');
+    var pencil = tool('Modifier', 'ph-pencil-simple', 'lgdc-prof__pen');
+    field.appendChild(pencil);
+    var bar = document.createElement('div');
+    bar.className = 'lgdc-prof__editbar';
+    var ok = tool('Valider', 'ph-check', 'lgdc-prof__ok');
+    var cancel = tool('Annuler', 'ph-x', 'lgdc-prof__cancel');
+    bar.append(ok, cancel);
+    editor.appendChild(bar);
+    pencil.addEventListener('click', function () {
+      field.classList.add('is-editing');
+      editor.classList.remove('invisible');
+      field.querySelector('.field_uneditable').classList.add('invisible');
+      var input = editor.querySelector('input:not([type=hidden]), textarea, select');
+      if (input) input.focus();
+    });
+    ok.addEventListener('click', function () { save(field); });
+    cancel.addEventListener('click', function () { close(field); });
+    editor.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') { event.preventDefault(); save(field); }
+      if (event.key === 'Escape') close(field);
+    });
+  });
 })();
