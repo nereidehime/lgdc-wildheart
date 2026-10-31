@@ -2492,3 +2492,17 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc-gr__avs img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .lgdc-fa-groups-foot { grid-template-columns: auto; justify-content: end; }
 .lgdc-fa-groups-foot:empty, .lgdc-fa-groups-foot:not(:has(*)) { display: none; }
+/* page d'un groupe (groupcp_info_body) : l'en-tête prend la couleur du groupe */
+.lgdc-fa-group .lgdc-grp__head h1 { display: inline-flex; align-items: center; gap: 16px; }
+.lgdc-fa-group .lgdc-grp__head .lgdc-gr__sym { flex: none; }
+.lgdc .lgdc-grp__stats { max-width: 420px; margin: 22px 0 0; }
+.lgdc .lgdc-grp__status { margin: 18px 0 22px; color: var(--ink-soft); }
+.lgdc .lgdc-grp__status a { color: var(--ink-strong); }
+.lgdc .lgdc-grp__empty { margin: 30px 0; color: var(--ink-soft); font-style: italic; }
+.lgdc .lgdc-grp__pick { display: flex; align-items: center; gap: 6px; margin: 0 6px; color: var(--ink-soft); }
+.lgdc-grp__tools, .lgdc-grp__type { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 26px; }
+.lgdc-grp__tools input[type=text] { min-height: 34px; padding: 6px 10px; color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font: 500 13px/18px var(--sans); }
+.lgdc-grp__tools input[type=submit], .lgdc-grp__tools input[type=button] { min-height: 34px; padding: 6px 14px; color: #fff; background: var(--a1); border: 0; border-radius: 5px; font: 800 10px/16px var(--sans); text-transform: uppercase; cursor: pointer; }
+.lgdc-grp__tools input[type=button] { color: var(--ink-strong); background: var(--b3); }
+.lgdc-grp__type label { display: inline-flex; align-items: center; gap: 6px; }
+.lgdc-fa-group .lgdc-forum-description { max-width: none; }
