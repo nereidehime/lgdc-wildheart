@@ -24,7 +24,7 @@
       button.setAttribute('data-lgdc', '');
       if (REMOVE.indexOf(command) >= 0) { button.remove(); return; }
       if (!ICONS[command]) return;
-      button.innerHTML = '<i class="ph-light ' + ICONS[command] + '" aria-hidden="true"></i>';
+      button.innerHTML = '<i class="ph-fill ' + ICONS[command] + '" aria-hidden="true"></i>';
       button.classList.add('lgdc-editor-icon');
     });
   }
