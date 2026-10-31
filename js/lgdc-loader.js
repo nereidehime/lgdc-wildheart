@@ -33,6 +33,7 @@
       report(error);
     });
   }
+  if (document.getElementById('notiffi_button')) load(base + 'lgdc-notiffi.js').catch(report);
 
   var mount = document.getElementById('lgdc-guidebook-mount');
   if (mount) page.push(load(base + 'lgdc-guidebook.js').then(function () {

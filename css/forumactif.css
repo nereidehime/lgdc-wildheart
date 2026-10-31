@@ -112,3 +112,24 @@
 .monomer-modal .monomer-close { padding: 0 !important; background: none; outline: revert; }
 .monomer-modal .switcheroo__form-input { padding: 10px 12px !important; font: inherit; color: #191715 !important; }
 .monomer-modal .switcheroo__form-button { padding: 12px 20px !important; margin: 0; align-self: auto; background: #191715; outline: revert; box-shadow: none; }
+
+/* Notiffi conserve la géométrie de la maquette, même avec l’ancien CSS dans le panneau Forumactif. */
+#lgdc-header #notiffi_button { position: relative; top: auto; right: auto; z-index: auto; display: grid; place-items: center; gap: 0; width: 34px; height: 34px; padding: 0; border-radius: 0; background: none; }
+#lgdc-header #notiffi_button .unread_count { width: auto; aspect-ratio: auto; display: block; place-items: normal; }
+#lgdc-notiffi #notiffi_panel { height: auto; right: 20px; gap: 0; align-items: stretch; opacity: 1; }
+[data-color-scheme="dark"] .lgdc-ntf__head { color: var(--on-dark); }
+#lgdc-notiffi .all_notifications { min-height: 0; max-height: none; border-radius: 0; }
+#lgdc-notiffi .all_notifications::-webkit-scrollbar { display: revert; }
+#lgdc-notiffi .no_notification { font-style: normal; }
+#lgdc-notiffi .notiffi_manage { width: auto; justify-content: normal; }
+#lgdc-notiffi .notiffi_actions { justify-items: normal; }
+#lgdc-notiffi .notiffi_actions button { padding: 9px 10px !important; }
+#lgdc-notiffi .lgdc-ntf__close, #lgdc-notiffi .notif_close, #lgdc-notiffi .alert_close { padding: 0 !important; border-radius: 0; line-height: inherit; align-self: auto; }
+.lgdc-ntf .notification { margin: 0; border: 0; border-radius: 0; background: none; animation: none; transition: none; }
+.lgdc-ntf .notif_details { align-self: auto; }
+.lgdc-ntf .notif_avatar img { border-radius: 0; }
+.lgdc-ntf .notif_content { width: auto; }
+.lgdc-ntf .notif_time { opacity: 1; }
+.lgdc-ntf .notification.alert { filter: none; }
+.lgdc-ntf .notif_text a.lgdc-who span[style*="color"] { color: inherit !important; }
+.lgdc-ntf .lgdc-ntf-error { margin: 4px 0 0; font: 400 11px/16px var(--sans); color: var(--ink); }
