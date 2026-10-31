@@ -83,19 +83,4 @@
     subforums.replaceChildren(list);
   });
 
-  document.querySelectorAll('[data-lgdc-home-feed]').forEach(function (feed) {
-    var source = document.querySelector('.lgdc-fa-card[data-forum-id="' + feed.dataset.lgdcHomeFeed + '"] .lgdc-fa-last__text');
-    if (!source || source.dataset.empty === 'true') return;
-    var copy = source.cloneNode(true);
-    copy.className = 'lgdc-fa-last';
-    copy.querySelectorAll('[id]').forEach(function (item) { item.removeAttribute('id'); });
-    feed.replaceChildren(copy);
-  });
-
-  document.querySelectorAll('label.lgdc-clans__tab').forEach(function (pick) {
-    pick.addEventListener('mouseenter', function () {
-      var radio = document.getElementById(pick.htmlFor);
-      if (radio) radio.checked = true;
-    });
-  });
 })();
