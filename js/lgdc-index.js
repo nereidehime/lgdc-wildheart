@@ -102,6 +102,141 @@
     colorProbe.style.color = pair[0];
     groupEnds[colorProbe.style.color] = pair[1];
   });
+  /* Cartes des forums : les données natives sont remises dans le balisage exact de la maquette.
+     « Avant de s’inscrire » en cartes centrées, Présentations en grande carte, les autres en cartes à anneau. */
+  var CENTERED = ['4', '5', '6'];
+  function plural(n, word) { return n + ' ' + word + (parseInt(n, 10) > 1 ? 's' : ''); }
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+  function lastPost(card) {
+    var box = card.querySelector('.lgdc-fa-last__text');
+    if (!box || box.dataset.empty) return null;
+    var topic = Array.from(box.querySelectorAll('a[href]')).find(function (a) { return a.getAttribute('href') && !a.classList.contains('last-post-icon'); });
+    if (!topic) return null;
+    var who = box.querySelector('.usr_grp_clr') || box.querySelector('strong');
+    var profile = who && who.closest('a[href]');
+    var date = Array.from(box.childNodes).filter(function (n) { return n.nodeType === 3; }).map(function (n) { return n.textContent; }).join(' ').replace(/\s+/g, ' ').trim();
+    var color = who && who.style && who.style.color || '#a39c92';
+    var avatar = card.querySelector('.lgdc-fa-avatar img');
+    var src = avatar && avatar.getAttribute('src');
+    return {
+      href: topic.getAttribute('href'), title: topic.textContent.trim(), date: date,
+      name: who ? who.textContent.trim() : '', profile: profile && profile.getAttribute('href'),
+      color: color, end: groupEnds[color] || color,
+      avatar: src && !/\/(pp-blank|no_?avatar)[^/]*$/i.test(src) ? src : null
+    };
+  }
+  function whoNode(last, tag) {
+    var who = el(tag, 'lgdc-who', last.name);
+    if (tag === 'a') who.href = last.profile || '#';
+    who.style.setProperty('--g1', last.color);
+    who.style.setProperty('--g2', last.end);
+    return who;
+  }
+  function ring(last) {
+    var outer = el('span', 'lgdc-ring'), inner = el('span', 'lgdc-ring__in');
+    outer.style.setProperty('--g1', last ? last.color : '#a39c92');
+    outer.style.setProperty('--g2', last ? last.end : '#857e74');
+    if (last && last.avatar) {
+      var img = el('img', 'lgdc-avatar--contain');
+      img.src = last.avatar; img.alt = ''; img.loading = 'lazy';
+      inner.appendChild(img);
+    }
+    outer.appendChild(inner);
+    return outer;
+  }
+  function counts(card) {
+    var b = card.querySelectorAll('.lgdc-cw__count b');
+    return [b[0] ? b[0].textContent.trim() : '0', b[1] ? b[1].textContent.trim() : '0'];
+  }
+  function countLine(cls, n) {
+    var p = el('p', 'lgdc-micro ' + cls);
+    [[n[0], 'sujet'], [n[1], 'message']].forEach(function (pair) {
+      var span = el('span'), b = el('b', null, pair[0]);
+      span.append(b, ' ' + plural(pair[0], pair[1]).replace(/^\S+ /, ''));
+      p.appendChild(span);
+    });
+    return p;
+  }
+  function lastLink(last) {
+    var a = el('a', 'lgdc-cw__last');
+    a.href = last.href;
+    var meta = el('span', 'lgdc-micro');
+    meta.append('par ', whoNode(last, 'span'), ', ' + last.date);
+    a.append(el('span', 'lgdc-cw__topic', last.title), meta);
+    return a;
+  }
+  document.querySelectorAll('.lgdc-fa-card').forEach(function (card) {
+    var id = card.dataset.forumId;
+    if (!id || card.dataset.clan) return; // les territoires gardent leur carte
+    var title = card.querySelector('.forumtitle');
+    if (!title) return;
+    var link = title.getAttribute('href'), name = title.textContent.trim();
+    var unread = /(^|\s)(forum|cat)_new\b/.test(card.className);
+    var last = lastPost(card), n = counts(card);
+    var desc = card.querySelector('.lgdc-fa-desc');
+    var subs = card.querySelector('.lgdc-fa-subs');
+    var fresh;
+    if (CENTERED.indexOf(id) >= 0) {
+      fresh = el('article', 'lgdc-cc');
+      var cin = el('div', 'lgdc-cc__in');
+      var ghost = el('h3', 'lgdc-cc__ghost'), ga = el('a', null, name); ga.href = link; ghost.appendChild(ga);
+      cin.appendChild(ghost);
+      var r = el('a', 'lgdc-cc__ring'); r.href = last ? last.href : link; r.setAttribute('aria-label', 'Dernier message'); r.appendChild(ring(last));
+      if (last) cin.appendChild(r);
+      if (last) {
+        var by = el('span', 'lgdc-micro lgdc-cc__by'); by.append('par ', whoNode(last, 'a'));
+        cin.append(el('span', 'lgdc-cc__topic', last.title), by, el('span', 'lgdc-micro lgdc-cc__date', last.date));
+      } else cin.appendChild(el('span', 'lgdc-micro lgdc-cc__date', 'Aucun message pour le moment.'));
+      cin.appendChild(countLine('lgdc-cc__count', n));
+      if (subs && !subs.hidden && subs.firstElementChild) cin.appendChild(subs.firstElementChild);
+      fresh.appendChild(cin);
+    } else if (id === '7') {
+      fresh = el('article', 'lgdc-frame lgdc-pres');
+      var top = el('div', 'lgdc-pres__top');
+      var h = el('h3', 'lgdc-clans__title'), ha = el('a', null, name); ha.href = link; h.appendChild(ha);
+      top.append(h, el('p', 'lgdc-chev lgdc-chev--sm', plural(n[0], 'sujet') + ', ' + plural(n[1], 'message')));
+      if (desc && !desc.hidden) { var dp = el('p', 'lgdc-text'); dp.innerHTML = desc.innerHTML; top.appendChild(dp); }
+      fresh.appendChild(top);
+      // les sous-forums par Clan deviennent les choix de la maquette
+      var picks = el('div', 'lgdc-clans__picks');
+      if (subs) subs.querySelectorAll('a').forEach(function (a) {
+        var pick = el('a', 'lgdc-clans__pick'); pick.href = a.getAttribute('href');
+        ['--g1', '--g2'].forEach(function (v) { pick.style.setProperty(v, a.style.getPropertyValue(v)); });
+        var emblem = a.querySelector('.lgdc-ring');
+        if (emblem) { emblem.classList.add('lgdc-ring--lg'); ['--g1', '--g2'].forEach(function (v) { emblem.style.setProperty(v, a.style.getPropertyValue(v)); }); pick.appendChild(emblem); }
+        pick.appendChild(el('span', 'lgdc-micro', a.textContent.trim()));
+        picks.appendChild(pick);
+      });
+      fresh.appendChild(picks);
+      var foot = el('div', 'lgdc-pres__foot');
+      if (last) foot.appendChild(lastLink(last));
+      fresh.appendChild(foot);
+    } else {
+      fresh = el('article', 'lgdc-cw');
+      var win = el('div', 'lgdc-cw__in'), body = el('div', 'lgdc-cw__body');
+      var head = el('div', 'lgdc-cw__head'), hn = el('h3', 'lgdc-cw__name'), hna = el('a', null, name);
+      hna.href = link; hn.appendChild(hna); if (last) head.appendChild(ring(last)); head.appendChild(hn);
+      body.append(head, countLine('lgdc-cw__count', n));
+      if (desc && !desc.hidden) { var p = el('p', 'lgdc-text'); p.innerHTML = desc.innerHTML; body.appendChild(p); }
+      if (last) body.appendChild(lastLink(last));
+      if (subs && !subs.hidden && subs.firstElementChild) body.appendChild(subs.firstElementChild);
+      win.appendChild(body); fresh.appendChild(win);
+    }
+    if (unread) { fresh.classList.add('is-unread'); fresh.prepend(el('span', 'lgdc-tab', 'Nouveau')); }
+    fresh.dataset.forumId = id;
+    card.replaceWith(fresh);
+  });
+  // grilles de la maquette : trois cartes pour « Avant de s’inscrire », la grille Personnages pour Présentations
+  document.querySelectorAll('.lgdc-fa-forums').forEach(function (grid) {
+    if (grid.querySelector('.lgdc-cc')) grid.classList.add('lgdc-grid--cat3');
+    if (grid.querySelector('.lgdc-pres')) grid.classList.add('lgdc-grid--perso');
+  });
+
   var CACHE_TTL = 3600000; // une heure
   var avatarRequests = new Map();
   var memberRequests = new Map();
