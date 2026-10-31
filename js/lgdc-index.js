@@ -102,43 +102,87 @@
     colorProbe.style.color = pair[0];
     groupEnds[colorProbe.style.color] = pair[1];
   });
+  var CACHE_TTL = 3600000; // une heure
   var avatarRequests = new Map();
+  var memberRequests = new Map();
   var avatarCache = {};
   try { avatarCache = JSON.parse(sessionStorage.getItem('lgdc-recent-avatars')) || {}; } catch (e) {}
+  function remember(key, value) {
+    avatarCache[key] = Object.assign({at: Date.now()}, value);
+    try { sessionStorage.setItem('lgdc-recent-avatars', JSON.stringify(avatarCache)); } catch (e) {}
+  }
+  function fresh(key) {
+    var entry = avatarCache[key];
+    return entry && Date.now() - entry.at < CACHE_TTL ? entry : null;
+  }
   function imageUrl(value, base) {
     if (typeof value !== 'string' || !value.trim()) return null;
-    try { var url = new URL(value, base); return /^https?:$/.test(url.protocol) ? url.href : null; }
-    catch (e) { return null; }
+    try {
+      var url = new URL(value, base);
+      if (!/^https?:$/.test(url.protocol)) return null;
+      // l'image par défaut de Forumactif n'est pas un avatar
+      return /\/(pp-blank|no_?avatar)[^/]*$/i.test(url.pathname) ? null : url.href;
+    } catch (e) { return null; }
   }
-  function avatarFor(link) {
-    if (!link) return Promise.resolve(null);
-    var profile;
-    try { profile = new URL(link.getAttribute('href'), location.href); } catch (e) { return Promise.resolve(null); }
-    if (profile.origin !== location.origin || !/^\/u\d+$/.test(profile.pathname)) return Promise.resolve(null);
-    var id = profile.pathname.slice(2);
+  function profileId(href) {
+    try {
+      var url = new URL(href, location.href);
+      return url.origin === location.origin && /^\/u\d+$/.test(url.pathname) ? url.pathname.slice(2) : null;
+    } catch (e) { return null; }
+  }
+  // sans lien de profil (session invitée), le numéro du membre se retrouve dans la liste des membres
+  function memberId(name) {
+    var key = 'n:' + name.toLowerCase();
+    var cached = fresh(key);
+    if (cached) return Promise.resolve(cached.id || null);
+    if (memberRequests.has(key)) return memberRequests.get(key);
+    var url = new URL('/memberlist?mode=joined&order=ASC&submit=Ok&username=' + encodeURIComponent(name), location.href).href;
+    var request = fetch(url, {credentials: 'same-origin'}).then(function (response) {
+      if (!response.ok) throw new Error('Liste des membres indisponible');
+      return response.text();
+    }).then(function (html) {
+      var page = new DOMParser().parseFromString(html, 'text/html');
+      var match = Array.from(page.querySelectorAll('a[href]')).find(function (a) {
+        return profileId(a.getAttribute('href')) && a.textContent.trim().toLowerCase() === name.toLowerCase();
+      });
+      var id = match ? profileId(match.getAttribute('href')) : null;
+      remember(key, {id: id});
+      return id;
+    }).catch(function () { return null; });
+    memberRequests.set(key, request);
+    return request;
+  }
+  function avatarOf(id) {
+    var base = new URL('/u' + id, location.href).href;
     var user = window._userdata;
     if (user && String(user.user_id) === id && typeof user.avatar === 'string') {
       var current = new DOMParser().parseFromString(user.avatar, 'text/html').querySelector('img');
-      if (current) return Promise.resolve(imageUrl(current.getAttribute('src'), profile.href));
+      if (current) return Promise.resolve(imageUrl(current.getAttribute('src'), base));
     }
-    var cached = avatarCache[id];
-    if (cached && Date.now() - cached.at < 300000 && typeof cached.src === 'string') return Promise.resolve(imageUrl(cached.src, profile.href));
+    var cached = fresh(id);
+    if (cached && typeof cached.src === 'string') return Promise.resolve(imageUrl(cached.src, base));
     if (avatarRequests.has(id)) return avatarRequests.get(id);
-    var request = fetch(profile.href, {credentials: 'same-origin'}).then(function (response) {
+    var request = fetch(base, {credentials: 'same-origin'}).then(function (response) {
       if (!response.ok) throw new Error('Profil indisponible');
       return response.text();
     }).then(function (html) {
       var page = new DOMParser().parseFromString(html, 'text/html');
       var avatar = page.querySelector('#user_avatar img, .lgdc-prof__av img');
-      var src = avatar && imageUrl(avatar.getAttribute('src'), profile.href);
-      if (src) {
-        avatarCache[id] = {src: src, at: Date.now()};
-        try { sessionStorage.setItem('lgdc-recent-avatars', JSON.stringify(avatarCache)); } catch (e) {}
-      }
+      var src = avatar && imageUrl(avatar.getAttribute('src'), base);
+      remember(id, {src: src || ''});
       return src;
     }).catch(function () { return null; });
     avatarRequests.set(id, request);
     return request;
+  }
+  // link : lien natif vers le profil s'il existe ; name : pseudo affiché ; member : le pseudo est celui d'un membre
+  function avatarFor(link, name, member) {
+    if (link) {
+      var id = profileId(link.getAttribute('href'));
+      return id ? avatarOf(id) : Promise.resolve(null);
+    }
+    if (!member || !name) return Promise.resolve(null);
+    return memberId(name).then(function (found) { return found ? avatarOf(found) : null; });
   }
   document.querySelectorAll('.lgdc-recent-topics .lgdc-posts').forEach(function (list) {
     list.setAttribute('tabindex', '0');
@@ -148,6 +192,9 @@
       var author = meta && (meta.querySelector('.lgdc-who') || meta.querySelector('.lgdc-recent-author a') || meta.querySelector('.lgdc-recent-author'));
       if (!author) return;
       var name = author.textContent.trim();
+      // un membre garde la couleur de son groupe dans une balise ; un invité n'est que du texte
+      var member = author.matches('a') || author.dataset.member === 'true' || Boolean(author.querySelector('.usr_grp_clr, [style*="color"], strong'));
+      if (member) author.dataset.member = 'true';
       var nativeColor = author.querySelector('[style*="color"]');
       var color = nativeColor && nativeColor.style.color || author.style.getPropertyValue('--g1') || '#a39c92';
       var end = groupEnds[color] || color;
@@ -169,7 +216,7 @@
       if (!square.querySelector('img')) square.replaceChildren();
       square.style.setProperty('--g1', color);
       square.style.setProperty('--g2', end);
-      avatarFor(author.matches('a') ? author : null).then(function (src) {
+      avatarFor(author.matches('a') ? author : author.querySelector('a[href]'), name, member).then(function (src) {
         if (!src || !square.isConnected) return;
         var image = document.createElement('img');
         image.src = src;
