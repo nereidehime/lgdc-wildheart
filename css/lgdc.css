@@ -2478,3 +2478,11 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-fa-member .lgdc-mb__mp { right: 0; top: 0; bottom: auto; }
 .lgdc-fa-memberlist .lgdc-mbs__sort { margin-left: auto; }
 .lgdc-fa-memberlist .lgdc-mbs__sort label { display: flex; align-items: center; gap: 10px; }
+
+/* accueil : début du récit « Une paix nouvelle », la suite est au guidebook */
+.lgdc .lgdc-prologue__more {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 11px 14px;
+  font: 800 10px/12px var(--sans); letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;
+  color: var(--ink-strong); border: 2px solid var(--line); border-radius: 5px; transition: border-color var(--t), gap var(--t);
+}
+.lgdc .lgdc-prologue__more:hover { border-color: var(--a2); gap: 12px; }
