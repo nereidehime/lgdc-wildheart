@@ -1893,7 +1893,6 @@ tw::before {
 .lgdc-gbs--pairs td, .lgdc-gbs--pairs td:first-child { width: 50%; font: italic 900 18px/22px var(--serif); color: var(--ink-strong); }
 .lgdc-gbs__list { margin: 10px 0 0 18px; list-style: disc; }
 .lgdc-gbs__list li { font: 400 14.5px/25px var(--sans); color: var(--ink); }
-.lgdc-gbs__code { margin: 12px 0 0; padding: 16px 18px; font: 500 12.5px/21px ui-monospace, monospace; color: var(--ink-strong); background: var(--b3); border-radius: 5px; white-space: pre-wrap; }
 
 /* profil : onglet « Système » (fiche technique) et émotions des liens */
 .lgdc .lgdc-prof__sysl { margin: 0; border-top: 2px solid var(--b3); }
