@@ -83,4 +83,90 @@
     subforums.replaceChildren(list);
   });
 
+  /* Le widget fournit les données ; ce passage reprend la ligne de la maquette. */
+  var groupEnds = {};
+  var colorProbe = document.createElement('span');
+  clans.map(function (clan) { return clan.colors; }).concat([
+    ['#a39c92', '#857e74'], ['#cb7a53', '#dfa283']
+  ]).forEach(function (pair) {
+    colorProbe.style.color = pair[0];
+    groupEnds[colorProbe.style.color] = pair[1];
+  });
+  var avatarRequests = new Map();
+  var avatarCache = {};
+  try { avatarCache = JSON.parse(sessionStorage.getItem('lgdc-recent-avatars')) || {}; } catch (e) {}
+  function imageUrl(value, base) {
+    if (typeof value !== 'string' || !value.trim()) return null;
+    try { var url = new URL(value, base); return /^https?:$/.test(url.protocol) ? url.href : null; }
+    catch (e) { return null; }
+  }
+  function avatarFor(link) {
+    if (!link) return Promise.resolve(null);
+    var profile;
+    try { profile = new URL(link.getAttribute('href'), location.href); } catch (e) { return Promise.resolve(null); }
+    if (profile.origin !== location.origin || !/^\/u\d+$/.test(profile.pathname)) return Promise.resolve(null);
+    var id = profile.pathname.slice(2);
+    var user = window._userdata;
+    if (user && String(user.user_id) === id && typeof user.avatar === 'string') {
+      var current = new DOMParser().parseFromString(user.avatar, 'text/html').querySelector('img');
+      if (current) return Promise.resolve(imageUrl(current.getAttribute('src'), profile.href));
+    }
+    var cached = avatarCache[id];
+    if (cached && Date.now() - cached.at < 300000 && typeof cached.src === 'string') return Promise.resolve(imageUrl(cached.src, profile.href));
+    if (avatarRequests.has(id)) return avatarRequests.get(id);
+    var request = fetch(profile.href, {credentials: 'same-origin'}).then(function (response) {
+      if (!response.ok) throw new Error('Profil indisponible');
+      return response.text();
+    }).then(function (html) {
+      var page = new DOMParser().parseFromString(html, 'text/html');
+      var avatar = page.querySelector('#user_avatar img, .lgdc-prof__av img');
+      var src = avatar && imageUrl(avatar.getAttribute('src'), profile.href);
+      if (src) {
+        avatarCache[id] = {src: src, at: Date.now()};
+        try { sessionStorage.setItem('lgdc-recent-avatars', JSON.stringify(avatarCache)); } catch (e) {}
+      }
+      return src;
+    }).catch(function () { return null; });
+    avatarRequests.set(id, request);
+    return request;
+  }
+  document.querySelectorAll('.lgdc-recent-topics .lgdc-posts').forEach(function (list) {
+    list.setAttribute('tabindex', '0');
+    list.setAttribute('aria-label', 'Les dix derniers messages');
+    list.querySelectorAll('li').forEach(function (row) {
+      var meta = row.querySelector('.lgdc-micro');
+      var author = meta && (meta.querySelector('.lgdc-who') || meta.querySelector('.lgdc-recent-author a') || meta.querySelector('.lgdc-recent-author'));
+      if (!author) return;
+      var name = author.textContent.trim();
+      var nativeColor = author.querySelector('[style*="color"]');
+      var color = nativeColor && nativeColor.style.color || author.style.getPropertyValue('--g1') || '#a39c92';
+      var end = groupEnds[color] || color;
+      author.classList.add('lgdc-who');
+      if (author.children.length) author.textContent = name;
+      author.style.setProperty('--g1', color);
+      author.style.setProperty('--g2', end);
+      // Compatibilité avec le template déjà installé : la date redevient du texte sur la même ligne.
+      var legacyTime = meta.querySelector('.lgdc-recent-time');
+      if (legacyTime) {
+        var date = legacyTime.textContent.trim();
+        meta.replaceChildren(document.createTextNode('par '), author, document.createTextNode(', ' + date));
+        author.classList.remove('lgdc-recent-author');
+      }
+      var square = row.querySelector('.lgdc-sq');
+      if (!square) { square = document.createElement('span'); square.className = 'lgdc-sq'; row.prepend(square); }
+      square.setAttribute('aria-hidden', 'true');
+      if (!square.querySelector('img')) square.replaceChildren();
+      square.style.setProperty('--g1', color);
+      square.style.setProperty('--g2', end);
+      avatarFor(author.matches('a') ? author : null).then(function (src) {
+        if (!src || !square.isConnected) return;
+        var image = document.createElement('img');
+        image.src = src;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        square.replaceChildren(image);
+      });
+    });
+  });
 })();

@@ -88,9 +88,7 @@
 .lgdc-fa-qeel #last_connected:empty { display: none; }
 .lgdc-fa-guidebook-loading { padding: 40px 54px; }
 .lgdc-recent-slot { min-width: 0; }
-.lgdc-recent-topics .lgdc-scroll { margin: 0; padding: 0 12px 0 0; }
-.lgdc-recent-topics .lgdc-recent-time { display: block; margin-top: 3px; }
-.lgdc-recent-topics .lgdc-recent-author a { font-weight: 800; }
+.lgdc-recent-topics .lgdc-sq:empty { visibility: hidden; }
 .lgdc-recent-topics:not(:has(.lgdc-posts li))::after { content: "Aucun sujet pour le moment."; display: block; font: 400 12px/20px var(--sans); color: var(--ink-soft); }
 
 /* Les boutons natifs ont un padding !important ; le Switcheroo garde celui de la maquette. */
