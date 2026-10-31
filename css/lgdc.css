@@ -2455,3 +2455,19 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc-prof__pseudo [id^="field_id"], .lgdc-prof__quote [id^="field_id"] { display: inline-flex; align-items: center; gap: 6px; padding-right: 0; }
 .lgdc-prof__pseudo dd, .lgdc-prof__quote dd { margin: 0; }
 .lgdc .lgdc-prof__pseudo .lgdc-prof__pen, .lgdc .lgdc-prof__quote .lgdc-prof__pen { position: static; flex: none; }
+
+/* édition sur place, version sobre : la saisie garde la police de la valeur, soulignée ; valider et annuler en texte */
+.lgdc-fa-profile .field_editable { gap: 6px 14px; }
+.lgdc-fa-profile .field_editable input:not([type=hidden]):not([type=radio]):not([type=checkbox]), .lgdc-fa-profile .field_editable textarea, .lgdc-fa-profile .field_editable select { flex: 1 1 100%; min-height: 0; padding: 2px 0 4px; color: inherit; background: transparent; border: 0; border-bottom: 2px solid var(--line); border-radius: 0; font: inherit; letter-spacing: inherit; }
+.lgdc-fa-profile .field_editable input:focus, .lgdc-fa-profile .field_editable textarea:focus, .lgdc-fa-profile .field_editable select:focus { border-bottom-color: var(--a1); }
+.lgdc-prof__editbar { gap: 14px; }
+.lgdc .lgdc-prof__ok, .lgdc .lgdc-prof__cancel { display: inline; width: auto; height: auto; padding: 4px 0; background: none; border: 0; border-radius: 0; font: 800 10px/14px var(--sans); letter-spacing: 1px; text-transform: uppercase; font-style: normal; cursor: pointer; }
+.lgdc .lgdc-prof__ok { color: var(--a1); background: none; }
+.lgdc .lgdc-prof__ok:hover { color: var(--a2); background: none; }
+.lgdc .lgdc-prof__cancel { color: var(--ink-soft); background: none; }
+.lgdc .lgdc-prof__cancel:hover { color: var(--ink-strong); }
+.lgdc-prof__id .lgdc-prof__cancel { color: #a39c92; }
+.lgdc-prof__id .lgdc-prof__cancel:hover { color: #ece7df; }
+.lgdc .lgdc-prof__pen { width: 24px; height: 24px; font-size: 15px; }
+.lgdc .lgdc-prof__editbar button { margin: 0; min-width: 0; padding: 4px 0 !important; box-shadow: none; }
+.lgdc .lgdc-prof__pen { padding: 0 !important; margin: 0; min-width: 0; line-height: 1; box-shadow: none; } .lgdc .lgdc-prof__pen i { display: block; line-height: 1; }

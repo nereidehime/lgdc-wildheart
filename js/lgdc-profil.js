@@ -208,6 +208,13 @@
     b.innerHTML = '<i class="ph-light ' + icon + '" aria-hidden="true"></i>';
     return b;
   }
+  function text(label, className) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = className;
+    b.textContent = label;
+    return b;
+  }
   function close(field) {
     field.classList.remove('is-editing');
     field.querySelector('.field_editable').classList.add('invisible');
@@ -256,12 +263,12 @@
     var editor = field.querySelector('.field_editable');
     if (!editor || !field.querySelector('.field_uneditable')) return;
     field.classList.add('lgdc-prof__editable');
-    var pencil = tool('Modifier', 'ph-pencil-simple', 'lgdc-prof__pen');
+    var pencil = tool('Modifier', 'ph-pencil-simple-line', 'lgdc-prof__pen');
     field.appendChild(pencil);
     var bar = document.createElement('div');
     bar.className = 'lgdc-prof__editbar';
-    var ok = tool('Valider', 'ph-check', 'lgdc-prof__ok');
-    var cancel = tool('Annuler', 'ph-x', 'lgdc-prof__cancel');
+    var ok = text('Valider', 'lgdc-prof__ok');
+    var cancel = text('Annuler', 'lgdc-prof__cancel');
     bar.append(ok, cancel);
     editor.appendChild(bar);
     pencil.addEventListener('click', function () {
