@@ -1,7 +1,11 @@
 /* Chargement par surface : les gros modules restent sur la page qui les utilise. */
 (function () {
   'use strict';
-  var base = 'https://cdn.jsdelivr.net/gh/nereidehime/lgdc-wildheart@main/js/';
+  // les modules viennent du même endroit que ce fichier : épingler son commit dans overall_footer_end suffit
+  var self = document.currentScript && document.currentScript.src;
+  var base = self && /\/lgdc-loader\.js(\?.*)?$/.test(self)
+    ? self.replace(/lgdc-loader\.js(\?.*)?$/, '')
+    : 'https://cdn.jsdelivr.net/gh/nereidehime/lgdc-wildheart@main/js/';
   var pending = new Map();
 
   function load(url) {
