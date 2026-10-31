@@ -172,7 +172,7 @@
   }
   document.querySelectorAll('.lgdc-fa-card').forEach(function (card) {
     var id = card.dataset.forumId;
-    if (!id || card.dataset.clan) return; // les territoires gardent leur carte
+    if (!id) return;
     var title = card.querySelector('.forumtitle');
     if (!title) return;
     var link = title.getAttribute('href'), name = title.textContent.trim();
@@ -181,17 +181,38 @@
     var desc = card.querySelector('.lgdc-fa-desc');
     var subs = card.querySelector('.lgdc-fa-subs');
     var fresh;
-    if (CENTERED.indexOf(id) >= 0) {
+    var clan = card.dataset.clan && clans.find(function (c) { return c.key === card.dataset.clan; });
+    if (clan) {
+      // territoire : « Crépuscule » en grand, le territoire en sous-titre, puis les traits (description coupée au premier point)
+      fresh = el('article', 'lgdc-cw lgdc-terr');
+      colors(fresh, clan);
+      var tin = el('div', 'lgdc-cw__in lgdc-cw__body');
+      var tid = el('div', 'lgdc-cw__head lgdc-terr__id');
+      var emb = emblem(clan, true); colors(emb, clan);
+      var text = desc ? desc.textContent.replace(/\s+/g, ' ').trim() : '';
+      var cut = text.indexOf('. ');
+      var where = cut > 0 ? text.slice(0, cut) : '', traits = cut > 0 ? text.slice(cut + 2) : text;
+      var tn = el('h3', 'lgdc-cw__name'), tna = el('a', null, name.replace(/^Clan (du |de la |de l’|de l')/i, '')); tna.href = link; tn.appendChild(tna);
+      var tbox = el('div'); tbox.appendChild(tn);
+      if (where) tbox.appendChild(el('p', 'lgdc-micro lgdc-terr__where', where.charAt(0).toLowerCase() + where.slice(1)));
+      tid.append(emb, tbox);
+      tin.append(tid, countLine('lgdc-cw__count', n));
+      if (traits) tin.appendChild(el('p', 'lgdc-text lgdc-terr__traits', traits.replace(/\.$/, '')));
+      if (last) tin.appendChild(lastLink(last));
+      if (subs && !subs.hidden && subs.firstElementChild) tin.appendChild(subs.firstElementChild);
+      fresh.appendChild(tin);
+    } else if (id !== '7' && !card.closest('.lgdc-fa-forums').querySelector('[data-forum-id="7"]')) {
       fresh = el('article', 'lgdc-cc');
       var cin = el('div', 'lgdc-cc__in');
       var ghost = el('h3', 'lgdc-cc__ghost'), ga = el('a', null, name); ga.href = link; ghost.appendChild(ga);
       cin.appendChild(ghost);
       var r = el('a', 'lgdc-cc__ring'); r.href = last ? last.href : link; r.setAttribute('aria-label', 'Dernier message'); r.appendChild(ring(last));
-      if (last) cin.appendChild(r);
+      if (!last) r.querySelector('.lgdc-ring__in').appendChild(el('i', 'ph-light ph-paw-print'));
+      cin.appendChild(r);
       if (last) {
         var by = el('span', 'lgdc-micro lgdc-cc__by'); by.append('par ', whoNode(last, 'a'));
         cin.append(el('span', 'lgdc-cc__topic', last.title), by, el('span', 'lgdc-micro lgdc-cc__date', last.date));
-      } else cin.appendChild(el('span', 'lgdc-micro lgdc-cc__date', 'Aucun message pour le moment.'));
+      } else cin.appendChild(el('span', 'lgdc-cc__topic', 'aucun message pour l’instant'));
       cin.appendChild(countLine('lgdc-cc__count', n));
       if (subs && !subs.hidden && subs.firstElementChild) cin.appendChild(subs.firstElementChild);
       fresh.appendChild(cin);
@@ -233,7 +254,13 @@
   });
   // grilles de la maquette : trois cartes pour « Avant de s’inscrire », la grille Personnages pour Présentations
   document.querySelectorAll('.lgdc-fa-forums').forEach(function (grid) {
-    if (grid.querySelector('.lgdc-cc')) grid.classList.add('lgdc-grid--cat3');
+    var cc = grid.querySelectorAll(':scope > .lgdc-cc');
+    if (cc.length && grid.querySelector('.lgdc-terr')) {
+      // Assemblée et Hors des territoires : leur propre rangée sous les quatre Clans, comme dans la maquette
+      var row = el('section', grid.className + ' lgdc-grid--cat2');
+      cc.forEach(function (c) { row.appendChild(c); });
+      grid.after(row);
+    } else if (cc.length) grid.classList.add(CENTERED.indexOf(cc[0].dataset.forumId) >= 0 ? 'lgdc-grid--cat3' : 'lgdc-grid--cat2');
     if (grid.querySelector('.lgdc-pres')) grid.classList.add('lgdc-grid--perso');
   });
 
@@ -319,6 +346,89 @@
     if (!member || !name) return Promise.resolve(null);
     return memberId(name).then(function (found) { return found ? avatarOf(found) : null; });
   }
+  /* Qui est en ligne : les variables natives (cachées dans #lgdc-qeel-raw) remplissent le balisage de la maquette. */
+  var raw = document.getElementById('lgdc-qeel-raw');
+  if (raw) (function () {
+    function part(name) { return raw.querySelector('[data-raw="' + name + '"]'); }
+    function numbers(node) { return node ? (node.textContent.match(/\d[\d\s  ]*/g) || []).map(function (n) { return parseInt(n.replace(/\D/g, ''), 10); }) : []; }
+    function bold(node) { var b = node && node.querySelector('b, strong'); return b ? b.textContent.trim() : String(numbers(node)[0] || 0); }
+    function fill(id, value) { var node = document.getElementById(id); if (node) node.textContent = value; return node; }
+    var GROUPS = [
+      { label: 'Staff', sym: 'staff', colors: ['#cb7a53', '#dfa283'] },
+      { label: 'Crépuscule', key: 'crepuscule' }, { label: 'Hêtre', key: 'hetre' },
+      { label: 'Orchidée', key: 'orchidee' }, { label: 'Brouillard', key: 'brouillard' }, { label: 'Solitaires', key: 'solitaires' }
+    ].map(function (group) {
+      var clan = group.key && clans.find(function (c) { return c.key === group.key; });
+      if (clan) { group.colors = clan.colors; group.sym = clan.sym || 'clan-' + clan.key; }
+      colorProbe.style.color = group.colors[0];
+      group.color = colorProbe.style.color;
+      group.people = [];
+      return group;
+    });
+    // les pseudos natifs : lien de profil et couleur du groupe
+    function people(node) {
+      return node ? Array.from(node.querySelectorAll('a[href]')).filter(function (a) { return profileId(a.getAttribute('href')); }).map(function (a) {
+        var colored = a.querySelector('[style*="color"]') || (a.style.color ? a : null);
+        var color = colored ? colored.style.color : '';
+        return { href: a.getAttribute('href'), name: a.textContent.trim(), color: color || '#a39c92', end: groupEnds[color] || color || '#857e74' };
+      }) : [];
+    }
+    function who(person) {
+      var a = el('a', 'lgdc-who', person.name); a.href = person.href;
+      a.style.setProperty('--g1', person.color); a.style.setProperty('--g2', person.end);
+      return a;
+    }
+
+    var online = numbers(part('online'));
+    var total = online[0] || 0, invisible = online[2] || 0, guests = online[3] || 0;
+    var list = people(part('list'));
+    list.forEach(function (person) {
+      var group = GROUPS.find(function (g) { return g.color === person.color; }) || GROUPS[GROUPS.length - 1];
+      group.people.push(person);
+    });
+    var staff = GROUPS[0].people.length;
+    fill('lgdc-qeel-total', total + ' en ligne');
+    var split = document.getElementById('lgdc-qeel-split');
+    if (split) [[staff, 'staff', 'staff'], [list.length - staff, 'membre', 'membres'], [invisible, 'invisible', 'invisibles'], [guests, 'invité', 'invités']].forEach(function (item) {
+      split.appendChild(el('span', null, item[0] + ' ' + (item[0] > 1 ? item[2] : item[1])));
+    });
+    var groups = document.getElementById('lgdc-qeel-groups');
+    if (groups) GROUPS.filter(function (g) { return g.people.length; }).forEach(function (group) {
+      var li = el('li'), head = el('a', 'lgdc-qeel__g'), avs = el('div', 'lgdc-qeel__avs');
+      colors(li, group); head.href = '/groups';
+      var r = emblem({ sym: group.sym }, true); colors(r, group);
+      head.append(r, el('span', 'lgdc-micro', group.label), el('b', 'lgdc-who', String(group.people.length)));
+      group.people.forEach(function (person) {
+        var a = el('a'); a.href = person.href; a.title = person.name; a.setAttribute('aria-label', person.name);
+        var sq = el('span', 'lgdc-sq', person.name.split(/\s+/).map(function (w) { return w.charAt(0); }).join('').slice(0, 2).toUpperCase());
+        sq.setAttribute('aria-hidden', 'true'); colors(sq, group);
+        a.appendChild(sq); avs.appendChild(a);
+        avatarOf(profileId(person.href)).then(function (src) {
+          if (!src || !sq.isConnected) return;
+          var img = el('img', 'lgdc-avatar--contain'); img.src = src; img.alt = ''; img.loading = 'lazy';
+          sq.replaceChildren(img);
+        });
+      });
+      li.append(head, avs); groups.appendChild(li);
+    });
+
+    var today = people(part('today'));
+    fill('lgdc-today-chip', today.length + (today.length > 1 ? ' membres passés' : ' membre passé') + ' ces dernières 24 h');
+    var names = document.getElementById('lgdc-today-names');
+    if (names) today.forEach(function (person, i) { if (i) names.append(', '); names.appendChild(who(person)); });
+    // « Le record du nombre d'utilisateurs en ligne est de 31 le Ven 30 Oct 2026 - 21:14 »
+    var recordText = part('record') ? part('record').textContent.replace(/\s+/g, ' ').trim() : '';
+    var record = recordText.match(/(\d+)\s+le\s+(.+)$/i);
+    var recordNode = document.getElementById('lgdc-today-record');
+    if (recordNode && record) {
+      var when = record[2].toLowerCase().replace(/\s*-\s*(\d{1,2}):(\d{2})$/, ' à $1 h $2').replace(/^(\S{3}) /, '$1. ');
+      recordNode.append('record : ', el('b', null, record[1]), ' connectés le ' + when);
+    }
+    function grouped(value) { var n = parseInt(String(value).replace(/\D/g, ''), 10); return isNaN(n) ? value : n.toLocaleString('fr-FR').replace(/\s/g, ' '); }
+    fill('lgdc-stat-members', grouped(bold(part('users'))));
+    fill('lgdc-stat-posts', grouped(bold(part('posts'))));
+  })();
+
   document.querySelectorAll('.lgdc-recent-topics .lgdc-posts').forEach(function (list) {
     list.setAttribute('tabindex', '0');
     list.setAttribute('aria-label', 'Les dix derniers messages');
