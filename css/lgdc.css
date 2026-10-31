@@ -2261,8 +2261,8 @@ tw::before {
 .lgdc-fa-card[data-clan] .lgdc-fa-status { position: absolute; top: 20px; right: 20px; width: 20px; height: 20px; }
 .lgdc-fa-card[data-clan] .lgdc-btns { grid-template-columns: 1fr; }
 .lgdc-fa-card[data-forum-id='14'], .lgdc-fa-card[data-forum-id='15'] { grid-column: span 2; }
-.lgdc-fa-index-tools { display: flex; flex-wrap: wrap; gap: 12px; padding: 20px 54px; }
-.lgdc-fa-index-tools a { font: 700 11px/18px var(--sans); text-decoration: underline; text-underline-offset: 3px; }
+.lgdc-fa-index-tools { padding: 30px 54px 0; }
+.lgdc-fa-index-tools .lgdc-btns { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 .lgdc-fa-qeel { padding: 0 54px 45px; }
 .lgdc-fa-qeel .lgdc-qeel__bar h2 { font: italic 900 30px/1.1 var(--serif); color: var(--on-dark); }
 .lgdc-fa-qeel__body { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; padding: 26px; }

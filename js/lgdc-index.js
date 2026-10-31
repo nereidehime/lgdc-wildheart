@@ -257,7 +257,7 @@
     var cc = grid.querySelectorAll(':scope > .lgdc-cc');
     if (cc.length && grid.querySelector('.lgdc-terr')) {
       // Assemblée et Hors des territoires : leur propre rangée sous les quatre Clans, comme dans la maquette
-      var row = el('section', grid.className + ' lgdc-grid--cat2');
+      var row = el('section', 'lgdc-grid lgdc-grid--cat2');
       cc.forEach(function (c) { row.appendChild(c); });
       grid.after(row);
     } else if (cc.length) grid.classList.add(CENTERED.indexOf(cc[0].dataset.forumId) >= 0 ? 'lgdc-grid--cat3' : 'lgdc-grid--cat2');
