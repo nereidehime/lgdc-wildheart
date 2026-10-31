@@ -29,7 +29,7 @@
   var page = [];
   if (document.querySelector('.lgdc-fa-card, .lgdc-fa-home')) page.push(load(base + 'lgdc-index.js').catch(report));
   if (document.querySelector('.lgdc-clans')) page.push(load(base + 'lgdc-clans.js').catch(report));
-  if (document.querySelector('.lgdc-fa-viewforum')) page.push(load(base + 'lgdc-forum.js').catch(report));
+  if (document.querySelector('.lgdc-fa-viewforum, .lgdc-fa-viewtopic')) page.push(load(base + 'lgdc-forum.js').catch(report));
   if (document.getElementById('switcheroo')) {
     load(base + 'lgdc-comptes.js').catch(report);
     load(base + 'lgdc-switcheroo.js').catch(report);

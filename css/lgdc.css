@@ -2382,3 +2382,20 @@ tw::before {
 .lgdc-fa-jump label { display: flex; align-items: center; gap: 10px; color: var(--ink-soft); }
 .lgdc-fa-jump select { max-width: 260px; min-height: 34px; }
 .lgdc-fa-modtools { grid-column: 1 / -1; color: var(--ink-soft); font-size: 11px; line-height: 18px; }
+
+/* ---------- LECTURE D'UN SUJET (viewtopic_body) : morceaux natifs ---------- */
+.lgdc-fa-viewtopic .lgdc-forum-toolbar:not(:has(a, strong)) { display: none; }
+.lgdc-fa-viewtopic .lgdc-posts { margin-top: 30px; }
+.lgdc-fa-viewtopic .lgdc-forum-actions { margin-left: auto; }
+.lgdc-fa-viewtopic .lgdc-forum-end { justify-content: flex-end; }
+.lgdc-fa-viewtopic .lgdc-forum-end .lgdc-forum-pagination { margin-right: auto; }
+.lgdc-fa-viewtopic .lgdc-post__rank img { display: block; max-width: 100%; margin: 6px auto 0; }
+.lgdc-fa-viewtopic .lgdc-post__actions .lgdc-fa-like { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 8px; font: 700 11px/1 var(--sans); color: var(--on-dark-soft); background: none; border: 0; border-radius: 5px; cursor: pointer; }
+.lgdc-fa-viewtopic .lgdc-post__actions .lgdc-fa-like i { font-size: 17px; }
+.lgdc-fa-viewtopic .lgdc-post__actions .lgdc-fa-like:hover { color: var(--on-dark); background: rgba(236, 231, 223, .08); }
+.lgdc-fa-viewtopic .lgdc-fa-like .like_text { display: none; }
+.lgdc-fa-posters { margin-bottom: 18px; color: var(--ink-soft); font-size: 11px; }
+.lgdc-fa-rules { margin-top: 30px; }
+.lgdc-fa-rules h2 { margin-bottom: 12px; font: italic 900 24px/1.2 var(--serif); color: var(--ink-strong); }
+.lgdc-fa-quickreply:not(:empty) { margin-top: 30px; }
+.lgdc-fa-quickmod { margin-left: auto; }

@@ -1,7 +1,8 @@
-/* Liste des sujets d'un forum : les lignes natives prennent le balisage de la maquette presentations.html. */
+/* Liste des sujets (maquette presentations.html) et lecture d'un sujet (maquette sujet.html) :
+   les données natives prennent le balisage des maquettes. */
 (function () {
   'use strict';
-  var page = document.querySelector('.lgdc-fa-viewforum');
+  var page = document.querySelector('.lgdc-fa-viewforum, .lgdc-fa-viewtopic');
   if (!page) return;
 
   // dégradés des groupes, comme sur l'index
@@ -104,4 +105,76 @@
   }
   var mod = document.getElementById('moderation_forum_tools');
   if (mod) mod.innerHTML = mod.innerHTML.replace(/modérer ce forum/, 'Modérer les sujets du forum');
+
+  /* Lecture d'un sujet : chaque message prend les couleurs du groupe de son auteur. */
+  var CLANS = [
+    { color: '#8e7f9a', sym: 'clan-crepuscule', name: 'Clan du Crépuscule' },
+    { color: '#b07a4f', sym: 'clan-hetre', name: 'Clan du Hêtre' },
+    { color: '#c2a24f', sym: 'clan-orchidee', name: 'Clan de l’Orchidée' },
+    { color: '#8a99a4', sym: 'clan-brouillard', name: 'Clan du Brouillard' },
+    { color: '#a39c92', sym: 'solitaires', name: 'Solitaires' }
+  ].map(function (clan) { probe.style.color = clan.color; clan.color = probe.style.color; return clan; });
+  var LABELS = { "Date d'inscription": 'Arrivée', 'Date d’inscription': 'Arrivée' };
+  function tool(href, label, icon) {
+    var a = document.createElement('a');
+    a.href = href; a.className = 'lgdc-tool';
+    a.setAttribute('aria-label', label); a.title = label;
+    a.innerHTML = '<i class="ph-light ' + icon + '" aria-hidden="true"></i>';
+    return a;
+  }
+  page.querySelectorAll('.lgdc-post').forEach(function (post) {
+    var nameBox = post.querySelector('.lgdc-fa-name');
+    var colored = nameBox && nameBox.querySelector('[style*="color"]');
+    var color = colored ? colored.style.color : '#a39c92';
+    post.style.setProperty('--g1', color);
+    post.style.setProperty('--g2', ends[color] || color);
+    var profile = (nameBox && nameBox.querySelector('a[href]')) || post.querySelector('.lgdc-fa-av a[href]');
+    var profileHref = profile && profile.getAttribute('href');
+    if (nameBox) {
+      var name = document.createElement(profileHref ? 'a' : 'span');
+      if (profileHref) name.href = profileHref;
+      name.className = 'lgdc-post__name';
+      name.textContent = nameBox.textContent.replace(/\s+/g, ' ').trim();
+      nameBox.replaceWith(name);
+      var clan = CLANS.find(function (c) { return c.color === color; });
+      if (clan) {
+        var line = document.createElement('p');
+        line.className = 'lgdc-post__clan';
+        line.innerHTML = '<span class="lgdc-sym" style="--sym:var(--sym-' + clan.sym + ')" aria-hidden="true"></span>';
+        line.appendChild(document.createTextNode(clan.name));
+        post.querySelector('.lgdc-post__rank').after(line);
+      }
+    }
+    var avatar = post.querySelector('.lgdc-fa-av img');
+    if (avatar) { avatar.removeAttribute('style'); avatar.alt = ''; }
+    else { var empty = post.querySelector('.lgdc-fa-av'); if (empty) empty.remove(); }
+    post.querySelectorAll('.lgdc-post__rank br').forEach(function (br) { br.remove(); });
+    post.querySelectorAll('.lgdc-post__stats dt').forEach(function (dt) {
+      var label = dt.textContent.replace(/\s*:\s*$/, '').trim();
+      dt.textContent = LABELS[label] || label;
+    });
+    // actions sans droit : Forumactif laisse un lien vide
+    post.querySelectorAll('.lgdc-post__actions a').forEach(function (a) { if (!a.getAttribute('href')) a.remove(); });
+    post.querySelectorAll('.lgdc-fa-like').forEach(function (b) { if (!b.dataset.href) b.remove(); });
+    var time = post.querySelector('.lgdc-post__date time');
+    if (time) time.textContent = time.textContent.replace(/\s+/g, ' ').trim();
+    // contacts : icônes natives remplacées par les outils de la maquette
+    var contact = post.querySelector('.lgdc-fa-contact');
+    if (contact) {
+      var tools = [];
+      if (profileHref) tools.push(tool(profileHref, 'Profil', 'ph-user-circle'));
+      contact.querySelectorAll('a[href]').forEach(function (a) {
+        var href = a.getAttribute('href');
+        if (/privmsg|mode=post/.test(href)) tools.push(tool(href, 'Message privé', 'ph-envelope-simple'));
+        else if (/^mailto:/.test(href)) tools.push(tool(href, 'E-mail', 'ph-at'));
+        else { var t = tool(href, a.title || 'Site web', 'ph-globe-simple'); t.target = '_blank'; t.rel = 'nofollow'; tools.push(t); }
+      });
+      contact.replaceChildren.apply(contact, tools);
+      if (!tools.length) contact.remove();
+    }
+    var sig = post.querySelector('.lgdc-post__sig');
+    if (sig && !sig.textContent.trim() && !sig.querySelector('img')) sig.remove();
+  });
+  var posters = page.querySelector('.lgdc-fa-posters');
+  if (posters && !posters.textContent.trim()) posters.remove();
 })();
