@@ -346,3 +346,11 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc-fa-search .lgdc-search__actions input[type=reset] { width: auto; flex: none; cursor: pointer; }
 .lgdc-fa-search .lgdc-search__actions { flex-wrap: nowrap; }
 .lgdc .lgdc-search__tags { display: flex; align-items: center; gap: 8px; font: 800 10px/14px var(--sans); text-transform: uppercase; letter-spacing: .6px; }
+
+/* ---------- RÉSULTATS DE RECHERCHE (search_results_topics, search_results_posts) ---------- */
+/* mots trouvés : Forumactif les met en rouge (span.coloradmin), ils passent en surlignage discret */
+.lgdc-fa-results span.coloradmin { color: inherit !important; background: color-mix(in srgb, var(--a2) 32%, transparent); border-radius: 2px; padding: 0 2px; }
+.lgdc-fa-results span.coloradmin b { font-weight: inherit; }
+.lgdc .lgdc-topic__forum { color: var(--ink-soft); }
+.lgdc .lgdc-topic__forum a { color: var(--ink-strong); font-weight: 700; }
+.lgdc-fa-results-posts .lgdc-search-hit__forum a { color: var(--ink-strong); font-weight: 700; }

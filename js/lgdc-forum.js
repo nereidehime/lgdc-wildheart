@@ -39,6 +39,8 @@
   topics.forEach(function (topic) {
     // classes natives : folder_new, folder_announce_new… ; « folder_no_new » reste lu
     var unread = Array.from(topic.classList).some(function (c) { return /_new$/.test(c) && !/no_new$/.test(c); });
+    // résultats de recherche : l'état vient de l'image native du dossier
+    if (topic.dataset.img) unread = /_new[^/]*$/.test(topic.dataset.img) && !/no_new/.test(topic.dataset.img);
     if (unread) {
       topic.classList.add('is-unread');
       var meta = topic.querySelector('.lgdc-topic__meta');
