@@ -1326,9 +1326,9 @@ section.lgdc-posts { display: flex; flex-direction: column; gap: 26px; }
   border-radius: 3px;
 }
 .lgdc-post__clan .lgdc-sym { width: 20px; height: 20px; }
-.lgdc .lgdc-post__stats { display: grid; grid-template-columns: 1fr 1fr; width: 100%; margin: 8px 0 0; border-top: 2px solid var(--b3); }
+.lgdc .lgdc-post__stats { display: grid; grid-template-columns: 1fr 1fr; width: 100%; margin: 8px 0 0; }
 .lgdc-post__stats div { display: flex; flex-direction: column-reverse; gap: 2px; padding-top: 10px; }
-.lgdc-post__stats div + div { padding-left: 10px; border-left: 2px solid var(--b3); }
+.lgdc-post__stats div + div { padding-left: 10px; }
 .lgdc-post__stats dt { font: 800 9.5px/12px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); }
 .lgdc-post__stats dd { margin: 0; font: italic 900 20px/1 var(--serif); color: var(--ink-strong); }
 .lgdc-post__contact { display: flex; gap: 2px; margin-top: 4px; }
@@ -2404,6 +2404,20 @@ tw::before {
 
 /* ---------- ÉDITEUR (SCEditor) : boutons en icônes Phosphor, posés par lgdc-editeur.js ---------- */
 /* le thème de SCEditor masque le texte des boutons (prévu pour ses images) : on rend l'icône visible */
-a.sceditor-button.lgdc-editor-icon { display: inline-grid !important; place-items: center; padding: 0 !important; overflow: visible !important; text-indent: 0 !important; font-size: 20px !important; line-height: 1 !important; color: #4f4943 !important; background: none; border-radius: 4px; width: 30px !important; height: 30px !important; }
+a.sceditor-button.lgdc-editor-icon { display: inline-grid !important; place-items: center; padding: 0 !important; overflow: visible !important; text-indent: 0 !important; font-size: 20px !important; line-height: 1 !important; color: var(--ink-strong, #1d1b19) !important; background: none; border-radius: 4px; width: 30px !important; height: 30px !important; }
 a.sceditor-button.lgdc-editor-icon i { display: block !important; width: auto !important; height: auto !important; font-size: 20px !important; line-height: 1 !important; text-indent: 0 !important; color: inherit !important; visibility: visible !important; opacity: 1 !important; }
-a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.active { color: #1d1b19 !important; background: #dfdad2 !important; }
+a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.active { color: var(--a1, #bf5531) !important; background: var(--b3, #dfdad2) !important; }
+
+/* ---------- RÉPONSE RAPIDE ET PIED DE SUJET : boutons et listes natifs ---------- */
+.lgdc-fa-quickreply div[style*="text-align"] { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px !important; }
+.lgdc-fa-quickreply input.button2 { min-height: 44px; padding: 12px 18px; color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font: 800 11px/16px var(--sans); text-transform: uppercase; letter-spacing: .6px; cursor: pointer; }
+.lgdc-fa-quickreply input.button2:hover { border-color: var(--a2); }
+.lgdc-fa-quickreply input.button2[name="post"] { color: #fff; background: var(--a1); border-color: var(--a1); }
+.lgdc-fa-quickreply input.button2[name="post"]:hover { color: #121110; background: var(--a2); border-color: var(--a2); }
+.lgdc-fa-forum-foot { grid-template-columns: auto auto; justify-content: space-between; }
+.lgdc-fa-jump label { font: 800 10px/16px var(--sans); text-transform: uppercase; letter-spacing: .6px; }
+.lgdc-fa-jump select { min-height: 34px; padding: 6px 30px 6px 10px; color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font: 500 13px/18px var(--sans); text-transform: none; letter-spacing: 0; cursor: pointer; }
+.lgdc-fa-jump select:hover, .lgdc-fa-jump select:focus { border-color: var(--a2); outline: none; }
+.lgdc-fa-jump input[type="submit"]:hover { color: #121110; background: var(--a2); }
+.lgdc-fa-quickmod { flex-wrap: wrap; justify-content: flex-end; }
+.lgdc-fa-quickmod .lgdc-fa-modtools { display: flex; gap: 4px; width: 100%; justify-content: flex-end; font-size: 0; }

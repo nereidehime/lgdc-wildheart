@@ -112,7 +112,8 @@
     { color: '#b07a4f', sym: 'clan-hetre', name: 'Clan du Hêtre' },
     { color: '#c2a24f', sym: 'clan-orchidee', name: 'Clan de l’Orchidée' },
     { color: '#8a99a4', sym: 'clan-brouillard', name: 'Clan du Brouillard' },
-    { color: '#a39c92', sym: 'solitaires', name: 'Solitaires' }
+    { color: '#a39c92', sym: 'solitaires', name: 'Solitaires' },
+    { color: '#cb7a53', sym: 'staff', name: 'Staff' }
   ].map(function (clan) { probe.style.color = clan.color; clan.color = probe.style.color; return clan; });
   var LABELS = { "Date d'inscription": 'Arrivée', 'Date d’inscription': 'Arrivée' };
   function tool(href, label, icon) {
@@ -174,6 +175,14 @@
     }
     var sig = post.querySelector('.lgdc-post__sig');
     if (sig && !sig.textContent.trim() && !sig.querySelector('img')) sig.remove();
+  });
+  // outils de modération : images natives remplacées par les outils de la maquette
+  var MOD = { delete: 'ph-trash', move: 'ph-arrows-out-cardinal', lock: 'ph-lock-simple', unlock: 'ph-lock-simple-open', split: 'ph-scissors', merge: 'ph-git-merge' };
+  page.querySelectorAll('.lgdc-fa-quickmod .lgdc-fa-modtools a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    var mode = /\/merge/.test(href) ? 'merge' : (href.match(/mode=(\w+)/) || [])[1];
+    var img = a.querySelector('img');
+    a.replaceWith(tool(href, img ? img.alt : mode, MOD[mode] || 'ph-wrench'));
   });
   var posters = page.querySelector('.lgdc-fa-posters');
   if (posters && !posters.textContent.trim()) posters.remove();
