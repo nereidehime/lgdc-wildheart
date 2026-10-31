@@ -128,3 +128,35 @@
 .lgdc-ntf .notification.alert { filter: none; }
 .lgdc-ntf .notif_text a.lgdc-who span[style*="color"] { color: inherit !important; }
 .lgdc-ntf .lgdc-ntf-error { margin: 4px 0 0; font: 400 11px/16px var(--sans); color: var(--ink); }
+
+/* ---------- BAS DE PAGE ----------
+   bande sombre sur la largeur de la colonne : le nom du forum, le panneau d'admin (administrateurs seulement),
+   puis les liens obligatoires de Forumactif, gardés visibles */
+.lgdc-fa-page #page-footer.lgdc-foot { padding: 0 54px 40px; }
+#page-footer .lgdc-foot__bar {
+  display: flex; align-items: center; gap: 18px;
+  min-height: 64px; margin: 0; padding: 12px 26px;
+  background: var(--d1); border: 0; border-radius: 10px;
+  font: 700 9.5px/16px var(--sans); letter-spacing: 1.5px; text-transform: uppercase;
+  color: #4a443e;
+}
+#page-footer .lgdc-foot__home { font: italic 900 24px/1 var(--serif); letter-spacing: -.02em; text-transform: none; color: var(--on-dark); }
+#page-footer .lgdc-foot__home:hover { color: var(--a2); }
+#page-footer .lgdc-foot__admin:empty { display: none; }
+#page-footer .lgdc-foot__admin a {
+  display: inline-grid; place-items: center; min-height: 30px; padding: 6px 14px;
+  font-weight: 800; color: #fff; background: var(--a1); border-radius: 5px;
+  transition: background-color var(--t);
+}
+#page-footer .lgdc-foot__admin a:hover { background: var(--a2); }
+#page-footer .lgdc-foot__fa { float: none; margin-left: auto; text-align: right; }
+#page-footer .lgdc-foot__fa :is(strong, .gensmall) { font: inherit; color: inherit; }
+#page-footer .lgdc-foot__fa a { color: var(--on-dark-soft); transition: color var(--t); }
+#page-footer .lgdc-foot__fa a:hover { color: var(--on-dark); }
+
+/* le cadre de la colonne est porté par #page-body : il continue ainsi sous les publicités de Forumactif
+   jusqu'aux top-sites, qui le ferment */
+.lgdc-fa-page #page-body { border-inline: 2px solid var(--line); }
+.lgdc-fa-page #page-body .lgdc-col { border-inline: 0; }
+.lgdc.lgdc-fa-aff { padding: 0; }
+.lgdc-fa-page #page-footer.lgdc-foot { padding-top: 0; }
