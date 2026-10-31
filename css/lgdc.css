@@ -2365,6 +2365,8 @@ tw::before {
 .lgdc-topics__empty { padding: 30px 26px; color: var(--ink-soft); font-size: 12px; }
 .lgdc-fa-viewforum .lgdc-forum-pagination:empty { display: none; }
 .lgdc-fa-viewforum .lgdc-forum-actions { margin-left: auto; }
+.lgdc-fa-viewforum .lgdc-forum-toolbar { justify-content: flex-end; }
+.lgdc-fa-viewforum .lgdc-forum-toolbar:not(:has(a, strong)) { display: none; }
 .lgdc-fa-watch:empty { display: none; }
 .lgdc-fa-watch a { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 14px; border: 2px solid var(--line); border-radius: 5px; background: var(--b1); color: var(--ink-strong); font: 800 10px/16px var(--sans); letter-spacing: .3px; text-transform: uppercase; }
 .lgdc-fa-sort { position: relative; }
