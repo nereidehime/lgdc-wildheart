@@ -26,6 +26,7 @@
   if (document.querySelector('.lgdc-fa-card, .lgdc-fa-home')) page.push(load(base + 'lgdc-index.js').catch(report));
   if (document.getElementById('switcheroo')) {
     load(base + 'lgdc-comptes.js').catch(report);
+    load(base + 'lgdc-switcheroo.js').catch(report);
     load(base + 'lgdc-membre.js').catch(function (error) {
       var navigation = document.getElementById('lgdc-native-nav');
       if (navigation) navigation.style.display = 'flex';

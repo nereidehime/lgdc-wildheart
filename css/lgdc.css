@@ -2281,3 +2281,20 @@ tw::before {
 .lgdc-fa-qeel #last_connected { grid-column: 1 / -1; padding-top: 20px; border-top: 2px solid var(--line); }
 .lgdc-fa-qeel #last_connected:empty { display: none; }
 .lgdc-fa-guidebook-loading { padding: 40px 54px; }
+
+/* Les boutons natifs ont un padding !important ; le Switcheroo garde celui de la maquette. */
+#lgdc-switch-toggle, .lgdc-switch .lgdc-ntf__close, .lgdc-switch .switcheroo__delete { padding: 0 !important; }
+.lgdc-switch .switcheroo__squircles { display: block; align-items: normal; gap: 0; }
+.lgdc-switch .switcheroo__squircle { position: static; width: auto; height: auto; justify-items: stretch; background: none; border-radius: 0; outline: 0; transition: none; cursor: default; }
+.lgdc-switch .switcheroo__choose { padding: 14px 0 !important; }
+.lgdc-switch .switcheroo__avatar img { position: static; object-position: center; border-radius: 3px; outline: 0; transition: none; }
+.lgdc-switch .switcheroo__delete { position: static; top: auto; right: auto; transform: none; opacity: 1; line-height: inherit; transition: none; cursor: pointer; }
+.lgdc-switch .switcheroo__squircle:hover .switcheroo__delete { transform: none; opacity: 1; }
+.lgdc-switch .switcheroo__popper { position: static; width: auto; left: auto; top: auto; padding: 0; background: none; border-radius: 0; z-index: auto; opacity: 1; transform: none; transform-origin: center; transition: none; }
+.lgdc-switch .switcheroo__popper::before { content: none; display: none; }
+.lgdc-switch .switcheroo__squircle:hover .switcheroo__popper { opacity: 1; transform: none; }
+/* Le CSS global de Forumactif applique border-box, contrairement à la fenêtre de référence. */
+.monomer-modal, .monomer-modal * { box-sizing: content-box; }
+.monomer-modal .monomer-close { padding: 0 !important; background: none; outline: revert; }
+.monomer-modal .switcheroo__form-input { padding: 10px 12px !important; font: inherit; color: #191715 !important; }
+.monomer-modal .switcheroo__form-button { padding: 12px 20px !important; margin: 0; align-self: auto; background: #191715; outline: revert; box-shadow: none; }
