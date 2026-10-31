@@ -20,6 +20,30 @@
 
   var DICE = ['Dextérité', 'Intelligence', 'Puissance', 'Volonté', 'Points de vie', 'Esquive', 'Vies'];
   var SYSTEM = ['Capacité de Clan', 'Capacités de chef', 'Astuces', 'Bonus de gestes', 'Améliorations'];
+  // astuces et capacités, avec le texte des infobulles du guidebook (header/generation/systeme.py)
+  var TIPS = {
+    "Organiser les patrouilles": "Une fois par sujet : +2 au test d’un camarade de Clan.",
+    "Neuf vies": "Perd une vie au lieu de mourir.",
+    "La parole du chef": "Une fois par sujet : +2 pour Convaincre ou Tenir bon face à son Clan.",
+    "Lire les signes": "Interprète les rêves et les présages, sans test.",
+    "Coup puissant": "+5 dégâts sur un coup.",
+    "Plaquage": "La cible est ralentie.",
+    "Griffes au ventre": "Contre une cible plaquée ou au sol, +3 dégâts.",
+    "Traque": "Relancer un test de Se faufiler.",
+    "Bond mortel": "Attraper et tuer en un seul test.",
+    "Patience": "+2 pour Guetter une proie.",
+    "Vigilance": "+2 pour Guetter.",
+    "Rempart": "Prendre les dégâts d’un camarade.",
+    "Commandement": "+2 au test d’un allié.",
+    "Effacer son odeur": "−2 pour qui la piste.",
+    "Feinte": "La cible ne peut pas esquiver.",
+    "Course": "Fuir sans test.",
+    "Connaissance des plantes": "+2 pour Soigner.",
+    "Remède de voyage": "Utiliser un remède hors du camp.",
+    "Feulement": "La cible est effrayée.",
+    "Apaiser": "Retire l’état « enragé ».",
+    "Parole d’Assemblée": "+2 pour Convaincre devant les Clans."
+  };
   var FICHE = ['Âge', 'Genre', 'Rang', 'Mentor', 'Apprenti'];
   var LINKS = { 'Fiche de liens': 'ph-link-simple', 'Chronologie': 'ph-clock-counter-clockwise', 'Présentation': 'ph-book-open-text' };
 
@@ -45,6 +69,24 @@
     var href = a ? a.getAttribute('href') : valueOf(field);
     return /^(https?:)?\/\/|^\//.test(href) ? href : '';
   }
+  // les noms d'astuces et de capacités prennent l'infobulle Truesight, comme dans le guidebook
+  var names = Object.keys(TIPS).sort(function (a, b) { return b.length - a.length; });
+  var pattern = new RegExp('(' + names.map(function (n) { return n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'gi');
+  function tips(box) {
+    if (box.querySelector('.lgdc-tip')) return;
+    var parts = box.textContent.split(pattern);
+    if (parts.length < 2) return;
+    box.replaceChildren.apply(box, parts.map(function (part, i) {
+      if (i % 2 === 0) return document.createTextNode(part);
+      var name = names.find(function (n) { return n.toLowerCase() === part.toLowerCase(); });
+      var b = document.createElement('b');
+      b.className = 'lgdc-tip';
+      b.dataset.tooltipHead = name;
+      b.title = TIPS[name];
+      b.textContent = part;
+      return b;
+    }));
+  }
   // affichage d'un champ selon son rôle : citation, disponibilité, bouton de fiche
   function decorate(field) {
     var box = field.querySelector('.field_uneditable') || field.querySelector('dd');
@@ -55,6 +97,7 @@
       if (empty) box.textContent = 'Ajouter une citation';
       else if (!/^«/.test(text)) box.textContent = '« ' + text + ' »';
     }
+    if (!empty && field.closest('#lgdc-prof-sysl')) tips(box);
     if (field.classList.contains('lgdc-prof__dispo')) field.classList.toggle('is-off', /indispo|^non|pas dispo|occup/i.test(text));
     if (field.dataset.icon) {
       var href = linkOf(field);
@@ -175,6 +218,7 @@
   var dice = document.getElementById('lgdc-prof-dice');
   var sysl = document.getElementById('lgdc-prof-sysl');
   var hasSystem = fill(dice, DICE) + fill(sysl, SYSTEM);
+  Array.from(sysl.children).forEach(decorate);
   if (!dice.children.length) dice.remove();
   if (!sysl.children.length) sysl.remove();
   // un panneau vide disparaît avec son titre
