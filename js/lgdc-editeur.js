@@ -15,6 +15,13 @@
     size: 'ph-text-aa', color: 'ph-palette', font: 'ph-text-t',
     mention: 'ph-at', emoticon: 'ph-smiley', source: 'ph-brackets-angle'
   };
+  // icônes en gras : la feuille « bold » de Phosphor n'est chargée que sur les pages de rédaction
+  if (!document.querySelector('link[href*="phosphor-icons/web@2.1.1/src/bold"]')) {
+    var bold = document.createElement('link');
+    bold.rel = 'stylesheet';
+    bold.href = 'https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css';
+    document.head.appendChild(bold);
+  }
   var REMOVE = ['table', 'servimg', 'youtube', 'headers', 'date', 'time', 'pastetext', 'removeformat', 'more', 'embed', 'twemojifa'];
 
   function dress() {
@@ -24,7 +31,7 @@
       button.setAttribute('data-lgdc', '');
       if (REMOVE.indexOf(command) >= 0) { button.remove(); return; }
       if (!ICONS[command]) return;
-      button.innerHTML = '<i class="ph-fill ' + ICONS[command] + '" aria-hidden="true"></i>';
+      button.innerHTML = '<i class="ph-bold ' + ICONS[command] + '" aria-hidden="true"></i>';
       button.classList.add('lgdc-editor-icon');
     });
   }
