@@ -316,3 +316,15 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc-grp__tools input[type=button] { color: var(--ink-strong); background: var(--b3); }
 .lgdc-grp__type label { display: inline-flex; align-items: center; gap: 6px; }
 .lgdc-fa-group .lgdc-forum-description { max-width: none; }
+
+/* ---------- ACTIVITÉS (discover) : un jour par section, un événement par ligne ---------- */
+.lgdc .lgdc-feed__list { margin: 0; padding: 0; list-style: none; border: 2px solid var(--line); border-radius: 5px; background: var(--b1); overflow: hidden; }
+.lgdc .lgdc-feed__item { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 14px 20px !important; }
+.lgdc .lgdc-feed__item + .lgdc-feed__item { border-top: 2px solid var(--b3); }
+.lgdc-feed__av { width: 40px; height: 40px; border-radius: 5px; background: var(--d2) var(--activity-image) center / cover no-repeat; }
+.lgdc .lgdc-feed__text { color: var(--ink-soft); font-size: 13px; line-height: 20px; }
+.lgdc .lgdc-feed__text a { color: var(--ink-strong); font-weight: 700; }
+.lgdc .lgdc-feed__text a:hover { color: var(--a1); }
+.lgdc .lgdc-feed__text .usr_grp_clr strong { font: italic 900 15px/1 var(--serif); letter-spacing: -.2px; }
+.lgdc .lgdc-feed__time { color: var(--ink-soft); white-space: nowrap; }
+.lgdc .lgdc-feed__end, .lgdc .lgdc-feed__empty { margin: 26px 0 0; color: var(--ink-soft); text-align: center; }
