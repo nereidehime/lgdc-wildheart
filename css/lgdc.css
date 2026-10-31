@@ -2442,3 +2442,16 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-prof__error { width: 100%; margin: 0; color: #c0503a; text-transform: none; letter-spacing: 0; }
 .lgdc-prof__id .lgdc-prof__pen { color: #a39c92; }
 .lgdc-prof__id .lgdc-prof__pen:hover { background: rgba(255,255,255,.08); }
+/* boutons de fiche modifiables : le bouton, puis le crayon à côté ; vide, il reste en pointillés */
+.lgdc-prof__linkfield { display: inline-flex; align-items: center; gap: 4px; }
+.lgdc-prof__linkfield > dt { display: none; }
+.lgdc-prof__linkfield > dd { margin: 0; }
+.lgdc .lgdc-prof__linkfield > .lgdc-prof__pen { position: static; opacity: 1; }
+.lgdc-prof__linkfield.is-editing .field_editable { min-width: 280px; }
+.lgdc .lgdc-prof__actions .lgdc-forum-button.is-empty { color: #a39c92; border-style: dashed; }
+.lgdc-prof__quote .is-empty, .lgdc-prof__quote.is-empty, .lgdc-prof__quote .is-empty .field_uneditable { font-style: normal; opacity: .55; }
+.lgdc-prof__quote [id^="field_id"] { padding-right: 34px; }
+/* joué par et citation : le crayon suit le texte, centré sur la ligne */
+.lgdc-prof__pseudo [id^="field_id"], .lgdc-prof__quote [id^="field_id"] { display: inline-flex; align-items: center; gap: 6px; padding-right: 0; }
+.lgdc-prof__pseudo dd, .lgdc-prof__quote dd { margin: 0; }
+.lgdc .lgdc-prof__pseudo .lgdc-prof__pen, .lgdc .lgdc-prof__quote .lgdc-prof__pen { position: static; flex: none; }

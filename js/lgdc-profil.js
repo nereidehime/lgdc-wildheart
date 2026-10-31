@@ -39,6 +39,35 @@
     return true;
   }
 
+  // adresse d'un champ de lien : un lien natif ou une adresse tapée
+  function linkOf(field) {
+    var a = field.querySelector('dd a[href]');
+    var href = a ? a.getAttribute('href') : valueOf(field);
+    return /^(https?:)?\/\/|^\//.test(href) ? href : '';
+  }
+  // affichage d'un champ selon son rôle : citation, disponibilité, bouton de fiche
+  function decorate(field) {
+    var box = field.querySelector('.field_uneditable') || field.querySelector('dd');
+    var text = clean(box.textContent);
+    var empty = !text || text === '—';
+    field.classList.toggle('is-empty', empty);
+    if (field.closest('.lgdc-prof__quote')) {
+      if (empty) box.textContent = 'Ajouter une citation';
+      else if (!/^«/.test(text)) box.textContent = '« ' + text + ' »';
+    }
+    if (field.classList.contains('lgdc-prof__dispo')) field.classList.toggle('is-off', /indispo|^non|pas dispo|occup/i.test(text));
+    if (field.dataset.icon) {
+      var href = linkOf(field);
+      var label = field.querySelector('dt').textContent;
+      var b = document.createElement(href ? 'a' : 'span');
+      if (href) b.href = href;
+      b.className = 'lgdc-forum-button' + (href ? '' : ' is-empty');
+      b.innerHTML = '<i class="ph-light ' + field.dataset.icon + '" aria-hidden="true"></i>';
+      b.appendChild(document.createTextNode(label));
+      box.replaceChildren(b);
+    }
+  }
+
   var fields = {};
   Array.from(raw.children).forEach(function (field) {
     var dt = field.querySelector('dt');
@@ -75,10 +104,8 @@
     block.className = 'lgdc-prof__quote';
     block.appendChild(quote);
     quote.querySelector('dt').remove();
-    var text = quote.querySelector('.field_uneditable') || quote.querySelector('dd');
-    var said = clean(text.textContent);
-    if (said && said !== '—' && !/^«/.test(said)) text.textContent = '« ' + said + ' »';
     where.after(block);
+    decorate(quote);
   }
   var avatar = page.querySelector('.lgdc-fa-av img');
   if (avatar) { avatar.removeAttribute('style'); avatar.classList.add('lgdc-avatar--contain'); }
@@ -94,8 +121,8 @@
   var dispo = take('Pour un RP');
   if (dispo && keep(dispo)) {
     dispo.classList.add('lgdc-prof__dispo');
-    if (/indispo|^non|pas dispo|occup/i.test(valueOf(dispo))) dispo.classList.add('is-off');
     stats.appendChild(dispo);
+    decorate(dispo);
   }
   var joined = take('Date d\'inscription') || take('Date d’inscription');
   if (joined) {
@@ -122,10 +149,12 @@
   Object.keys(LINKS).forEach(function (label) {
     var field = take(label);
     if (!field) return;
-    var link = field.querySelector('dd a[href]');
-    var href = link ? link.getAttribute('href') : valueOf(field);
-    if (/^(https?:)?\/|^\//.test(href)) button(href, label, LINKS[label]);
-    else if (editable(field)) { keep(field); actions.appendChild(field); }
+    if (!linkOf(field) && !editable(field)) return;
+    keep(field);
+    field.dataset.icon = LINKS[label];
+    field.classList.add('lgdc-prof__linkfield');
+    actions.appendChild(field);
+    decorate(field);
   });
 
   // la fiche, le crédit, le système
@@ -189,10 +218,8 @@
   function shown(field, html) {
     var box = field.querySelector('.field_uneditable');
     box.innerHTML = html;
-    var text = clean(box.textContent);
-    if (!text) box.textContent = '—';
-    else if (field.closest('.lgdc-prof__quote') && !/^«/.test(text)) box.textContent = '« ' + text + ' »';
-    if (field.classList.contains('lgdc-prof__dispo')) field.classList.toggle('is-off', /indispo|^non|pas dispo|occup/i.test(text));
+    if (!clean(box.textContent)) box.textContent = '—';
+    decorate(field);
   }
   function save(field) {
     var content = [];
