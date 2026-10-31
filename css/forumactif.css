@@ -328,3 +328,16 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-feed__text .usr_grp_clr strong { font: italic 900 15px/1 var(--serif); letter-spacing: -.2px; }
 .lgdc .lgdc-feed__time { color: var(--ink-soft); white-space: nowrap; }
 .lgdc .lgdc-feed__end, .lgdc .lgdc-feed__empty { margin: 26px 0 0; color: var(--ink-soft); text-align: center; }
+
+/* ---------- MESSAGERIE (privmsgs_body, privmsgs_read_body) ---------- */
+/* les actions natives sont des boutons d'envoi : même allure que les liens de la maquette */
+.lgdc .lgdc-fa-mp-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.lgdc .lgdc-fa-mp-actions input[type=submit] { display: inline-flex; align-items: center; min-height: 34px; padding: 6px 12px; border: 2px solid var(--line); border-radius: 5px; background: var(--b1); color: var(--ink-strong); font: 800 10px/16px var(--sans); letter-spacing: .3px; text-transform: uppercase; cursor: pointer; }
+.lgdc .lgdc-fa-mp-actions input[type=submit]:hover { border-color: var(--a2); background: var(--b3); }
+.lgdc .lgdc-mp__subj { display: block; color: var(--ink-strong); }
+.lgdc .lgdc-mp__subj:hover { color: var(--a1); }
+.lgdc .lgdc-mp__av { display: grid; place-items: center; font: 800 10px/1 var(--sans); text-transform: uppercase; color: #121110; }
+.lgdc .lgdc-mp__empty { margin: 0; padding: 40px 20px; color: var(--ink-soft); font-style: italic; text-align: center; }
+.lgdc-mp__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding: 16px 20px 0; border-top: 0; }
+.lgdc .lgdc-mp__danger input[type=submit] { color: var(--ink-strong); background: var(--b3); }
+.lgdc .lgdc-mp__history { margin-top: 30px; }
