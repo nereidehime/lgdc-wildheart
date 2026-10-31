@@ -2404,6 +2404,6 @@ tw::before {
 
 /* ---------- ÉDITEUR (SCEditor) : boutons en icônes Phosphor, posés par lgdc-editeur.js ---------- */
 /* le thème de SCEditor masque le texte des boutons (prévu pour ses images) : on rend l'icône visible */
-a.sceditor-button.lgdc-editor-icon { display: inline-grid !important; place-items: center; padding: 0 !important; overflow: visible !important; text-indent: 0 !important; font-size: 17px !important; line-height: 1 !important; color: #4f4943 !important; background: none; border-radius: 4px; }
-a.sceditor-button.lgdc-editor-icon i { display: block !important; width: auto !important; height: auto !important; font-size: 17px !important; line-height: 1 !important; text-indent: 0 !important; color: inherit !important; visibility: visible !important; opacity: 1 !important; }
+a.sceditor-button.lgdc-editor-icon { display: inline-grid !important; place-items: center; padding: 0 !important; overflow: visible !important; text-indent: 0 !important; font-size: 20px !important; line-height: 1 !important; color: #4f4943 !important; background: none; border-radius: 4px; width: 30px !important; height: 30px !important; }
+a.sceditor-button.lgdc-editor-icon i { display: block !important; width: auto !important; height: auto !important; font-size: 20px !important; line-height: 1 !important; text-indent: 0 !important; color: inherit !important; visibility: visible !important; opacity: 1 !important; }
 a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.active { color: #1d1b19 !important; background: #dfdad2 !important; }
