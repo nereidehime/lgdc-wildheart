@@ -5,6 +5,11 @@
    titres en Playfair italique, micro-libellés en Inter, noms aux couleurs des groupes.
    ========================================================================= */
 
+/* Blank Theme impose dl { display: grid; 220px auto } dans le header : on revient au flux normal,
+   sans spécificité ajoutée pour que les listes à classe gardent leur propre grille. */
+.lgdc :where(dl) { display: block; grid-template-columns: none; gap: 0; }
+.lgdc :where(h1, h2, h3, h4, h5, h6) { padding: 0; }
+
 /* ---------- TOKENS ---------- */
 .lgdc, .lgdc-fa-page {
   --b1: #ece8e2;            /* fond des cartes */
@@ -1182,7 +1187,7 @@ html:has(#lgdc-header) { scroll-padding-top: 70px; }
 /* WILDHEART — liste des sujets ; tokens et menu hérités de lgdc-header.css. */
 .lgdc-forum { width: 100%; max-width: 1200px; margin: auto; padding: 30px 54px 45px; background: var(--b2); border-inline: 2px solid var(--line); }
 .lgdc-forum-head { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 24px 32px; border-radius: 5px; background: var(--d2); color: var(--on-dark); }
-.lgdc .lgdc-forum-head h1 { font: italic 900 clamp(35px, 4.2vw, 52px)/1.1 var(--serif); letter-spacing: -.025em; color: var(--on-dark); }
+.lgdc .lgdc-forum-head h1 { margin: 0; font: italic 900 clamp(35px, 4.2vw, 52px)/1.1 var(--serif); letter-spacing: -.025em; text-transform: none; text-align: left; color: var(--on-dark); }
 .lgdc-forum-head p, .lgdc-forum-description { max-width: 53ch; margin-top: 14px; color: var(--on-dark-soft); font-size: 12px; line-height: 20px; }
 .lgdc .lgdc-forum-button { display: inline-flex; justify-content: center; align-items: center; gap: 10px; flex: none; min-height: 44px; padding: 12px 18px; background: var(--b1); color: var(--ink-strong); border: 2px solid var(--line); border-radius: 5px; font: 800 11px/16px var(--sans); text-transform: uppercase; letter-spacing: .6px; }
 .lgdc .lgdc-forum-button:hover { border-color: var(--a2); }
@@ -1294,7 +1299,7 @@ html:has(#lgdc-header) { scroll-padding-top: 70px; }
 .lgdc-crumbs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; color: var(--on-dark-soft); }
 .lgdc-crumbs a { color: var(--on-dark); }
 .lgdc-crumbs a:hover { color: var(--a2); }
-.lgdc-posts { display: flex; flex-direction: column; gap: 26px; }
+section.lgdc-posts { display: flex; flex-direction: column; gap: 26px; }
 .lgdc-post { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 22px; align-items: start; scroll-margin-top: 80px; }
 
 .lgdc-post__who {
