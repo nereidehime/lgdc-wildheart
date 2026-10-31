@@ -14,13 +14,23 @@
     { forum: '10', presentation: '21', key: 'crepuscule', colors: ['#8e7f9a', '#b59ab8'] },
     { forum: '11', presentation: '22', key: 'hetre', colors: ['#b07a4f', '#c99566'] },
     { forum: '12', presentation: '23', key: 'orchidee', colors: ['#c2a24f', '#d1b46a'] },
-    { forum: '13', presentation: '24', key: 'brouillard', colors: ['#8a99a4', '#7fa39a'] }
+    { forum: '13', presentation: '24', key: 'brouillard', colors: ['#8a99a4', '#7fa39a'] },
+    // Solitaires : pas de territoire. Mettre le numéro de leur sous-forum de présentations dès qu’il existe ;
+    // en attendant, il est reconnu à son nom.
+    { forum: null, presentation: null, name: /solitaire/i, key: 'solitaires', sym: 'solitaires', colors: ['#a39c92', '#857e74'] }
   ];
+
+  function presentationOf(link) {
+    var id = forumId(link.href);
+    return clans.find(function (item) {
+      return (item.presentation && item.presentation === id) || (!item.presentation && item.name && item.name.test(link.textContent));
+    });
+  }
 
   function emblem(clan, ring) {
     var symbol = document.createElement('span');
     symbol.className = 'lgdc-sym lgdc-fa-emblem';
-    symbol.style.setProperty('--sym', 'var(--sym-clan-' + clan.key + ')');
+    symbol.style.setProperty('--sym', 'var(--sym-' + (clan.sym || 'clan-' + clan.key) + ')');
     symbol.setAttribute('aria-hidden', 'true');
     if (!ring) return symbol;
     var outer = document.createElement('span');
@@ -40,7 +50,7 @@
   document.querySelectorAll('.lgdc-fa-card').forEach(function (card) {
     var id = forumId(card.dataset.forumUrl);
     if (id) card.dataset.forumId = id;
-    var clan = clans.find(function (item) { return item.forum === id; });
+    var clan = id && clans.find(function (item) { return item.forum === id; });
     if (clan) {
       card.dataset.clan = clan.key;
       colors(card, clan);
@@ -65,7 +75,7 @@
     var links = Array.from(subforums.querySelectorAll('a')).filter(function (a) { return forumId(a.href); });
     if (!links.length) { subforums.hidden = true; return; }
     if (id === '7') links.sort(function (a, b) {
-      function order(link) { return clans.findIndex(function (item) { return item.presentation === forumId(link.href); }); }
+      function order(link) { return clans.indexOf(presentationOf(link)); }
       var first = order(a), second = order(b);
       return (first < 0 ? clans.length : first) - (second < 0 ? clans.length : second);
     });
@@ -73,7 +83,7 @@
     list.className = 'lgdc-btns';
     links.forEach(function (link) {
       if (id === '7') {
-        var item = clans.find(function (clan) { return clan.presentation === forumId(link.href); });
+        var item = presentationOf(link);
         if (item) { colors(link, item); link.prepend(emblem(item, true)); }
       }
       var li = document.createElement('li');
@@ -149,9 +159,10 @@
       var legacyTime = meta.querySelector('.lgdc-recent-time');
       if (legacyTime) {
         var date = legacyTime.textContent.trim();
-        meta.replaceChildren(document.createTextNode('par '), author, document.createTextNode(', ' + date));
+        meta.replaceChildren(document.createTextNode('par\u00a0'), author, document.createTextNode(', ' + date));
         author.classList.remove('lgdc-recent-author');
       }
+      if (meta.firstChild && meta.firstChild.nodeType === 3 && /^\s*par\s*$/i.test(meta.firstChild.textContent)) meta.firstChild.textContent = 'par\u00a0';
       var square = row.querySelector('.lgdc-sq');
       if (!square) { square = document.createElement('span'); square.className = 'lgdc-sq'; row.prepend(square); }
       square.setAttribute('aria-hidden', 'true');
