@@ -229,9 +229,13 @@
         ['--g1', '--g2'].forEach(function (v) { pick.style.setProperty(v, a.style.getPropertyValue(v)); });
         var emblem = a.querySelector('.lgdc-ring');
         if (emblem) { emblem.classList.add('lgdc-ring--lg'); ['--g1', '--g2'].forEach(function (v) { emblem.style.setProperty(v, a.style.getPropertyValue(v)); }); pick.appendChild(emblem); }
-        pick.appendChild(el('span', 'lgdc-micro', a.textContent.trim()));
+        var label = el('span', 'lgdc-micro', a.textContent.trim());
+        label.appendChild(el('br'));
+        label.appendChild(el('b', 'lgdc-fa-validated', '…'));
+        pick.appendChild(label);
         picks.appendChild(pick);
       });
+      setTimeout(function () { validated(picks); }); // après la mise en place du cache, plus bas
       fresh.appendChild(picks);
       var foot = el('div', 'lgdc-pres__foot');
       if (last) foot.appendChild(lastLink(last));
@@ -275,6 +279,45 @@
   function fresh(key) {
     var entry = avatarCache[key];
     return entry && Date.now() - entry.at < CACHE_TTL ? entry : null;
+  }
+
+  // personnages validés : membres du groupe de chaque Clan (sans le modérateur), reconnus à la couleur du choix
+  function validated(picks) {
+    var probe = document.createElement('span');
+    function key(color) { probe.style.color = color; return probe.style.color; }
+    function read(url) {
+      return fetch(url, { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.text() : ''; })
+        .then(function (html) { return new DOMParser().parseFromString(html, 'text/html'); });
+    }
+    function membersOf(doc) {
+      var cards = doc.querySelectorAll('.lgdc-grp__members .lgdc-mb__name');
+      if (doc.querySelector('.lgdc-fa-group')) return cards.length;
+      var inMembers = false, n = 0;
+      doc.querySelectorAll('table tr').forEach(function (tr) {
+        if (tr.classList.contains('row3')) { inMembers = /membres/i.test(tr.textContent); return; }
+        if (inMembers && tr.querySelector('a[href^="/u"]')) n++;
+      });
+      return n;
+    }
+    var cached = fresh('validated');
+    var counts = cached ? Promise.resolve(cached.counts) : read('/groups').then(function (doc) {
+      var groups = Array.from(doc.querySelectorAll('a[href^="/g"][style*="color"]'));
+      return Promise.all(groups.map(function (a) {
+        return read(a.getAttribute('href')).then(function (page) { return [key(a.style.color), membersOf(page)]; }).catch(function () { return null; });
+      }));
+    }).then(function (pairs) {
+      var map = {};
+      pairs.forEach(function (pair) { if (pair) map[pair[0]] = pair[1]; });
+      remember('validated', { counts: map });
+      return map;
+    });
+    counts.then(function (map) {
+      picks.querySelectorAll('.lgdc-clans__pick').forEach(function (pick) {
+        var n = map[key(pick.style.getPropertyValue('--g1'))];
+        var b = pick.querySelector('.lgdc-fa-validated');
+        b.textContent = n == null ? '' : n + (n > 1 ? ' validés' : ' validé');
+      });
+    }).catch(function () { picks.querySelectorAll('.lgdc-fa-validated').forEach(function (b) { b.textContent = ''; }); });
   }
   function imageUrl(value, base) {
     if (typeof value !== 'string' || !value.trim()) return null;
