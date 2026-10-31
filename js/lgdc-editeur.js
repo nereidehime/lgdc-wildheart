@@ -2,7 +2,8 @@
    Adapté de « Better Text Editor » (Kim, Blank Theme : https://blankthemerpg.forumactif.com/t77-edison). */
 (function () {
   'use strict';
-  if (!document.getElementById('textarea_content')) return;
+  // page de rédaction (#textarea_content) ou réponse rapide (#text_editor_textarea)
+  if (!document.querySelector('#textarea_content, #text_editor_textarea')) return;
 
   // commande SCEditor (data-sceditor-command) : icône Phosphor
   var ICONS = {
@@ -26,12 +27,11 @@
       button.innerHTML = '<i class="ph-light ' + ICONS[command] + '" aria-hidden="true"></i>';
       button.classList.add('lgdc-editor-icon');
     });
-    return buttons.length;
   }
 
-  // SCEditor construit sa barre après le chargement : on attend qu'elle apparaisse
-  if (dress()) return;
-  var observer = new MutationObserver(function () { if (dress()) observer.disconnect(); });
+  // SCEditor construit sa barre après le chargement, parfois en plusieurs fois : on surveille un moment
+  dress();
+  var observer = new MutationObserver(dress);
   observer.observe(document.body, { childList: true, subtree: true });
-  setTimeout(function () { observer.disconnect(); }, 15000);
+  setTimeout(function () { observer.disconnect(); }, 20000);
 })();

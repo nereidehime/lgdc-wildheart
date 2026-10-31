@@ -40,7 +40,7 @@
     });
   }
   if (document.getElementById('notiffi_button')) load(base + 'lgdc-notiffi.js').catch(report);
-  if (document.getElementById('textarea_content')) load(base + 'lgdc-editeur.js').catch(report);
+  if (document.querySelector('#textarea_content, #text_editor_textarea')) load(base + 'lgdc-editeur.js').catch(report);
 
   var mount = document.getElementById('lgdc-guidebook-mount');
   if (mount) page.push(load(base + 'lgdc-guidebook.js').then(function () {

@@ -208,6 +208,8 @@
 .lgdc-fa-rules { margin-top: 30px; }
 .lgdc-fa-rules h2 { margin-bottom: 12px; font: italic 900 24px/1.2 var(--serif); color: var(--ink-strong); }
 .lgdc-fa-quickreply:not(:empty) { margin-top: 30px; }
+.lgdc-fa-viewtopic .quickreply.lgdc-fa-quickreply { display: block; }
+.lgdc-fa-quickreply > *, .lgdc-fa-quickreply form, .lgdc-fa-quickreply .sceditor-container { width: 100% !important; max-width: none; }
 .lgdc-fa-quickmod { margin-left: auto; }
 
 /* ---------- ÉDITEUR (SCEditor) : boutons en icônes Phosphor, posés par lgdc-editeur.js ---------- */
