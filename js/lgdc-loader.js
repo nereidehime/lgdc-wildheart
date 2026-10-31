@@ -32,6 +32,7 @@
   if (document.querySelector('.lgdc-fa-viewforum, .lgdc-fa-viewtopic')) page.push(load(base + 'lgdc-forum.js').catch(report));
   if (document.querySelector('.lgdc-fa-profile')) page.push(load(base + 'lgdc-profil.js').catch(report));
   if (document.querySelector('.lgdc-fa-memberlist')) page.push(load(base + 'lgdc-membres.js').catch(report));
+  if (document.querySelector('.lgdc-fa-groups')) page.push(load(base + 'lgdc-groupes.js').catch(report));
   if (document.getElementById('switcheroo')) {
     load(base + 'lgdc-comptes.js').catch(report);
     load(base + 'lgdc-switcheroo.js').catch(report);

@@ -2486,3 +2486,9 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
   color: var(--ink-strong); border: 2px solid var(--line); border-radius: 5px; transition: border-color var(--t), gap var(--t);
 }
 .lgdc .lgdc-prologue__more:hover { border-color: var(--a2); gap: 12px; }
+
+/* ---------- GROUPES (groupcp_user_body) ---------- */
+.lgdc .lgdc-gr__avs a.lgdc-gr__initials { display: grid; place-items: center; font: 800 10px/1 var(--sans); letter-spacing: .5px; text-transform: uppercase; color: #121110; background: var(--g1); }
+.lgdc-gr__avs img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.lgdc-fa-groups-foot { grid-template-columns: auto; justify-content: end; }
+.lgdc-fa-groups-foot:empty, .lgdc-fa-groups-foot:not(:has(*)) { display: none; }
