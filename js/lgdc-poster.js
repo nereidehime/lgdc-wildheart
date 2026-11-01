@@ -381,4 +381,114 @@
     });
     box.insertBefore(hunt, list);
   }
+
+  // mises en page : modèle de RP ou message du staff, écrit en balise en tête du message
+  // ([modele=brk|titre=…|lune=…|lieu=…|moment=…|avec=…|image=…], [staff=ok|titre=…]) ; la fiche du sujet le rend
+  var MODELS = [
+    ['', 'Aucune'],
+    ['modele=tpl', 'RP : bannière'], ['modele=tpl2', 'RP : colonne'], ['modele=brk', 'RP : bandeau'], ['modele=frm', 'RP : encadré']
+  ];
+  var level = window._userdata ? Number(window._userdata.user_level) : 0;
+  if (level > 0) MODELS.push(['staff=fix', 'Staff : retouches'], ['staff=ok', 'Staff : fiche validée'], ['staff=no', 'Staff : fiche refusée']);
+  // champs utiles à chaque modèle
+  var USES = { tpl: ['titre', 'lune', 'lieu', 'moment', 'avec', 'image'], tpl2: ['titre', 'lune', 'lieu', 'moment', 'avec'], brk: ['titre', 'lune', 'lieu', 'moment'], frm: ['titre', 'lune', 'lieu', 'moment'], staff: ['titre'] };
+  var LAYOUT = /^\s*\[(modele|staff)=([^\]]*)\]\s*\n?/i;
+  var moon = document.querySelector('[data-lgdc-moon]');
+  var lay = document.createElement('div');
+  lay.className = 'lgdc-layout';
+  lay.innerHTML = '<label class="lgdc-micro lgdc-layout__kind">Modèle <select data-l="kind"></select></label>'
+    + '<label class="lgdc-micro" data-f="titre">Titre <input type="text" data-l="titre" maxlength="120"></label>'
+    + '<label class="lgdc-micro" data-f="lune">Lune <input type="number" min="1" max="999" data-l="lune"></label>'
+    + '<label class="lgdc-micro" data-f="lieu">Lieu <input type="text" data-l="lieu" maxlength="80"></label>'
+    + '<label class="lgdc-micro" data-f="moment">Moment <select data-l="moment"><option value="">—</option><option>Aube</option><option>Matin</option><option>Midi</option><option>Après-midi</option><option>Crépuscule</option><option>Nuit</option></select></label>'
+    + '<label class="lgdc-micro" data-f="avec">Avec <input type="text" data-l="avec" maxlength="200" title="Les noms des autres personnages, séparés par des virgules"></label>'
+    + '<label class="lgdc-micro" data-f="image">Image de la bannière <input type="url" data-l="image" maxlength="300"></label>';
+  var field = function (k) { return lay.querySelector('[data-l="' + k + '"]'); };
+  MODELS.forEach(function (m) { var o = document.createElement('option'); o.value = m[0]; o.textContent = m[1]; field('kind').appendChild(o); });
+  if (moon && /^\d+$/.test(moon.textContent.trim())) field('lune').value = moon.textContent.trim();
+  function shape() {
+    var v = field('kind').value, k = v.split('=')[1] || '';
+    var uses = v ? USES[/^staff/.test(v) ? 'staff' : k] : [];
+    lay.querySelectorAll('[data-f]').forEach(function (f) { f.hidden = uses.indexOf(f.dataset.f) < 0; });
+  }
+  field('kind').addEventListener('change', shape);
+  // dialogues : la couleur est retenue pour ce compte (donc ce personnage) dans ce navigateur,
+  // et écrite dans chaque balise à l'envoi pour que tous les visiteurs la voient
+  var colorKey = 'lgdc-dialogue-' + (window._userdata ? window._userdata.user_id : '0');
+  var talk = document.createElement('div');
+  talk.className = 'lgdc-layout__talk';
+  talk.innerHTML = '<label class="lgdc-micro">Couleur des dialogues <input type="color" data-l="dialogue" value="#bf5531"></label>'
+    + '<button type="button" class="lgdc-dice__level lgdc-layout__say"><i class="ph-light ph-chat-circle" aria-hidden="true"></i>Dialogue</button>'
+    + '<span class="lgdc-micro lgdc-layout__hint">Sélectionne une réplique, puis clique sur Dialogue.</span>';
+  lay.appendChild(talk);
+  var ink = talk.querySelector('[data-l="dialogue"]');
+  // le personnage connecté (le compte du Switcheroo), comme dans « bon retour, pseudo »
+  var who = window._userdata && window._userdata.username;
+  if (who) {
+    var label = talk.querySelector('label');
+    label.firstChild.textContent = 'Couleur des dialogues de ' + who + ' ';
+  }
+  try { var saved = localStorage.getItem(colorKey); if (/^#[0-9a-f]{6}$/i.test(saved || '')) ink.value = saved; } catch (e) {}
+  ink.addEventListener('change', function () { try { localStorage.setItem(colorKey, ink.value); } catch (e) {} });
+  talk.querySelector('.lgdc-layout__say').addEventListener('click', function () {
+    var ed = editor();
+    if (ed && ed.insert) ed.insert('[dialogue]', '[/dialogue]');
+    else {
+      var start = area.selectionStart || 0, stop = area.selectionEnd || 0, v = area.value;
+      area.value = v.slice(0, start) + '[dialogue]' + v.slice(start, stop) + '[/dialogue]' + v.slice(stop);
+    }
+  });
+  var layPanel = document.createElement('div');
+  layPanel.className = 'panel lgdc-layout-panel';
+  layPanel.innerHTML = '<h3>Mise en page</h3>';
+  layPanel.appendChild(lay);
+  var dicePanel = box.closest('.panel');
+  if (dicePanel && dicePanel.parentNode) dicePanel.parentNode.insertBefore(layPanel, dicePanel);
+  else (area.closest('.panel') || area).after(layPanel);
+  // aperçu ou édition : la balise remplit les champs, puis quitte la zone de texte
+  var layFound = area.value.match(LAYOUT);
+  if (layFound) {
+    var opt = layFound[1].toLowerCase() + '=' + layFound[2].split('|')[0].trim().toLowerCase();
+    if (MODELS.some(function (m) { return m[0] === opt; })) field('kind').value = opt;
+    layFound[2].split('|').slice(1).forEach(function (part) {
+      var eq = part.indexOf('='), key = part.slice(0, eq).trim(), el = eq > 0 && (key === 'couleur' ? ink : field(key));
+      if (el) el.value = part.slice(eq + 1).trim();
+    });
+    var layStrip = function () { var t = getText(); if (LAYOUT.test(t)) setText(t.replace(LAYOUT, '')); };
+    layStrip();
+    setTimeout(layStrip, 300);
+    setTimeout(layStrip, 1500);
+  }
+  shape();
+  // dialogues colorés dans l'aperçu et la revue du sujet
+  document.querySelectorAll('.postbody .content, .lgdc-fa-posting .content').forEach(function (content) {
+    if (/\[dialogue/i.test(content.innerHTML)) content.innerHTML = content.innerHTML.replace(/\[dialogue(?:=(#[0-9a-f]{6}|#[0-9a-f]{3}))?\]([\s\S]*?)\[\/dialogue\]/gi, function (all, color, text) { return '<span class="lgdc-dialogue"' + (color ? ' style="--d:' + color + '"' : '') + '>' + text + '</span>'; });
+  });
+  // aperçu : la balise devient une ligne lisible ; revue du sujet : elle disparaît
+  document.querySelectorAll('.postbody .content, .lgdc-fa-posting .content').forEach(function (content) {
+    var preview = content.previousElementSibling && content.previousElementSibling.classList.contains('h3');
+    var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    for (var t = walker.nextNode(); t; t = walker.nextNode()) {
+      var m = t.textContent.match(/\[(modele|staff)=([^\]|]*)[^\]]*\]/i);
+      if (!m) continue;
+      var label = (MODELS.find(function (x) { return x[0] === m[1].toLowerCase() + '=' + m[2].trim().toLowerCase(); }) || [, 'personnalisée'])[1];
+      t.textContent = t.textContent.replace(m[0], preview ? '(mise en page ' + label + ' : elle s’affichera dans le sujet) ' : '');
+      break;
+    }
+  });
+  form.addEventListener('submit', function () {
+    var text = getText().replace(LAYOUT, '').replace(/\[dialogue\]/gi, '[dialogue=' + ink.value + ']');
+    var v = field('kind').value;
+    if (v) {
+      var k = v.split('=')[1], uses = USES[/^staff/.test(v) ? 'staff' : k];
+      var parts = [v].concat(uses.map(function (key) {
+        var val = field(key).value.replace(/[|\]\[\n]/g, ' ').trim();
+        return val ? key + '=' + val : '';
+      }).filter(Boolean));
+      // un RP prend pour accent la couleur de dialogue du personnage
+      if (!/^staff/.test(v)) parts.push('couleur=' + ink.value);
+      text = '[' + parts.join('|') + ']\n' + text;
+    }
+    setText(text);
+  }, true);
 })();

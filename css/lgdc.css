@@ -2649,6 +2649,20 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-dice__remove:hover { color: var(--a1); background: var(--b3); }
 .lgdc .lgdc-dice__add { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 8px 14px !important; color: var(--ink-strong); background: var(--b1); border: 2px dashed var(--line); border-radius: 5px; font: 800 10px/16px var(--sans); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; }
 .lgdc .lgdc-dice__add:hover { border-color: var(--a2); color: var(--a1); }
+/* mise en page d'un message : modèle de RP ou message du staff */
+.lgdc .lgdc-layout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 14px; }
+.lgdc .lgdc-layout label { display: flex; flex-direction: column; gap: 6px; color: var(--ink-soft); }
+.lgdc .lgdc-layout label[hidden] { display: none; }
+.lgdc .lgdc-layout__kind { grid-column: 1 / -1; max-width: 320px; }
+.lgdc-fa-posting .lgdc-layout :is(input, select) { width: 100%; min-height: 38px; padding: 8px 10px; color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font: 500 14px/20px var(--sans); text-transform: none; letter-spacing: 0; }
+.lgdc-fa-posting:has(.personaForm) .lgdc-layout-panel { display: none; }
+/* dialogues colorés : [dialogue=#…]…[/dialogue] */
+.lgdc .lgdc-dialogue { color: var(--d, color-mix(in srgb, var(--g1, var(--a1)) 75%, var(--ink-strong))); font-weight: 600; }
+.lgdc .lgdc-layout__talk { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; padding-top: 12px; border-top: 2px solid var(--b3); }
+.lgdc .lgdc-layout__talk label { flex-direction: row; align-items: center; gap: 10px; }
+.lgdc-fa-posting .lgdc-layout__talk input[type="color"] { width: 44px; min-height: 34px; padding: 2px; cursor: pointer; }
+.lgdc .lgdc-layout__say { display: inline-flex; align-items: center; gap: 6px; }
+.lgdc .lgdc-layout__hint { align-self: center; color: var(--ink-soft); text-transform: none; letter-spacing: 0; font-weight: 400; }
 /* sélecteur des dés : bouton par ligne, panneau avec recherche et familles (comme les smileys) */
 .lgdc .lgdc-dice__row { position: relative; }
 .lgdc .lgdc-dice__pick { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 38px; padding: 8px 12px !important; color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font: 500 14px/20px var(--sans); text-align: left; cursor: pointer; }
@@ -2671,7 +2685,7 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-roll__head { display: flex; align-items: center; gap: 9px; margin: 0 0 14px; padding: 11px 16px; background: var(--d2); font: 800 10px/14px var(--sans); letter-spacing: 3px; text-transform: uppercase; color: var(--on-dark); }
 .lgdc .lgdc-roll__head i { font-size: 16px; color: var(--g1); }
 .lgdc .lgdc-roll__row { display: flex; align-items: center; gap: 8px; padding: 0 16px; }
-.lgdc .lgdc-roll__row + .lgdc-roll__row { margin-top: 10px; }
+.lgdc .lgdc-roll__row + .lgdc-roll__row { margin-top: 12px !important; }
 .lgdc .lgdc-roll__die { min-width: 52px; margin-right: 4px; font: 800 10px/14px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); }
 .lgdc .lgdc-roll__face { display: grid; place-items: center; min-width: 38px; height: 38px; padding: 0 6px; border-radius: 7px; background: linear-gradient(135deg, var(--g1), var(--g2)); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .16); font: italic 900 19px/1 var(--serif); color: #fff; }
 .lgdc .lgdc-roll__out { margin-left: 6px; font: italic 900 26px/1 var(--serif); letter-spacing: -.5px; color: var(--g1); background: linear-gradient(90deg, var(--g1), var(--g2)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
@@ -2684,7 +2698,7 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-roll__verdict.is-crit { background: linear-gradient(90deg, var(--a2), var(--a1)); }
 .lgdc .lgdc-roll__verdict.is-fail { background: #8a837a; }
 .lgdc .lgdc-roll__verdict.is-fumble { background: var(--d2); }
-.lgdc .lgdc-roll__step { margin: 0 !important; padding: 9px 16px; border-top: 2px solid var(--b3); }
+.lgdc .lgdc-roll__row.lgdc-roll__step { margin: 0 !important; padding: 9px 16px; border-top: 2px solid var(--b3); }
 .lgdc .lgdc-roll__row.is-special + .lgdc-roll__step { margin-top: 14px !important; }
 .lgdc .lgdc-roll__step .lgdc-roll__die { min-width: 92px; color: var(--ink-strong); }
 .lgdc .lgdc-roll__step.is-off { opacity: .4; }

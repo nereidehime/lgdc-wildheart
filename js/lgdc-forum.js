@@ -251,6 +251,148 @@
     return hit ? hit[1] : null;
   }
   // lancers de dés : le texte natif (« Le membre 'X' a effectué l'action suivante… ») devient une carte
+  // mises en page des messages : la balise écrite par l'éditeur en tête du message,
+  // [modele=brk|titre=…|lune=…|lieu=…|moment=…|avec=…|image=…|couleur=#…] pour un RP, [staff=ok|titre=…] pour le staff.
+  // Le reste du message devient le texte du modèle, aux couleurs du Clan de l'auteur.
+  var MOMENTS = { 'aube': 'ph-sun-horizon', 'matin': 'ph-sun', 'midi': 'ph-sun', 'après-midi': 'ph-sun', 'crépuscule': 'ph-sun-horizon', 'nuit': 'ph-moon-stars' };
+  var STAFF = { fix: 'Ajustements demandés', ok: 'Fiche validée', no: 'Fiche refusée' };
+  function node(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function meta(cls, o) {
+    var p = node('p', cls);
+    [['ph-moon', o.lune ? 'Lune ' + o.lune : ''], ['ph-map-pin', o.lieu], [MOMENTS[(o.moment || '').toLowerCase()] || 'ph-sun', o.moment]].forEach(function (item) {
+      if (!item[1]) return;
+      var span = node('span');
+      var icon = node('i', 'ph-light ' + item[0]);
+      icon.setAttribute('aria-hidden', 'true');
+      span.append(icon, item[1]);
+      p.appendChild(span);
+    });
+    return p.children.length ? p : null;
+  }
+  function partners(cls, o) {
+    var names = (o.avec || '').split(',').map(function (n) { return n.trim(); }).filter(Boolean);
+    if (!names.length) return null;
+    var p = node('p', cls);
+    names.forEach(function (n) {
+      var a = node('a', null, n);
+      a.href = '/memberlist?username=' + encodeURIComponent(n);
+      p.appendChild(a);
+    });
+    return p;
+  }
+  // éclaircit une couleur #rrggbb vers le blanc (0 à 1), pour la seconde couleur du dégradé
+  function lighten(hex, amount) {
+    return '#' + [1, 3, 5].map(function (i) {
+      var c = parseInt(hex.slice(i, i + 2), 16);
+      return Math.round(c + (255 - c) * amount).toString(16).padStart(2, '0');
+    }).join('');
+  }
+  function where(o) { return [o.lune ? 'Lune ' + o.lune : '', o.lieu, (o.moment || '').toLowerCase()].filter(Boolean).join(', '); }
+  function layout(content, post) {
+    var html = content.innerHTML;
+    var m = html.match(/\[(modele|staff)=([^\]]*)\]/i);
+    if (!m) return;
+    var raw = document.createElement('div');
+    raw.innerHTML = m[2];
+    var parts = raw.textContent.split('|');
+    var kind = parts.shift().trim().toLowerCase(), o = {};
+    parts.forEach(function (part) {
+      var eq = part.indexOf('=');
+      if (eq > 0) o[part.slice(0, eq).trim().toLowerCase()] = part.slice(eq + 1).trim();
+    });
+    var staff = /^staff$/i.test(m[1]);
+    if (staff ? !STAFF[kind] : ['tpl', 'tpl2', 'brk', 'frm'].indexOf(kind) < 0) return;
+    var body = html.slice(0, m.index) + html.slice(m.index + m[0].length).replace(/^\s*(<br\s*\/?>\s*)+/i, '');
+    var text = node('div');
+    text.innerHTML = body.trim();
+    var box, g1 = post.style.getPropertyValue('--g1'), g2 = post.style.getPropertyValue('--g2');
+    if (staff) {
+      box = node('div', 'lgdc-adm lgdc-adm--' + kind);
+      box.append(node('p', 'lgdc-adm__label', STAFF[kind]));
+      if (o.titre) box.appendChild(node('h2', 'lgdc-adm__title', o.titre));
+      // le texte libre devient des paragraphes (une ligne vide les sépare), les listes restent à part
+      var para = null, breaks = 0;
+      Array.from(text.childNodes).forEach(function (child) {
+        if (child.nodeType === 1 && /^(UL|OL|DIV|BLOCKQUOTE|TABLE|P)$/.test(child.tagName)) { para = null; box.appendChild(child); return; }
+        if (child.nodeType === 1 && child.tagName === 'BR') { breaks++; if (breaks > 1) para = null; else if (para) para.appendChild(child); return; }
+        if (child.nodeType === 3 && !child.textContent.trim()) return;
+        breaks = 0;
+        if (!para) { para = node('p'); box.appendChild(para); }
+        para.appendChild(child);
+      });
+      box.querySelectorAll('p > br:last-child').forEach(function (br) { br.remove(); });
+    } else {
+      box = node('div', 'lgdc-' + kind);
+      // accent : la couleur de dialogue du personnage, sinon celle de son groupe
+      if (/^#[0-9a-f]{6}$/i.test(o.couleur || '')) { g1 = o.couleur; g2 = lighten(o.couleur, .3); }
+      if (g1) { box.style.setProperty('--g1', g1); box.style.setProperty('--g2', g2 || g1); }
+      var av = post.querySelector('.lgdc-post__av img');
+      var avatar = function (cls) {
+        var span = node(cls === 'lgdc-tpl2__av' ? 'span' : 'div', cls);
+        if (av) { var img = node('img'); img.src = av.getAttribute('src'); img.alt = ''; span.appendChild(img); }
+        return span;
+      };
+      var title = o.titre ? node('h2', 'lgdc-' + kind + '__title', o.titre) : null;
+      if (kind === 'tpl') {
+        var top = node('div', 'lgdc-tpl__top');
+        if (/^https?:\/\//.test(o.image || '')) top.style.setProperty('--img', 'url("' + o.image.replace(/"/g, '') + '")');
+        else box.classList.add('lgdc-tpl--plain');
+        if (title) top.appendChild(title);
+        box.append(top, avatar('lgdc-tpl__av'));
+        if (where(o)) box.appendChild(node('p', 'lgdc-tpl__where', where(o)));
+        text.className = 'lgdc-tpl__text';
+        box.appendChild(text);
+        var with1 = partners('lgdc-tpl__with', o); if (with1) box.appendChild(with1);
+      } else if (kind === 'tpl2') {
+        var side = node('aside', 'lgdc-tpl2__side');
+        side.appendChild(avatar('lgdc-tpl2__av'));
+        if (title) side.appendChild(title);
+        if (where(o)) side.appendChild(node('p', 'lgdc-tpl2__sub', where(o)));
+        var main = node('div', 'lgdc-tpl2__main');
+        text.className = 'lgdc-tpl2__text';
+        main.appendChild(text);
+        var with2 = partners('lgdc-tpl2__with', o); if (with2) main.appendChild(with2);
+        box.append(side, main);
+      } else {
+        var inner = node('div', 'lgdc-' + kind + '__in');
+        if (kind === 'brk') {
+          var clan = CLANS.find(function (c) { return c.color === post.style.getPropertyValue('--g1'); });
+          if (clan) {
+            var sym = node('span', 'lgdc-brk__sym'), mark = node('span', 'lgdc-sym');
+            mark.style.setProperty('--sym', 'var(--sym-' + clan.sym + ')');
+            mark.setAttribute('aria-hidden', 'true');
+            sym.appendChild(mark);
+            inner.appendChild(sym);
+          }
+        }
+        if (title) inner.appendChild(title);
+        text.className = 'lgdc-' + kind + '__text';
+        inner.appendChild(text);
+        var info = meta('lgdc-' + kind + '__meta', o); if (info) inner.appendChild(info);
+        box.appendChild(inner);
+      }
+    }
+    content.replaceChildren(box);
+  }
+  // [dialogue=#b0503a]…[/dialogue] : la réplique prend la couleur choisie pour le personnage (sinon celle du Clan)
+  function dialogue(content) {
+    if (!/\[dialogue/i.test(content.innerHTML)) return;
+    content.innerHTML = content.innerHTML.replace(/\[dialogue(?:=(#[0-9a-f]{6}|#[0-9a-f]{3}))?\]([\s\S]*?)\[\/dialogue\]/gi, function (all, color, text) {
+      return '<span class="lgdc-dialogue"' + (color ? ' style="--d:' + color + '"' : '') + '>' + text + '</span>';
+    });
+  }
+  page.querySelectorAll('.lgdc-post').forEach(function (post) {
+    var content = post.querySelector('.lgdc-post__body .content');
+    if (!content) return;
+    dialogue(content);
+    layout(content, post);
+  });
+
   // [difficulté 13 +2] écrit par l'éditeur dans le message de RP : retiré du texte, gardé pour le verdict.
   // Forumactif publie le lancer dans un message à part, juste après, au nom du compte admin : le joueur
   // n'apparaît que dans « Le membre 'X' ». Le lancer reprend la balise du message précédent de ce joueur.
@@ -558,6 +700,8 @@
     var author = post.querySelector('a.lgdc-post__name, .lgdc-post__name a');
     var userId = author ? ((author.getAttribute('href') || '').match(/\/u(\d+)/) || [])[1] || '0' : '0';
     var found = 0;
+    // les dés prennent l'accent de la mise en page du RP s'il y en a une, sinon la couleur du groupe
+    var accent = content.querySelector('.lgdc-tpl, .lgdc-tpl2, .lgdc-brk, .lgdc-frm') || post;
     var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
     var texts = [];
     for (var t = walker.nextNode(); t; t = walker.nextNode()) if (/\[(lancer|chasse|portée)[^\]]*\]/i.test(t.textContent)) texts.push(t);
@@ -565,7 +709,7 @@
       var re = /\[(lancer|chasse|portée)([^\]]*)\]/gi, m, last = 0, frag = document.createDocumentFragment(), src = text.textContent;
       while ((m = re.exec(src))) {
         frag.appendChild(document.createTextNode(src.slice(last, m.index)));
-        var card = postId && topicId ? rollCard(m[1], m[2], 'wildheart:' + topicId + ':' + postId + ':' + userId + ':' + (found++), post) : null;
+        var card = postId && topicId ? rollCard(m[1], m[2], 'wildheart:' + topicId + ':' + postId + ':' + userId + ':' + (found++), accent) : null;
         frag.appendChild(card || document.createTextNode(m[0]));
         last = re.lastIndex;
       }
