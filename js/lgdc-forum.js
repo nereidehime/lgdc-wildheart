@@ -252,7 +252,7 @@
   }
   // lancers de dés : le texte natif (« Le membre 'X' a effectué l'action suivante… ») devient une carte
   // mises en page des messages : la balise écrite par l'éditeur en tête du message,
-  // [modele=brk|titre=…|lune=…|lieu=…|moment=…|avec=…|image=…|couleur=#…] pour un RP, [staff=ok|titre=…] pour le staff.
+  // [modele=brk|titre=…|lune=…|lieu=…|moment=…|avec=…|image=…|couleur=#…|tw=…] pour un RP, [staff=ok|titre=…] pour le staff.
   // Le reste du message devient le texte du modèle, aux couleurs du Clan de l'auteur.
   var MOMENTS = { 'aube': 'ph-sun-horizon', 'matin': 'ph-sun', 'midi': 'ph-sun', 'après-midi': 'ph-sun', 'crépuscule': 'ph-sun-horizon', 'nuit': 'ph-moon-stars' };
   var STAFF = { fix: 'Ajustements demandés', ok: 'Fiche validée', no: 'Fiche refusée' };
@@ -310,6 +310,7 @@
     var body = html.slice(0, m.index) + html.slice(m.index + m[0].length).replace(/^\s*(<br\s*\/?>\s*)+/i, '');
     var text = node('div');
     text.innerHTML = body.trim();
+    if (o.tw && !staff) text.prepend(node('tw', null, o.tw));
     var box, g1 = post.style.getPropertyValue('--g1'), g2 = post.style.getPropertyValue('--g2');
     if (staff) {
       box = node('div', 'lgdc-adm lgdc-adm--' + kind);
@@ -643,7 +644,7 @@
       line(card, 'Chasse : ' + words[0], [d100], prey);
       var dice = words.slice(1).filter(function (w) { return /^d\d+$/i.test(w); });
       var faces = dice.map(function (w) { return roll(+w.slice(1)); });
-      var step = 0, caught = false, over = false;
+      var step = 0, caught = false, over = false, failed = false;
       STEPS.forEach(function (stepName, st) {
         var row = line(card, stepName, []);
         row.classList.add('lgdc-roll__step');
@@ -664,12 +665,14 @@
         against.textContent = score + (plus ? ' (+1 du Clan)' : '') + ' contre ' + HUNT[prey][st];
         var verdict = judge(pair, score, HUNT[prey][st]);
         row.append(against, chip(verdict));
-        if (verdict[0] === 'fail' || verdict[0] === 'fumble') { over = true; return; }
+        if (verdict[0] === 'fail' || verdict[0] === 'fumble') { over = true; failed = true; return; }
         step = st + (verdict[0] === 'crit' ? 2 : 1);
         if (step >= 4) { caught = true; over = true; }
       });
       if (caught) ending(card, true, 'Proie attrapée', 'Chasse : ' + prey + ' (+' + HUNT[prey][4] + ')');
-      else ending(card, false, 'La proie s’enfuit');
+      else if (failed) ending(card, false, 'La proie s’enfuit');
+      // la balise n'a pas assez de dés pour finir la chasse : pas de faux échec
+      else ending(card, false, 'Chasse incomplète', 'les dés des étapes manquent');
       return card;
     }
 

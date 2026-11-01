@@ -2653,6 +2653,7 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-layout { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 14px; }
 .lgdc .lgdc-layout label { display: flex; flex-direction: column; gap: 6px; color: var(--ink-soft); }
 .lgdc .lgdc-layout label[hidden] { display: none; }
+.lgdc .lgdc-layout__tw { grid-column: 1 / -1; }
 .lgdc .lgdc-layout__kind { grid-column: 1 / -1; max-width: 320px; }
 .lgdc-fa-posting .lgdc-layout :is(input, select) { width: 100%; min-height: 38px; padding: 8px 10px; color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font: 500 14px/20px var(--sans); text-transform: none; letter-spacing: 0; }
 .lgdc-fa-posting:has(.personaForm) .lgdc-layout-panel { display: none; }

@@ -168,6 +168,8 @@
     select.value = value;
     current.querySelector('.lgdc-dice__pick span').textContent = dieName(value);
     close();
+    // un dé Chasse choisi à la main : les dés des étapes sont ajoutés, comme avec « Lancer une chasse »
+    if (/^chasse /.test(value)) loadStats().then(function (attrs) { huntWith(value.slice(7), attrs); });
   }
   search.addEventListener('input', filter);
   search.addEventListener('keydown', function (e) {
@@ -402,6 +404,7 @@
     + '<label class="lgdc-micro" data-f="lieu">Lieu <input type="text" data-l="lieu" maxlength="80"></label>'
     + '<label class="lgdc-micro" data-f="moment">Moment <select data-l="moment"><option value="">—</option><option>Aube</option><option>Matin</option><option>Midi</option><option>Après-midi</option><option>Crépuscule</option><option>Nuit</option></select></label>'
     + '<label class="lgdc-micro" data-f="avec">Avec <input type="text" data-l="avec" maxlength="200" title="Les noms des autres personnages, séparés par des virgules"></label>'
+    + '<label class="lgdc-micro lgdc-layout__tw">Avertissement <input type="text" data-l="tw" maxlength="200" title="Facultatif. Ce que contient le message de difficile : sang, mort d’un personnage…"></label>'
     + '<label class="lgdc-micro" data-f="image">Image du carré <input type="url" data-l="image" maxlength="300" title="Facultatif. Une image carrée : à côté du titre pour la bannière (sinon elle reste unie), dans la colonne (sinon l’avatar du compte)."></label>';
   var field = function (k) { return lay.querySelector('[data-l="' + k + '"]'); };
   MODELS.forEach(function (m) { var o = document.createElement('option'); o.value = m[0]; o.textContent = m[1]; field('kind').appendChild(o); });
@@ -487,7 +490,12 @@
       }).filter(Boolean));
       // un RP prend pour accent la couleur de dialogue du personnage
       if (!/^staff/.test(v)) parts.push('couleur=' + ink.value);
+      var warn = field('tw').value.replace(/[|\]\[\n<>]/g, ' ').trim();
+      if (warn && !/^staff/.test(v)) parts.push('tw=' + warn);
       text = '[' + parts.join('|') + ']\n' + text;
+    } else {
+      var alone = field('tw').value.replace(/[<>\n]/g, ' ').trim();
+      if (alone && !/^\s*<tw>/i.test(text)) text = '<tw>' + alone + '</tw>\n' + text;
     }
     setText(text);
   }, true);
