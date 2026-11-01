@@ -2160,6 +2160,8 @@ tw::before {
 .lgdc .lgdc-adm ul:last-child { margin-bottom: 24px; }
 .lgdc .lgdc-post__body .lgdc-adm p.lgdc-adm__sub { margin: 22px 26px 0; font: 800 10px/14px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: color-mix(in srgb, var(--g1) 70%, var(--ink-strong)); }
 .lgdc-post__body .lgdc-adm li a { color: inherit; text-decoration: underline; text-decoration-color: var(--g1); text-underline-offset: 3px; }
+/* la règle des listes de sujets (.lgdc-posts li > span:last-child, en colonne) ne doit pas toucher les étapes */
+.lgdc-posts .lgdc-post__body .lgdc-adm li > span:last-child { display: block; gap: 0; }
 
 /* la liste des derniers messages de l'accueil s'appelle aussi .lgdc-posts : on neutralise ses styles de li */
 .lgdc-post__body :is(.lgdc-adm, .lgdc-app) li { display: block; gap: 0; }
