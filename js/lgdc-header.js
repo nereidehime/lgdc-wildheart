@@ -55,27 +55,52 @@
     store('lgdc-theme', dark ? 'dark' : 'light');
   });
 
-  /* ---------- la lune en cours : 1 lune = 1 mois réel ----------
+  /* ---------- la lune en cours : une lune va d'une pleine lune à la suivante ----------
      data-launch (AAAA-MM-JJ) sur #lgdc-header = début de la Lune 1.
-     Chaque 1er du mois réel, une nouvelle lune se lève. */
+     Chaque lune suivante se lève le lendemain d'une vraie pleine lune, à l'heure de Paris :
+     l'Assemblée tombe donc le dernier jour de chaque lune. */
   (function () {
+    var rad = Math.PI / 180;
+    // pleine lune n° k (Meeus, Astronomical Algorithms, ch. 49), en millisecondes UTC, à quelques minutes près
+    function fullMoon(k) {
+      k += .5;
+      var t = k / 1236.85, e = 1 - .002516 * t;
+      var m = (2.5534 + 29.1053567 * k) * rad;
+      var mp = (201.5643 + 385.81693528 * k + .0107582 * t * t) * rad;
+      var f = (160.7108 + 390.67050284 * k) * rad;
+      var om = (124.7746 - 1.56375588 * k) * rad;
+      var jd = 2451550.09766 + 29.530588861 * k + .00015437 * t * t
+        - .40614 * Math.sin(mp) + .17302 * e * Math.sin(m) + .01614 * Math.sin(2 * mp)
+        + .01043 * Math.sin(2 * f) + .00734 * e * Math.sin(mp - m) - .00515 * e * Math.sin(mp + m)
+        + .00209 * e * e * Math.sin(2 * m) - .00111 * Math.sin(mp - 2 * f) - .00057 * Math.sin(mp + 2 * f)
+        + .00056 * e * Math.sin(2 * mp + m) - .00042 * Math.sin(3 * mp) + .00042 * e * Math.sin(m + 2 * f)
+        + .00038 * e * Math.sin(m - 2 * f) - .00024 * e * Math.sin(2 * mp - m) - .00017 * Math.sin(om);
+      return (jd - 2440587.5) * 864e5;
+    }
+    // jour du calendrier à Paris, compté depuis le 1er janvier 1970
+    var paris = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' });
+    function day(ms) { return Math.round(Date.parse(paris.format(new Date(ms))) / 864e5); }
+
     var p = (root.dataset.launch || '').split('-');
-    var now = new Date();
-    var launch = p.length > 1 ? new Date(+p[0], +p[1] - 1, 1) : new Date(now.getFullYear(), now.getMonth(), 1);
-    var moon = Math.max(1, (now.getFullYear() - launch.getFullYear()) * 12 + now.getMonth() - launch.getMonth() + 1);
-    var start = new Date(launch.getFullYear(), launch.getMonth() + moon - 1, 1);
-    var next = new Date(start.getFullYear(), start.getMonth() + 1, 1);
+    var nowMs = Date.now(), today = day(nowMs);
+    var launch = p.length > 2 ? Math.round(Date.UTC(+p[0], +p[1] - 1, +p[2]) / 864e5) : today;
+    // première pleine lune qui se lève après l'ouverture : la Lune 2 commence le lendemain
+    var k = Math.floor((launch * 864e5 - fullMoon(0)) / (29.530588861 * 864e5)) - 1;
+    while (day(fullMoon(k)) + 1 <= launch) k++;
+    var moon = 1, start = launch, next = day(fullMoon(k)) + 1;
+    while (next <= today) { moon++; start = next; next = day(fullMoon(++k)) + 1; }
     var nextMoon = moon + 1;
     // avant l'ouverture du forum : on compte les jours jusqu'à la Lune 1
-    if (now < launch) { next = launch; nextMoon = 1; start = now; }
-    var days = Math.ceil((next - now) / 864e5);
-    var progress = Math.min(1, Math.max(0, (now - start) / (next - start)));
+    if (today < launch) { moon = 1; nextMoon = 1; start = today; next = launch; }
+    var days = next - today;
+    var hour = (nowMs - Date.parse(paris.format(new Date(nowMs)))) / 864e5 % 1;
+    var progress = Math.min(1, Math.max(0, (today - start + hour) / (next - start)));
 
     function fill(attr, val) {
       root.querySelectorAll('[' + attr + ']').forEach(function (el) { el.textContent = val; });
     }
     fill('data-lgdc-moon', moon);
-    fill('data-lgdc-nextlabel', now < launch ? 'Ouverture' : 'Lune ' + nextMoon);
+    fill('data-lgdc-nextlabel', today < launch ? 'Ouverture' : 'Lune ' + nextMoon);
     fill('data-lgdc-days', days <= 1 ? 'demain' : 'dans ' + days + ' jours');
     root.querySelectorAll('[data-lgdc-progress]').forEach(function (el) { el.style.width = (progress * 100) + '%'; });
     root.querySelectorAll('.lgdc-moon').forEach(function (el) { el.classList.add('is-ready'); });
