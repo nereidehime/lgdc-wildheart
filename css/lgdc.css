@@ -1766,6 +1766,24 @@ section.lgdc-posts { display: flex; flex-direction: column; gap: 26px; }
 .lgdc--dark .lgdc-gb__prologue { box-shadow: inset 0 0 0 2px var(--line); }
 /* texte courant lisible : Inter, pas de Playfair italique sur un long paragraphe */
 .lgdc .lgdc-gb__page .lgdc-gb__prologue p { font: 400 14.5px/25px var(--sans); text-align: justify; color: #ece7df; }
+/* carte de la réserve : image Inkarnate, étiquettes et repères posés en pourcentage */
+.lgdc-map { margin: 18px 0 0; }
+.lgdc-map__img { position: relative; aspect-ratio: 4 / 3; border-radius: 5px; background: url("../assets/images/carte-reserve.webp") center / cover no-repeat; box-shadow: inset 0 0 0 2px var(--line); }
+.lgdc-map__clan, .lgdc-map__place, .lgdc-map__pin { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); }
+.lgdc-map__clan { display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border-radius: 5px; background: rgba(250, 248, 243, .9); font: italic 900 17px/1 var(--serif); color: #1d1b19; white-space: nowrap; pointer-events: none; }
+.lgdc-map__clan i { width: 22px; height: 22px; background: var(--g1); -webkit-mask: var(--sym) center / contain no-repeat; mask: var(--sym) center / contain no-repeat; }
+.lgdc-map__place { padding: 4px 9px; border-radius: 4px; background: #1d1b19; font: 600 10px/1.2 var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: #ece7df; pointer-events: none; }
+.lgdc .lgdc-map__pin { display: grid; place-items: center; width: 30px; height: 30px; padding: 0 !important; border: 0; border-radius: 6px; background: #1d1b19; color: #ece7df; font-size: 16px; cursor: pointer; transition: background var(--t) var(--ease); }
+.lgdc .lgdc-map__pin:hover, .lgdc .lgdc-map__pin:focus-visible { background: #cb7a53; outline: 0; }
+.lgdc-map__tip { position: absolute; bottom: calc(100% + 8px); left: 50%; width: 200px; padding: 10px 12px; border-radius: 5px; background: rgba(250, 248, 243, .97); box-shadow: 0 6px 18px rgba(0, 0, 0, .25); font: 400 12.5px/18px var(--sans); color: #4f4943; text-align: left; opacity: 0; visibility: hidden; transform: translate(-50%, 4px); transition: opacity .2s var(--ease), transform .2s var(--ease), visibility .2s; z-index: 2; }
+.lgdc-map__tip b { display: block; margin-bottom: 3px; font: italic 900 15px/1.2 var(--serif); color: #1d1b19; }
+.lgdc-map__pin:hover .lgdc-map__tip, .lgdc-map__pin:focus-visible .lgdc-map__tip { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.lgdc-map__pin--left .lgdc-map__tip { left: 0; transform: translate(0, 4px); }
+.lgdc-map__pin--right .lgdc-map__tip { left: auto; right: 0; transform: translate(0, 4px); }
+.lgdc-map__pin--left:hover .lgdc-map__tip, .lgdc-map__pin--left:focus-visible .lgdc-map__tip,
+.lgdc-map__pin--right:hover .lgdc-map__tip, .lgdc-map__pin--right:focus-visible .lgdc-map__tip { transform: none; }
+.lgdc .lgdc-map figcaption { margin-top: 10px; color: var(--ink-soft); }
+
 /* tableau du guidebook (barème des points) */
 .lgdc-gb__table { width: 100%; margin: 16px 0; border-collapse: collapse; }
 .lgdc-gb__table th, .lgdc-gb__table td { padding: 11px 0; border-bottom: 2px solid var(--b3); text-align: left; }
