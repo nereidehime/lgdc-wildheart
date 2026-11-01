@@ -4,7 +4,7 @@
   var root = document.querySelector('.lgdc-clans');
   if (!root) return;
   var capacity = Number(root.dataset.capacity);
-  if (!Number.isSafeInteger(capacity) || capacity < 1) capacity = 26;
+  if (!Number.isSafeInteger(capacity) || capacity < 1) capacity = 28;
   root.style.setProperty('--lgdc-clan-capacity', String(capacity));
   var panels = Array.from(root.querySelectorAll('.lgdc-clans__panel'));
   var freeTotal = 0;
