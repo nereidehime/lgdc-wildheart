@@ -36,10 +36,15 @@
   if (document.querySelector('.lgdc-fa-mp')) page.push(load(base + 'lgdc-mp.js').catch(report));
   if (document.querySelector('.lgdc-fa-search, .lgdc-fa-results-posts')) page.push(load(base + 'lgdc-recherche.js').catch(report));
   if (document.querySelector('.lgdc-fa-posting')) page.push(load(base + 'lgdc-poster.js').catch(report));
-  // fiche de présentation (Persona) : nouveau sujet dans les présentations, modification d'une fiche, ou fiche affichée
+  // formulaires Persona : nouveau sujet dans leur forum, modification d'un de leurs messages, ou message affiché
   var editorText = document.querySelector('textarea#text_editor_textarea');
-  if (document.querySelector('.persona') || location.href.indexOf('/post?f=7&mode=newtopic') >= 0
-    || (editorText && editorText.value.indexOf('<div class="persona">') >= 0)) page.push(load(base + 'lgdc-fiche.js').catch(report));
+  var personaShown = document.querySelector('.persona');
+  [['fiche', 7, 'lgdc-fiche.js'], ['liens', 2, 'lgdc-liens.js'], ['chronologie', 25, 'lgdc-chronologie.js']].forEach(function (persona) {
+    var tag = '"name":"' + persona[0] + '"';
+    if (location.href.indexOf('/post?f=' + persona[1] + '&mode=newtopic') >= 0
+      || (editorText && editorText.value.indexOf('<div class="persona">{' + tag) >= 0)
+      || (personaShown && personaShown.textContent.indexOf(tag) >= 0)) page.push(load(base + persona[2]).catch(report));
+  });
   if (document.getElementById('switcheroo')) {
     load(base + 'lgdc-comptes.js').catch(report);
     load(base + 'lgdc-switcheroo.js').catch(report);
