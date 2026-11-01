@@ -391,7 +391,7 @@
   var level = window._userdata ? Number(window._userdata.user_level) : 0;
   if (level > 0) MODELS.push(['staff=fix', 'Staff : retouches'], ['staff=ok', 'Staff : fiche validée'], ['staff=no', 'Staff : fiche refusée']);
   // champs utiles à chaque modèle
-  var USES = { tpl: ['titre', 'lune', 'lieu', 'moment', 'avec', 'image'], tpl2: ['titre', 'lune', 'lieu', 'moment', 'avec'], brk: ['titre', 'lune', 'lieu', 'moment'], frm: ['titre', 'lune', 'lieu', 'moment'], staff: ['titre'] };
+  var USES = { tpl: ['titre', 'lune', 'lieu', 'moment', 'avec', 'image'], tpl2: ['titre', 'lune', 'lieu', 'moment', 'avec', 'image'], brk: ['titre', 'lune', 'lieu', 'moment'], frm: ['titre', 'lune', 'lieu', 'moment'], staff: ['titre'] };
   var LAYOUT = /^\s*\[(modele|staff)=([^\]]*)\]\s*\n?/i;
   var moon = document.querySelector('[data-lgdc-moon]');
   var lay = document.createElement('div');
@@ -402,7 +402,7 @@
     + '<label class="lgdc-micro" data-f="lieu">Lieu <input type="text" data-l="lieu" maxlength="80"></label>'
     + '<label class="lgdc-micro" data-f="moment">Moment <select data-l="moment"><option value="">—</option><option>Aube</option><option>Matin</option><option>Midi</option><option>Après-midi</option><option>Crépuscule</option><option>Nuit</option></select></label>'
     + '<label class="lgdc-micro" data-f="avec">Avec <input type="text" data-l="avec" maxlength="200" title="Les noms des autres personnages, séparés par des virgules"></label>'
-    + '<label class="lgdc-micro" data-f="image">Image de la bannière <input type="url" data-l="image" maxlength="300"></label>';
+    + '<label class="lgdc-micro" data-f="image">Image du carré <input type="url" data-l="image" maxlength="300" title="Facultatif. Une image carrée : à côté du titre pour la bannière (sinon elle reste unie), dans la colonne (sinon l’avatar du compte)."></label>';
   var field = function (k) { return lay.querySelector('[data-l="' + k + '"]'); };
   MODELS.forEach(function (m) { var o = document.createElement('option'); o.value = m[0]; o.textContent = m[1]; field('kind').appendChild(o); });
   if (moon && /^\d+$/.test(moon.textContent.trim())) field('lune').value = moon.textContent.trim();

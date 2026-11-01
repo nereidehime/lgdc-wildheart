@@ -334,19 +334,27 @@
       var av = post.querySelector('.lgdc-post__av img');
       var avatar = function (cls) {
         var span = node(cls === 'lgdc-tpl2__av' ? 'span' : 'div', cls);
-        if (av) { var img = node('img'); img.src = av.getAttribute('src'); img.alt = ''; span.appendChild(img); }
+        // l'image choisie dans l'éditeur, sinon l'avatar du compte
+        var src = /^https?:\/\//.test(o.image || '') ? o.image.replace(/"/g, '') : av && av.getAttribute('src');
+        if (src) { var img = node('img'); img.src = src; img.alt = ''; span.appendChild(img); }
         return span;
       };
       var title = o.titre ? node('h2', 'lgdc-' + kind + '__title', o.titre) : null;
       if (kind === 'tpl') {
         var top = node('div', 'lgdc-tpl__top');
-        // avec une image : bannière et avatar ; sans image : variante unie, sans avatar (comme la maquette)
-        var banner = /^https?:\/\//.test(o.image || '');
-        if (banner) top.style.setProperty('--img', 'url("' + o.image.replace(/"/g, '') + '")');
+        // avec une image : elle remplit le carré, sur la bannière de brume teintée de l'accent ;
+        // sans image : variante unie, sans carré (comme la maquette)
+        var picture = /^https?:\/\//.test(o.image || '') ? o.image.replace(/"/g, '') : '';
+        if (picture) top.style.setProperty('--img', 'url("https://images.unsplash.com/photo-1696255400336-05e8eb84f01a?w=1200&q=70")');
         else box.classList.add('lgdc-tpl--plain');
         if (title) top.appendChild(title);
         box.appendChild(top);
-        if (banner) box.appendChild(avatar('lgdc-tpl__av'));
+        if (picture) {
+          var square = node('div', 'lgdc-tpl__av'), img = node('img');
+          img.src = picture; img.alt = '';
+          square.appendChild(img);
+          box.appendChild(square);
+        }
         if (where(o)) box.appendChild(node('p', 'lgdc-tpl__where', where(o)));
         text.className = 'lgdc-tpl__text';
         box.appendChild(text);
