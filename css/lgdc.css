@@ -2814,7 +2814,8 @@ input[type="radio"]:focus-visible + label.choice { outline: 2px solid var(--pf-s
 /* liens et chronologie : chaque entrée se remplit dans une rangée séparée */
 .personaForm .wh-liens__entry + .wh-liens__entry, .personaForm .wh-chrono__entry + .wh-chrono__entry { margin-top: 22px; padding-top: 22px; border-top: 2px solid var(--pf-line); }
 .personaForm :is(.wh-liens__name-row, .wh-chrono__name-row) { display: grid; grid-template-columns: minmax(0, 1fr) 40px; gap: 14px; align-items: start; }
-.personaForm :is(.wh-liens__remove, .wh-chrono__remove) { display: grid; place-items: center; width: 40px; height: 44px; margin-top: 18px; padding: 0; color: var(--pf-soft); background: var(--pf-field); border: 2px solid var(--pf-line); border-radius: 5px; font-size: 18px; cursor: pointer; }
+.personaForm :is(.wh-liens__remove, .wh-chrono__remove) { display: grid; place-items: center; width: 40px; height: 44px; margin-top: 18px; padding: 0 !important; color: var(--pf-soft); background: var(--pf-field); border: 2px solid var(--pf-line); border-radius: 5px; font-size: 18px; cursor: pointer; }
+.personaForm :is(.wh-liens__remove, .wh-chrono__remove) i { display: block; font-size: 17px; line-height: 1; }
 .personaForm :is(.wh-liens__remove, .wh-chrono__remove):hover { color: var(--pf-accent); border-color: var(--pf-accent); }
 .personaForm :is(.wh-liens__remove, .wh-chrono__remove, .addField):focus-visible { outline: 2px solid var(--pf-strong); outline-offset: 3px; }
 .personaForm :is(.wh-liens__status, .wh-chrono__status) { margin: 8px 0 0; }
@@ -2828,7 +2829,7 @@ input[type="radio"]:focus-visible + label.choice { outline: 2px solid var(--pf-s
 .persona-options.open { background: var(--d2, #191715); }
 .persona-options.open .persona-options-list { display: block; width: max-content; }
 .persona-options-list { display: none; margin: 6px 6px 0; padding: 10px; background: var(--b1, #ece8e2); border-radius: 3px; }
-button.persona-options-button { float: right; width: 32px; height: 32px; padding: 0; background: none; border: 0; border-radius: 5px; cursor: pointer; }
+button.persona-options-button { float: right; display: flex; justify-content: center; align-items: center; width: 32px; height: 32px; padding: 0 !important; background: none; border: 0; border-radius: 5px; cursor: pointer; }
 .persona-options-button:hover { background: var(--b2, #e8e4dd); }
 .persona-code-parameters { display: none; position: relative; padding: 10px; background: var(--b3, #dfdad2); border-radius: 5px; }
 .persona-code-parameters.open { display: block; }
