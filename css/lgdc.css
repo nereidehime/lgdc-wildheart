@@ -2759,6 +2759,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--line,
 .personaForm .field > .field { margin: 0; }
 .personaForm label { display: block; margin-bottom: 4px; font: 800 9.5px/14px var(--sans, Inter, sans-serif); letter-spacing: 1.5px; text-transform: uppercase; color: var(--pf-strong); }
 .personaForm .description { margin: -2px 0 6px; font-size: 12px; line-height: 18px; color: var(--pf-soft); }
+.personaForm .description a { color: var(--pf-accent); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
 .personaForm .field.columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 14px; }
 .personaForm .field.columns.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .personaForm .field.columns.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -2784,18 +2785,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--line,
 .personaForm .wh-select:has(select:disabled) > i { opacity: .35; }
 
 .personaForm .wh-number { position: relative; }
-.personaForm .wh-number.is-stepped input[type="number"] { padding-right: 48px; appearance: textfield; }
-.personaForm .wh-number.is-stepped input::-webkit-inner-spin-button,
-.personaForm .wh-number.is-stepped input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .personaForm .wh-number:focus-within input { border-color: var(--pf-strong); }
-.personaForm .wh-number__arrows { position: absolute; inset: 2px 2px 2px auto; display: grid; grid-template-rows: 1fr 1fr; width: 34px; overflow: hidden; border-left: 1px solid var(--pf-line); border-radius: 0 3px 3px 0; background: var(--pf-bg); }
-.personaForm .wh-number__arrows button { display: grid; place-items: center; width: 100%; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; color: var(--pf-soft); background: transparent; cursor: pointer; }
-.personaForm .wh-number__arrows button:first-child { border-bottom: 1px solid var(--pf-line); }
-.personaForm .wh-number__arrows i { font-size: 13px; }
-.personaForm .wh-number__arrows button:enabled:hover { color: var(--pf-strong); background: var(--pf-line); }
-.personaForm .wh-number__arrows button:enabled:active { color: var(--pf-field); background: var(--pf-strong); }
-.personaForm .wh-number__arrows button:focus-visible { outline: 2px solid var(--pf-strong); outline-offset: -2px; }
-.personaForm .wh-number__arrows button:disabled { opacity: .35; cursor: default; }
 
 /* erreurs renvoyées par le plugin */
 .personaForm .input-error, .personaForm .input-error:focus { border-color: var(--pf-accent); }
