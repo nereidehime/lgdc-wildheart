@@ -2158,6 +2158,8 @@ tw::before {
 .lgdc .lgdc-post__body .lgdc-adm li:has(> b) { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 16px; align-items: baseline; }
 .lgdc-post__body .lgdc-adm li b { font: 800 9.5px/22px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: color-mix(in srgb, var(--g1) 70%, var(--ink-strong)); }
 .lgdc .lgdc-adm ul:last-child { margin-bottom: 24px; }
+.lgdc .lgdc-post__body .lgdc-adm p.lgdc-adm__sub { margin: 22px 26px 0; font: 800 10px/14px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: color-mix(in srgb, var(--g1) 70%, var(--ink-strong)); }
+.lgdc-post__body .lgdc-adm li a { color: inherit; text-decoration: underline; text-decoration-color: var(--g1); text-underline-offset: 3px; }
 
 /* la liste des derniers messages de l'accueil s'appelle aussi .lgdc-posts : on neutralise ses styles de li */
 .lgdc-post__body :is(.lgdc-adm, .lgdc-app) li { display: block; gap: 0; }

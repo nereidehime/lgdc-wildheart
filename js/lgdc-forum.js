@@ -292,6 +292,22 @@
       return Math.round(c + (255 - c) * amount).toString(16).padStart(2, '0');
     }).join('');
   }
+  // la suite d'une fiche validée, la même pour tout le monde
+  function nextSteps() {
+    var ul = node('ul');
+    [['Liens', 'Poste ta fiche de liens : ', '/f2-fiche-de-liens', 'fiches de liens', '. Le formulaire se remplit tout seul.'],
+     ['Chronologie', 'Ouvre ta chronologie dans ', '/f25-chronologies', 'chronologies', ', pour suivre les RP de ton personnage.'],
+     ['Partenaires', 'Cherche avec qui jouer dans ', '/f26-recherches-ouvertes', 'les recherches ouvertes', ', ou réponds à une annonce.'],
+     ['Premier RP', 'Lance ton premier sujet sur le territoire de ton Clan. Les dés et les modèles sont dans l’éditeur, expliqués au ', '/h1-guidebook#systeme', 'guidebook', '.']
+    ].forEach(function (step) {
+      var li = node('li'), a = node('a', null, step[3]);
+      a.href = step[2];
+      li.append(node('b', null, step[0]), node('span'));
+      li.lastChild.append(step[1], a, step[4]);
+      ul.appendChild(li);
+    });
+    return ul;
+  }
   function where(o) { return [o.lune ? 'Lune ' + o.lune : '', o.lieu, (o.moment || '').toLowerCase()].filter(Boolean).join(', '); }
   function layout(content, post) {
     var html = content.innerHTML;
@@ -315,7 +331,9 @@
     if (staff) {
       box = node('div', 'lgdc-adm lgdc-adm--' + kind);
       box.append(node('p', 'lgdc-adm__label', STAFF[kind]));
-      if (o.titre) box.appendChild(node('h2', 'lgdc-adm__title', o.titre));
+      // fiche validée : le staff donne seulement le pseudo, le titre de bienvenue en découle
+      var title = o.titre || (kind === 'ok' && o.pour ? 'Bienvenue parmi nous, ' + o.pour : '');
+      if (title) box.appendChild(node('h2', 'lgdc-adm__title', title));
       // le texte libre devient des paragraphes (une ligne vide les sépare), les listes restent à part
       var para = null, breaks = 0;
       Array.from(text.childNodes).forEach(function (child) {
@@ -326,7 +344,9 @@
         if (!para) { para = node('p'); box.appendChild(para); }
         para.appendChild(child);
       });
-      box.querySelectorAll('p > br:last-child').forEach(function (br) { br.remove(); });
+      // seul le retour à la ligne qui finit un paragraphe disparaît (:last-child ignore le texte qui le suit)
+      box.querySelectorAll('p > br').forEach(function (br) { var next = br.nextSibling; if (!next || (next.nodeType === 3 && !next.textContent.trim() && !next.nextSibling)) br.remove(); });
+      if (kind === 'ok') box.append(node('p', 'lgdc-adm__sub', 'Et maintenant'), nextSteps());
     } else {
       box = node('div', 'lgdc-' + kind);
       // accent : la couleur de dialogue du personnage, sinon celle de son groupe
