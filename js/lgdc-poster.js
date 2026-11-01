@@ -404,8 +404,8 @@
     + '<label class="lgdc-micro" data-f="lieu">Lieu <input type="text" data-l="lieu" maxlength="80"></label>'
     + '<label class="lgdc-micro" data-f="moment">Moment <select data-l="moment"><option value="">—</option><option>Aube</option><option>Matin</option><option>Midi</option><option>Après-midi</option><option>Crépuscule</option><option>Nuit</option></select></label>'
     + '<label class="lgdc-micro" data-f="avec">Avec <input type="text" data-l="avec" maxlength="200" title="Les noms des autres personnages, séparés par des virgules"></label>'
-    + '<label class="lgdc-micro lgdc-layout__tw">Avertissement <input type="text" data-l="tw" maxlength="200" title="Facultatif. Ce que contient le message de difficile : sang, mort d’un personnage…"></label>'
     + '<label class="lgdc-micro" data-f="image">Image du carré <input type="url" data-l="image" maxlength="300" title="Facultatif. Une image carrée : à côté du titre pour la bannière (sinon elle reste unie), dans la colonne (sinon l’avatar du compte)."></label>';
+    + '<label class="lgdc-micro lgdc-layout__tw">Avertissement <input type="text" data-l="tw" maxlength="200" title="Facultatif. Ce que contient le message de difficile : sang, mort d’un personnage…"></label>'
   var field = function (k) { return lay.querySelector('[data-l="' + k + '"]'); };
   MODELS.forEach(function (m) { var o = document.createElement('option'); o.value = m[0]; o.textContent = m[1]; field('kind').appendChild(o); });
   if (moon && /^\d+$/.test(moon.textContent.trim())) field('lune').value = moon.textContent.trim();
