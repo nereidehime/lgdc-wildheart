@@ -462,6 +462,9 @@ html:has(#lgdc-header) { scroll-padding-top: 70px; }
 .lgdc .lgdc-moon__num { display: flex; align-items: baseline; gap: 8px; }
 .lgdc-moon__num .lgdc-micro { color: #cb7a53; }
 .lgdc-moon__num b { font: italic 900 44px/.8 var(--serif); color: #ece7df; }
+/* les valeurs du template sont provisoires : cachées jusqu'au calcul de lgdc-header.js (filet de 3 s si le script échoue) */
+.lgdc-moon:not(.is-ready) { visibility: hidden; animation: lgdc-moon-late 0s 3s forwards; }
+@keyframes lgdc-moon-late { to { visibility: visible; } }
 .lgdc-moon__txt { display: flex; flex-direction: column; gap: 8px; padding-left: 18px; border-left: 1px solid rgba(236, 231, 223, .16); }
 .lgdc-moon__txt .lgdc-micro { color: #a39c92; }
 .lgdc-moon__days { color: #ece7df; }
@@ -2427,7 +2430,7 @@ a.sceditor-button.lgdc-editor-icon i { display: block !important; width: auto !i
 a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.active { color: var(--a1, #bf5531) !important; background: var(--b3, #dfdad2) !important; }
 
 /* ---------- RÉPONSE RAPIDE ET PIED DE SUJET : boutons et listes natifs ---------- */
-.lgdc-fa-quickreply div[style*="text-align"] { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px !important; }
+.lgdc-fa-quickreply div[style*="text-align"] { display: flex; justify-content: center; gap: 10px; margin-top: 14px !important; margin-bottom: 20px; }
 .lgdc-fa-quickreply input.button2 { min-height: 44px; padding: 12px 18px; color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font: 800 11px/16px var(--sans); text-transform: uppercase; letter-spacing: .6px; cursor: pointer; }
 .lgdc-fa-quickreply input.button2:hover { border-color: var(--a2); }
 .lgdc-fa-quickreply input.button2[name="post"] { color: #fff; background: var(--a1); border-color: var(--a1); }
@@ -2546,7 +2549,7 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-mp__subj:hover { color: var(--a1); }
 .lgdc .lgdc-mp__av { display: grid; place-items: center; font: 800 10px/1 var(--sans); text-transform: uppercase; color: #121110; }
 .lgdc .lgdc-mp__empty { margin: 0; padding: 40px 20px; color: var(--ink-soft); font-style: italic; text-align: center; }
-.lgdc-mp__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding: 16px 20px 0; border-top: 0; }
+.lgdc-mp__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding: 16px 20px; border-top: 0; }
 .lgdc .lgdc-mp__danger input[type=submit] { color: var(--ink-strong); background: var(--b3); }
 .lgdc .lgdc-mp__history { margin-top: 30px; }
 
@@ -2626,6 +2629,52 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-dice__remove:hover { color: var(--a1); background: var(--b3); }
 .lgdc .lgdc-dice__add { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 8px 14px !important; color: var(--ink-strong); background: var(--b1); border: 2px dashed var(--line); border-radius: 5px; font: 800 10px/16px var(--sans); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; }
 .lgdc .lgdc-dice__add:hover { border-color: var(--a2); color: var(--a1); }
+/* sélecteur des dés : bouton par ligne, panneau avec recherche et familles (comme les smileys) */
+.lgdc .lgdc-dice__row { position: relative; }
+.lgdc .lgdc-dice__pick { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 38px; padding: 8px 12px !important; color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font: 500 14px/20px var(--sans); text-align: left; cursor: pointer; }
+.lgdc .lgdc-dice__pick:hover { border-color: var(--a2); }
+.lgdc .lgdc-dice__pick i { color: var(--ink-soft); }
+.lgdc .lgdc-dice__picker { position: absolute; top: calc(100% + 6px); left: 46px; z-index: 20; width: 360px; padding: 12px; background: var(--b1); border: 2px solid var(--line); border-radius: 6px; box-shadow: 0 10px 28px rgba(0, 0, 0, .18); }
+.lgdc .lgdc-dice__picker[hidden] { display: none; }
+.lgdc-fa-posting .lgdc-dice__search { width: 100%; min-height: 36px; margin: 0 0 10px; padding: 7px 10px; color: var(--ink-strong); background: var(--b2); border: 2px solid var(--line); border-radius: 5px; font: 500 13px/20px var(--sans); }
+.lgdc .lgdc-dice__groups { display: flex; flex-direction: column; gap: 10px; max-height: 260px; overflow-y: auto; }
+.lgdc .lgdc-dice__group[hidden], .lgdc .lgdc-dice__chip[hidden] { display: none; }
+.lgdc .lgdc-dice__group > p { margin: 0 0 6px; color: var(--ink-soft); }
+.lgdc .lgdc-dice__grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.lgdc .lgdc-dice__chip { min-height: 32px; padding: 6px 11px !important; color: var(--ink-strong); background: var(--b3); border: 0; border-radius: 5px; font: 600 13px/20px var(--sans); cursor: pointer; }
+.lgdc .lgdc-dice__chip:hover, .lgdc .lgdc-dice__chip:focus-visible { color: #fff; background: var(--a1); outline: 0; }
+.lgdc .lgdc-dice__chip.is-on { box-shadow: inset 0 0 0 2px var(--a1); }
+.lgdc .lgdc-dice__empty { margin: 4px 0 0; color: var(--ink-soft); }
+/* résultat d'un lancer de dés dans un message */
+.lgdc-roll { margin: 16px 0 0; padding: 14px 16px; background: var(--b3); border-radius: 6px; }
+.lgdc .lgdc-roll__head { display: flex; align-items: center; gap: 7px; margin: 0 0 10px; color: var(--ink-soft); }
+.lgdc-roll__head i { font-size: 15px; }
+.lgdc-roll__row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.lgdc-roll__row + .lgdc-roll__row { margin-top: 8px; }
+.lgdc-roll__die { min-width: 46px; margin-right: 6px; font: 800 10px/16px var(--sans); letter-spacing: .6px; text-transform: uppercase; color: var(--ink-soft); }
+.lgdc-roll__face { display: grid; place-items: center; min-width: 34px; height: 34px; padding: 0 6px; background: var(--b1); border-radius: 5px; font: italic 900 18px/1 var(--serif); color: var(--ink-strong); }
+.lgdc-roll__out { margin: 0 8px 0 2px; font: italic 900 17px/1 var(--serif); color: var(--a1); }
+.lgdc-roll__total { display: flex; align-items: baseline; gap: 8px; margin: 12px 0 0; padding-top: 10px; border-top: 2px solid var(--line); }
+.lgdc-roll__total .lgdc-micro { color: var(--ink-soft); }
+.lgdc-roll__total b { font: italic 900 22px/1 var(--serif); color: var(--ink-strong); }
+.lgdc-roll__diff { margin-left: auto; color: var(--ink-soft); }
+.lgdc-roll__verdict { padding: 5px 10px; border-radius: 5px; font: 800 10px/14px var(--sans); letter-spacing: .6px; text-transform: uppercase; color: #fff; }
+.lgdc-roll__verdict.is-win { background: #6f9a8b; }
+.lgdc-roll__verdict.is-crit { background: var(--a1); }
+.lgdc-roll__verdict.is-fail { background: #8a837a; }
+.lgdc-roll__verdict.is-fumble { background: #bf5531; }
+.lgdc .lgdc-roll__note { margin: 10px 0 0; font: 400 13px/19px var(--sans); color: var(--ink); }
+.lgdc .lgdc-dice__hunt { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 12px; padding: 10px 14px; background: var(--b3); border-radius: 5px; font: 400 13px/19px var(--sans); color: var(--ink-strong); }
+.lgdc .lgdc-dice__hunt button { padding: 0 !important; color: var(--ink-soft); background: none; border: 0; font: 800 10px/16px var(--sans); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; }
+.lgdc .lgdc-dice__hunt button:hover { color: var(--a1); }
+/* difficulté et bonus du test, sous les dés de l'éditeur */
+.lgdc .lgdc-dice__test { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 0 14px; }
+.lgdc .lgdc-dice__test label { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-soft); }
+.lgdc-fa-posting .lgdc-dice__test input { width: 70px; min-height: 38px; padding: 8px 10px; color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); border-radius: 5px; font: 500 14px/20px var(--sans); }
+.lgdc .lgdc-dice__levels { display: inline-flex; gap: 6px; }
+.lgdc .lgdc-dice__level { min-height: 32px; padding: 6px 10px !important; color: var(--ink-strong); background: var(--b3); border: 0; border-radius: 5px; font: 600 12px/20px var(--sans); cursor: pointer; }
+.lgdc .lgdc-dice__level:hover { color: var(--a1); }
+.lgdc .lgdc-dice__level.is-on { color: #fff; background: var(--a1); }
 /* smileys repliables (lgdc-poster.js) : fermée, la boîte devient une fine colonne avec son bouton */
 .lgdc .lgdc-smileys__toggle { display: flex; align-items: center; gap: 8px; width: 100%; margin: 0 0 10px; padding: 6px 4px !important; color: var(--ink-strong); background: none; border: 0; border-bottom: 2px solid var(--b3); font: 800 10px/14px var(--sans); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; }
 .lgdc .lgdc-smileys__toggle span { flex: 1; text-align: left; }

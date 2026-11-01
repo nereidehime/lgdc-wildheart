@@ -186,6 +186,141 @@
     var img = a.querySelector('img');
     a.replaceWith(tool(href, img ? img.alt : mode, MOD[mode] || 'ph-wrench'));
   });
+  // tables des dés spéciaux (guidebook, chapitre Le système) : bornes hautes du d100
+  var PREY = {
+    'crépuscule': [[35, 'campagnol'], [60, 'lézard'], [85, 'oiseau'], [100, 'lapin']],
+    'hêtre': [[40, 'mulot'], [70, 'oiseau'], [100, 'écureuil']],
+    'orchidée': [[40, 'campagnol'], [85, 'oiseau'], [100, 'lapin']],
+    'brouillard': [[35, 'grenouille'], [55, 'campagnol'], [70, 'oiseau'], [100, 'poisson']]
+  };
+  var LITTER = [[4, '1 chaton'], [14, '2 chatons'], [34, '3 chatons'], [59, '4 chatons'], [79, '5 chatons'], [91, '6 chatons'], [97, '7 chatons'], [100, '8 chatons']];
+  // chasse jouée en RP, une étape par message : difficultés par proie (Guetter, Se faufiler, Bondir, Mordre) et points
+  var HUNT = {
+    campagnol: [10, 7, 7, 7, 1], mulot: [10, 7, 7, 7, 1], grenouille: [10, 7, 10, 7, 1], 'lézard': [10, 7, 10, 7, 1],
+    oiseau: [7, 10, 13, 7, 1], 'écureuil': [7, 10, 13, 7, 2], poisson: [10, 7, 13, 7, 2], lapin: [7, 13, 13, 10, 3]
+  };
+  var STEPS = ['Guetter', 'Se faufiler', 'Bondir', 'Mordre'];
+  function stepIndex(name) {
+    return STEPS.findIndex(function (step) { return step.toLowerCase() === name.trim().toLowerCase(); });
+  }
+  function note(card, text) {
+    var p = document.createElement('p');
+    p.className = 'lgdc-roll__note';
+    p.textContent = text;
+    card.appendChild(p);
+  }
+  function lookup(die, value) {
+    var name = die.toLowerCase();
+    var table = /portée/.test(name) ? LITTER : null;
+    Object.keys(PREY).forEach(function (clan) { if (/chasse/.test(name) && name.indexOf(clan) >= 0) table = PREY[clan]; });
+    if (!table || !/^\d+$/.test(value)) return null;
+    var hit = table.find(function (step) { return +value <= step[0]; });
+    return hit ? hit[1] : null;
+  }
+  // lancers de dés : le texte natif (« Le membre 'X' a effectué l'action suivante… ») devient une carte
+  page.querySelectorAll('.lgdc-post__body .content').forEach(function (content) {
+    // [difficulté 13 +2] écrit par l'éditeur : retiré du texte, gardé pour le verdict
+    var check = null;
+    var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    for (var t = walker.nextNode(); t; t = walker.nextNode()) {
+      var m = t.textContent.match(/\[difficulté (\d+)(?: ([+-]\d+))?(?: chasse ([^,\]]+), ([^\]]+))?\]/);
+      if (m) {
+        check = { diff: +m[1], bonus: m[2] ? +m[2] : 0 };
+        if (m[3] && HUNT[m[3].trim()] && stepIndex(m[4]) >= 0) { check.prey = m[3].trim(); check.step = stepIndex(m[4]); }
+        t.textContent = t.textContent.replace(m[0], '');
+      }
+    }
+    var starts = [];
+    content.childNodes.forEach(function (node) {
+      if (node.nodeType === 3 && /Le membre '\s*$/.test(node.textContent)) starts.push(node);
+    });
+    starts.forEach(function (start, i) {
+      var nodes = [];
+      for (var n = start; n && n !== starts[i + 1]; n = n.nextSibling) nodes.push(n);
+      var holder = document.createElement('div');
+      nodes.forEach(function (node) { holder.appendChild(node.cloneNode(true)); });
+      var html = holder.innerHTML;
+      var rolls = [];
+      html.replace(/'([^']+)'\s*:\s*<strong>([^<]+)<\/strong>/g, function (all, die, values) {
+        rolls.push({ die: die, values: values.split(/[,\s]+/).filter(Boolean) });
+      });
+      if (!rolls.length) return;
+      // le texte du message avant « Le membre » reste, seul le bloc du lancer est remplacé
+      start.textContent = start.textContent.replace(/Le membre '\s*$/, '');
+      var card = document.createElement('div');
+      card.className = 'lgdc-roll';
+      var head = document.createElement('p');
+      head.className = 'lgdc-roll__head lgdc-micro';
+      head.innerHTML = '<i class="ph-light ph-dice-five" aria-hidden="true"></i>Lancer de dés';
+      card.appendChild(head);
+      var total = 0, count = 0, faces = [], found = null;
+      rolls.forEach(function (roll) {
+        var row = document.createElement('div');
+        row.className = 'lgdc-roll__row';
+        var die = document.createElement('span');
+        die.className = 'lgdc-roll__die';
+        die.textContent = roll.die;
+        row.appendChild(die);
+        var special = false;
+        roll.values.forEach(function (value) {
+          var face = document.createElement('b');
+          face.className = 'lgdc-roll__face';
+          face.textContent = value;
+          row.appendChild(face);
+          var result = lookup(roll.die, value);
+          if (result && HUNT[result]) found = result;
+          if (result) {
+            special = true;
+            var out = document.createElement('span');
+            out.className = 'lgdc-roll__out';
+            out.textContent = result;
+            row.appendChild(out);
+          }
+          else if (/^\d+$/.test(value)) { total += +value; count++; faces.push(+value); }
+        });
+        if (special) row.classList.add('is-special');
+        card.appendChild(row);
+      });
+      var tested = check && count > 0 && i === 0;
+      if (count > 1 || tested) {
+        var sum = document.createElement('p');
+        sum.className = 'lgdc-roll__total';
+        sum.innerHTML = '<span class="lgdc-micro">total</span><b></b>';
+        var score = total + (tested ? check.bonus : 0);
+        sum.querySelector('b').textContent = score;
+        if (tested) {
+          if (check.bonus) sum.querySelector('.lgdc-micro').textContent = 'total, bonus ' + (check.bonus > 0 ? '+' : '') + check.bonus;
+          // critique : double de 6 ou plus ; échec spectaculaire : double 1 (guidebook, Le test)
+          var pair = faces.length === 2 && faces[0] === faces[1];
+          var verdict = pair && faces[0] === 1 ? ['fumble', 'Échec spectaculaire']
+            : pair && faces[0] >= 6 ? ['crit', 'Critique']
+            : score >= check.diff ? ['win', 'Réussite'] : ['fail', 'Échec'];
+          var against = document.createElement('span');
+          against.className = 'lgdc-micro lgdc-roll__diff';
+          against.textContent = 'difficulté ' + check.diff;
+          var tag = document.createElement('span');
+          tag.className = 'lgdc-roll__verdict is-' + verdict[0];
+          tag.textContent = verdict[1];
+          sum.append(against, tag);
+        }
+        card.appendChild(sum);
+        if (tested && check.prey) {
+          var prey = check.prey;
+          head.lastChild.textContent = 'Chasse : ' + prey + ', étape ' + (check.step + 1) + ' sur 4 : ' + STEPS[check.step];
+          if (verdict[0] === 'fail' || verdict[0] === 'fumble') note(card, 'La proie s’enfuit.');
+          else {
+            var next = check.step + (verdict[0] === 'crit' ? 2 : 1);
+            if (verdict[0] === 'crit' && next < 5) note(card, 'Critique : l’étape suivante est sautée.');
+            if (next >= 4) note(card, 'Proie attrapée. À indiquer en fin de message : Chasse : ' + prey + ' (+' + HUNT[prey][4] + ')');
+            else note(card, 'Étape suivante : ' + STEPS[next] + ', difficulté ' + HUNT[prey][next] + '.');
+          }
+        }
+      }
+      if (found) note(card, 'Première étape : Guetter, difficulté ' + HUNT[found][0] + '.');
+      nodes.slice(1).forEach(function (node) { node.remove(); });
+      start.after(card);
+    });
+  });
   var posters = page.querySelector('.lgdc-fa-posters');
   if (posters && !posters.textContent.trim()) posters.remove();
 })();

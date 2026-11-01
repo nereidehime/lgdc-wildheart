@@ -78,6 +78,7 @@
     fill('data-lgdc-nextlabel', now < launch ? 'Ouverture' : 'Lune ' + nextMoon);
     fill('data-lgdc-days', days <= 1 ? 'demain' : 'dans ' + days + ' jours');
     root.querySelectorAll('[data-lgdc-progress]').forEach(function (el) { el.style.width = (progress * 100) + '%'; });
+    root.querySelectorAll('.lgdc-moon').forEach(function (el) { el.classList.add('is-ready'); });
   })();
 
   /* ---------- intro : seule la bannière apparaît ---------- */
