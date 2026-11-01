@@ -2150,6 +2150,25 @@ tw::before {
 .lgdc-adm--no { --g1: #bf5531; }
 .lgdc-adm--fix { --g1: #b08a3c; }
 .lgdc-adm--info { --g1: #bf5531; }
+.lgdc-pform { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; margin: 18px 26px 24px; }
+.lgdc-pform__f { display: grid; gap: 6px; min-width: 0; margin: 0; padding: 0; border: 0; font: 800 9.5px/12px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: color-mix(in srgb, var(--g1) 70%, var(--ink-strong)); }
+.lgdc-pform__wide, .lgdc-pform__where, .lgdc-pform__end { grid-column: 1 / -1; }
+.lgdc-pform :is(input:not([type=radio]), textarea) { width: 100%; box-sizing: border-box; padding: 10px 12px; font: 400 13.5px/20px var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink-strong); background: var(--b1, #f4f1ec); border: 1px solid var(--line); border-radius: 5px; resize: vertical; }
+.lgdc-pform :is(input, textarea):focus-visible { outline: 2px solid var(--g1); outline-offset: 1px; }
+.lgdc-pform__where legend { padding: 0; margin-bottom: 6px; }
+.lgdc-pform__where { grid-template-columns: repeat(3, 1fr); }
+.lgdc-pform__where legend { grid-column: 1 / -1; }
+.lgdc-pform__where label { position: relative; cursor: pointer; }
+.lgdc-pform__where input { position: absolute; opacity: 0; }
+.lgdc-pform__where span { display: grid; gap: 2px; padding: 12px 16px; font: 400 12.5px/18px var(--sans); letter-spacing: 0; text-transform: none; color: var(--ink); background: color-mix(in srgb, var(--g1) 8%, var(--tb)); border: 2px solid transparent; border-radius: 5px; }
+.lgdc-pform__where b { font: 600 14px/20px var(--sans); color: var(--ink-strong); }
+.lgdc-pform__where input:checked + span { background: color-mix(in srgb, var(--g1) 16%, var(--tb)); border-color: var(--g1); }
+.lgdc-pform__where input:focus-visible + span { outline: 2px solid var(--g1); outline-offset: 2px; }
+.lgdc-pform__end { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 4px; }
+.lgdc-pform button { padding: 11px 22px; font: 800 10px/14px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: #fff; background: var(--g1); border: 0; border-radius: 5px; cursor: pointer; }
+.lgdc-pform button:hover { background: color-mix(in srgb, var(--g1) 85%, #000); }
+.lgdc-pform__msg { font: 500 13px/18px var(--sans); color: var(--ink); }
+@media (max-width: 640px) { .lgdc-pform, .lgdc-pform__where { grid-template-columns: 1fr; } }
 .lgdc .lgdc-adm__head { display: grid; place-items: center; width: 64px; height: 64px; margin: 24px 26px 0; font-size: 36px; color: var(--g1); background: color-mix(in srgb, var(--g1) 14%, var(--tb)); border-radius: 50%; }
 .lgdc .lgdc-adm__head + .lgdc-adm__title { margin-top: 16px; }
 .lgdc .lgdc-post__body .lgdc-adm p.lgdc-adm__label { padding: 10px 24px; color: #fff; background: var(--g1); }

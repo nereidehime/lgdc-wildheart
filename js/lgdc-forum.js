@@ -432,6 +432,55 @@
     layout(content, post);
   });
 
+  // [formulaire=partenariat] dans un message : le formulaire de demande, qui remplit la réponse rapide
+  // (ou copie la demande si la page n'en a pas)
+  page.querySelectorAll('.lgdc-post__body .content').forEach(function (content) {
+    var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT), mark = null;
+    for (var t = walker.nextNode(); t && !mark; t = walker.nextNode()) if (/\[formulaire=partenariat\]/i.test(t.textContent)) mark = t;
+    if (!mark) return;
+    var holder = mark.parentElement.closest('p') || mark.parentElement;
+    var form = node('form', 'lgdc-pform');
+    form.noValidate = true;
+    form.innerHTML = '<label class="lgdc-pform__f">Nom du forum<input name="nom" required maxlength="80"></label>'
+      + '<label class="lgdc-pform__f">Lien du forum<input name="lien" type="url" required placeholder="https://…"></label>'
+      + '<label class="lgdc-pform__f">Genre<input name="genre" required maxlength="80" placeholder="RPG animalier, fantasy, city…"></label>'
+      + '<fieldset class="lgdc-pform__f lgdc-pform__where"><legend>Emplacements souhaités</legend>'
+      + '<label><input type="checkbox" name="place" value="Accueil"><span><b>Accueil</b>sur l’index et en pied de page</span></label>'
+      + '<label><input type="checkbox" name="place" value="Pied de page"><span><b>Pied de page</b>sur toutes les pages</span></label>'
+      + '<label><input type="checkbox" name="place" value="Échange de fiches"><span><b>Échange de fiches</b>sans bouton</span></label></fieldset>'
+      + '<label class="lgdc-pform__f">Bouton 50×50<input name="bouton" type="url" placeholder="Pour l’accueil ou le pied de page"></label>'
+      + '<label class="lgdc-pform__f">Ta fiche partenaire<input name="fiche" type="url" placeholder="Pour un échange de fiches"></label>'
+      + '<label class="lgdc-pform__f lgdc-pform__wide">Mini-contexte<textarea name="contexte" rows="4" required placeholder="L’univers de ton forum en quelques lignes"></textarea></label>'
+      + '<label class="lgdc-pform__f lgdc-pform__wide">Un mot pour nous<textarea name="mot" rows="3" placeholder="Facultatif"></textarea></label>'
+      + '<div class="lgdc-pform__end"><button type="submit">Préparer ma demande</button><span class="lgdc-pform__msg" role="status"></span></div>';
+    holder.replaceWith(form);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var f = form.elements, msg = form.querySelector('.lgdc-pform__msg');
+      // le bouton n'est demandé que pour un emplacement avec bouton, la fiche pour un échange
+      var places = Array.from(form.querySelectorAll('[name="place"]:checked')).map(function (c) { return c.value; });
+      if (!places.length) { msg.textContent = 'Choisis au moins un emplacement.'; return; }
+      f.bouton.required = places.some(function (p) { return p !== 'Échange de fiches'; });
+      f.fiche.required = places.indexOf('Échange de fiches') >= 0;
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      var v = function (k) { return f[k].value.replace(/\[|\]/g, '').trim(); };
+      var text = '[b]Forum :[/b] [url=' + v('lien') + ']' + v('nom') + '[/url]\n[b]Genre :[/b] ' + v('genre')
+        + '\n[b]Emplacements :[/b] ' + places.join(', ') + (v('bouton') ? '\n[b]Bouton :[/b] [img]' + v('bouton') + '[/img]' : '')
+        + (v('fiche') ? '\n[b]Fiche partenaire :[/b] [url=' + v('fiche') + ']' + v('fiche') + '[/url]' : '')
+        + '\n\n[b]Contexte :[/b]\n[quote]' + v('contexte') + '[/quote]' + (v('mot') ? '\n' + v('mot') : '');
+      var area = document.querySelector('textarea[name="message"]'), ed = null;
+      try { ed = area && window.jQuery && jQuery(area).sceditor('instance'); } catch (err) {}
+      if (area) {
+        if (ed && ed.val) ed.val(text);
+        area.value = text;
+        area.closest('form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        msg.textContent = 'Ta demande est dans la réponse, plus qu’à l’envoyer.';
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function () { msg.textContent = 'Demande copiée : colle-la dans ta réponse.'; });
+      }
+    });
+  });
+
   // [difficulté 13 +2] écrit par l'éditeur dans le message de RP : retiré du texte, gardé pour le verdict.
   // Forumactif publie le lancer dans un message à part, juste après, au nom du compte admin : le joueur
   // n'apparaît que dans « Le membre 'X' ». Le lancer reprend la balise du message précédent de ce joueur.
