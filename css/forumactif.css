@@ -481,6 +481,9 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc .lgdc-post__body .lgdc-roll .lgdc-roll__face { padding: 0 6px; color: #fff; background: linear-gradient(135deg, var(--g1), var(--g2)); border-radius: 7px; font: italic 900 19px/1 var(--serif); -webkit-box-decoration-break: slice; box-decoration-break: slice; }
 .lgdc .lgdc-post__body .lgdc-roll .lgdc-roll__total b { padding: 0; color: var(--ink-strong); background: none; font: italic 900 30px/1 var(--serif); }
 .lgdc .lgdc-post__body .lgdc-roll .lgdc-roll__end b { padding: 0; color: inherit; background: none; font: italic 900 20px/1 var(--serif); }
+.lgdc .lgdc-post__body .lgdc-roll .lgdc-roll__head { margin: 0 0 14px; }
+.lgdc .lgdc-post__body .lgdc-roll .lgdc-roll__total { margin: 14px 0 0; }
+.lgdc .lgdc-post__body .lgdc-roll .lgdc-roll__note { margin: 12px 16px 0; }
 .lgdc .lgdc-post__body .lgdc-roll .lgdc-roll__head i { color: var(--g1); font-weight: inherit; }
 .lgdc .lgdc-roll__note { margin: 12px 16px 0; font: 400 13px/19px var(--sans); color: var(--ink); }
 .lgdc .lgdc-dice__hunt { display: flex; flex-wrap: wrap; flex-basis: 100%; width: 100%; box-sizing: border-box; align-items: center; gap: 8px 14px; margin: 0 0 12px; padding: 10px 14px; background: var(--b3); border-radius: 5px; font: 400 13px/19px var(--sans); color: var(--ink-strong); }
