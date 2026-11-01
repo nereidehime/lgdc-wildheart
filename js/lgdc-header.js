@@ -106,7 +106,8 @@
     root.querySelectorAll('.lgdc-moon').forEach(function (el) { el.classList.add('is-ready'); });
   })();
 
-  /* ---------- intro : seule la bannière apparaît ---------- */
+  /* ---------- intro : seule la bannière apparaît ----------
+     x: 0 avec xPercent : sinon GSAP lit le translateX(-50%) du CSS en pixels et l'ajoute au xPercent (double décalage). */
   if (reduce || !hasGsap || skip) return;
   var q = function (s) { return root.querySelectorAll(s); };
   gsap.timeline({
@@ -117,10 +118,10 @@
     }
   })
     .fromTo(q('.lgdc-hero__photo'), { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: 2.6, ease: 'power2.out' }, 0)
-    .fromTo(q('.lgdc-hero__moon'), { opacity: 0, xPercent: -50, y: 40 }, { opacity: 1, xPercent: -50, y: 0, duration: 2.4 }, .1)
-    .fromTo(q('.lgdc-hero__render'), { opacity: 0, y: 70, xPercent: -50 }, { opacity: 1, y: 0, xPercent: -50, duration: 1.8 }, .3)
+    .fromTo(q('.lgdc-hero__moon'), { opacity: 0, x: 0, xPercent: -50, y: 40 }, { opacity: 1, x: 0, xPercent: -50, y: 0, duration: 2.4 }, .1)
+    .fromTo(q('.lgdc-hero__render'), { opacity: 0, y: 70, x: 0, xPercent: -50 }, { opacity: 1, y: 0, x: 0, xPercent: -50, duration: 1.8 }, .3)
     .fromTo(q('.lgdc-title__half--l'), { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 1.6 }, .7)
     .fromTo(q('.lgdc-title__half--r'), { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 1.6 }, .7)
     .fromTo(q('.lgdc-hero__left, .lgdc-hero__right'), { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 1.2, stagger: .12 }, 1.2)
-    .fromTo(q('.lgdc-moon'), { opacity: 0, y: 16, xPercent: -50 }, { opacity: 1, y: 0, xPercent: -50, duration: 1.2 }, 1.4);
+    .fromTo(q('.lgdc-moon'), { opacity: 0, y: 16, x: 0, xPercent: -50 }, { opacity: 1, y: 0, x: 0, xPercent: -50, duration: 1.2 }, 1.4);
 })();
