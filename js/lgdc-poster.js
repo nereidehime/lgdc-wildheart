@@ -290,6 +290,22 @@
   var found = (area ? area.value : '').match(TAG);
   if (found) { diff.value = found[1]; bonus.value = found[2] ? +found[2] : ''; mark(); }
   if (found && found[3] && HUNT[found[3]] && stepOf(found[4]) >= 0) hunt = { prey: found[3], step: stepOf(found[4]) };
+  if (hunt) banner('Chasse en cours : ' + hunt.prey + ', étape ' + (hunt.step + 1) + ' sur 4 : ' + STEPS[hunt.step] + '.');
+  // aperçu : la balise devient une ligne lisible (les dés ne sont lancés qu'à l'envoi)
+  document.querySelectorAll('.postbody .content').forEach(function (content) {
+    var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    for (var t = walker.nextNode(); t; t = walker.nextNode()) {
+      var m = t.textContent.match(/\[difficulté (\d+)(?: ([+-]\d+))?(?: chasse ([^,\]]+), ([^\]]+))?\]/);
+      if (!m) continue;
+      t.textContent = t.textContent.replace(m[0], '');
+      var plan = document.createElement('p');
+      plan.className = 'lgdc-roll__note lgdc-roll__plan';
+      plan.textContent = (m[3] ? 'Chasse : ' + m[3] + ', ' + m[4] + '. ' : 'Test. ') + 'Difficulté ' + m[1]
+        + (m[2] ? ', bonus ' + m[2] : '') + '. Les dés seront lancés à l’envoi.';
+      content.appendChild(plan);
+      break;
+    }
+  });
   if (form) form.addEventListener('submit', function () {
     var text = getText().replace(TAG, '');
     var picked = Array.from(list.querySelectorAll('select')).some(function (s) { return s.value; });
@@ -384,11 +400,14 @@
     var clanBonus = (state.clan === 'crepuscule' && state.step === 0) || (state.clan === 'orchidee' && state.step === 2) ? 1 : 0;
     bonus.value = clanBonus || '';
     mark();
+    banner('Chasse en cours : ' + state.prey + ', étape ' + (state.step + 1) + ' sur 4 : '
+      + STEPS[state.step] + '. Dés et difficulté préremplis' + (clanBonus ? ', avec le +1 du Clan.' : '.'));
+  }
+  function banner(text) {
     var info = document.createElement('p');
     info.className = 'lgdc-dice__hunt';
     info.innerHTML = '<span></span><button type="button">Ne pas tester ici</button>';
-    info.querySelector('span').textContent = 'Chasse en cours : ' + state.prey + ', étape ' + (state.step + 1) + ' sur 4 : '
-      + STEPS[state.step] + '. Dés et difficulté préremplis' + (clanBonus ? ', avec le +1 du Clan.' : '.');
+    info.querySelector('span').textContent = text;
     info.querySelector('button').addEventListener('click', function () {
       hunt = null;
       list.innerHTML = '';
