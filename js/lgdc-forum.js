@@ -203,6 +203,26 @@
   var STEPS = ['Guetter', 'Se faufiler', 'Bondir', 'Mordre'];
   // capacité de Clan : +1 en Guetter pour le Crépuscule, +1 en Bondir pour l'Orchidée
   var CLAN_STEP = { 'crépuscule': 0, 'orchidée': 2 };
+  // dégradé des dés : le territoire de la chasse, sinon le groupe de l'auteur
+  var CLAN_TINT = { 'crépuscule': ['#8e7f9a', '#b59ab8'], 'hêtre': ['#b07a4f', '#c99566'], 'orchidée': ['#c2a24f', '#d1b46a'], 'brouillard': ['#8a99a4', '#7fa39a'] };
+  function tint(card, pair) {
+    if (!pair || !pair[0]) return;
+    card.style.setProperty('--g1', pair[0]);
+    card.style.setProperty('--g2', pair[1] || pair[0]);
+  }
+  function ending(card, won, text, line) {
+    var end = document.createElement('div');
+    end.className = 'lgdc-roll__end ' + (won ? 'is-win' : 'is-fail');
+    var title = document.createElement('b');
+    title.textContent = text;
+    end.appendChild(title);
+    if (line) {
+      var code = document.createElement('code');
+      code.textContent = line;
+      end.appendChild(code);
+    }
+    card.appendChild(end);
+  }
   function note(card, text) {
     var p = document.createElement('p');
     p.className = 'lgdc-roll__note';
@@ -231,14 +251,36 @@
     return hit ? hit[1] : null;
   }
   // lancers de dés : le texte natif (« Le membre 'X' a effectué l'action suivante… ») devient une carte
-  page.querySelectorAll('.lgdc-post__body .content').forEach(function (content) {
-    // [difficulté 13 +2] écrit par l'éditeur : retiré du texte, gardé pour le verdict
-    var check = null;
+  // [difficulté 13 +2] écrit par l'éditeur dans le message de RP : retiré du texte, gardé pour le verdict.
+  // Forumactif publie le lancer dans un message à part, juste après, au nom du compte admin : le joueur
+  // n'apparaît que dans « Le membre 'X' ». Le lancer reprend la balise du message précédent de ce joueur.
+  var contents = Array.from(page.querySelectorAll('.lgdc-post__body .content'));
+  var checks = contents.map(function (content) {
+    var found = null;
     var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
     for (var t = walker.nextNode(); t; t = walker.nextNode()) {
       var m = t.textContent.match(/\[difficulté (\d+)(?: ([+-]\d+))?\]/);
-      if (m) { check = { diff: +m[1], bonus: m[2] ? +m[2] : 0 }; t.textContent = t.textContent.replace(m[0], ''); }
+      if (m) { found = { diff: +m[1], bonus: m[2] ? +m[2] : 0 }; t.textContent = t.textContent.replace(m[0], ''); }
     }
+    return found;
+  });
+  function poster(content) {
+    var name = content.closest('.lgdc-post');
+    name = name && name.querySelector('.lgdc-post__name');
+    return name ? name.textContent.replace(/\s+/g, ' ').trim() : '';
+  }
+  function roller(content) {
+    var m = content.innerHTML.match(/Le membre '\s*<strong>([^<]+)<\/strong>/);
+    return m ? m[1].replace(/\s+/g, ' ').trim() : '';
+  }
+  contents.forEach(function (content, index) {
+    var check = checks[index];
+    var player = roller(content);
+    // le dernier message de ce joueur parmi les trois précédents, sinon le message suivant s'il est de lui
+    for (var k = index - 1; !check && player && k >= 0 && k >= index - 3; k--) {
+      if (poster(contents[k]) === player) { check = checks[k]; break; }
+    }
+    if (!check && player && contents[index + 1] && poster(contents[index + 1]) === player) check = checks[index + 1];
     var starts = [];
     content.childNodes.forEach(function (node) {
       if (node.nodeType === 3 && /Le membre '\s*$/.test(node.textContent)) starts.push(node);
@@ -262,7 +304,12 @@
       head.className = 'lgdc-roll__head lgdc-micro';
       head.innerHTML = '<i class="ph-light ph-dice-five" aria-hidden="true"></i>Lancer de dés';
       card.appendChild(head);
-      var total = 0, count = 0, faces = [], prey = null, territory = null, plainRows = [];
+      // couleur du groupe du joueur qui a lancé (le message du lancer est au nom de l'admin)
+      var own = contents.map(function (c) { return c.closest('.lgdc-post'); })
+        .filter(function (p, k) { return p && poster(contents[k]) === player; })[0];
+      var post = own || content.closest('.lgdc-post');
+      if (post) tint(card, [post.style.getPropertyValue('--g1'), post.style.getPropertyValue('--g2')]);
+      var total = 0, count = 0, faces = [], prey = null, territory = null, plainRows = [], marks = [];
       rolls.forEach(function (roll) {
         var row = document.createElement('div');
         row.className = 'lgdc-roll__row';
@@ -283,6 +330,7 @@
           }
           if (result) {
             special = true;
+            marks.push(result);
             var out = document.createElement('span');
             out.className = 'lgdc-roll__out';
             out.textContent = result;
@@ -298,6 +346,9 @@
       if (prey && faces.length >= 2) {
         // la chasse se déroule dans l'ordre : arrêt au premier échec, un critique saute l'étape suivante
         head.lastChild.textContent = 'Chasse';
+        tint(card, CLAN_TINT[territory]);
+        card.classList.add('is-hunt');
+        card.dataset.mark = prey;
         plainRows.forEach(function (row) { row.remove(); });
         var step = 0, caught = false, over = false;
         STEPS.forEach(function (name, s) {
@@ -335,8 +386,8 @@
           step = s + (verdict[0] === 'crit' ? 2 : 1);
           if (step >= 4) { caught = true; over = true; }
         });
-        if (caught) note(card, 'Proie attrapée. À indiquer en fin de message : Chasse : ' + prey + ' (+' + HUNT[prey][4] + ')');
-        else note(card, 'La proie s’enfuit.');
+        if (caught) ending(card, true, 'Proie attrapée', 'Chasse : ' + prey + ' (+' + HUNT[prey][4] + ')');
+        else ending(card, false, 'La proie s’enfuit');
       }
       else {
         var tested = check && count > 0 && i === 0;
@@ -346,6 +397,7 @@
           sum.innerHTML = '<span class="lgdc-micro">total</span><b></b>';
           var score = total + (tested ? check.bonus : 0);
           sum.querySelector('b').textContent = score;
+          card.dataset.mark = score;
           if (tested) {
             if (check.bonus) sum.querySelector('.lgdc-micro').textContent = 'total, bonus ' + (check.bonus > 0 ? '+' : '') + check.bonus;
             var against = document.createElement('span');
@@ -356,8 +408,169 @@
           card.appendChild(sum);
         }
       }
+      if (!card.dataset.mark) card.dataset.mark = marks.length ? marks[0] : count > 1 ? total : (faces[0] || '');
       nodes.slice(1).forEach(function (node) { node.remove(); });
       start.after(card);
+    });
+  });
+  // lancer de dés du forum : la balise écrite par l'éditeur ([lancer d8 d6 difficulté 13 +2],
+  // [chasse Orchidée d8 d12 …], [portée]) devient une fiche. Chaque dé est calculé à partir des numéros
+  // du message, du sujet et du compte, et de sa position : le résultat est le même pour tous les visiteurs.
+  // cyrb53 (hachage) puis mulberry32 (tirage), deux algorithmes publics.
+  function cyrb53(str) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var c = 0; c < str.length; c++) {
+      var ch = str.charCodeAt(c);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+  }
+  function mulberry32(seed) {
+    var t = (seed + 0x6d2b79f5) | 0;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  function die(seed, sides) { return 1 + Math.floor(mulberry32(cyrb53(seed) % 4294967296) * sides); }
+  function face(value) {
+    var b = document.createElement('b');
+    b.className = 'lgdc-roll__face';
+    b.textContent = value;
+    return b;
+  }
+  function line(card, label, values, out) {
+    var row = document.createElement('div');
+    row.className = 'lgdc-roll__row' + (out ? ' is-special' : '');
+    var name = document.createElement('span');
+    name.className = 'lgdc-roll__die';
+    name.textContent = label;
+    row.appendChild(name);
+    values.forEach(function (v) { row.appendChild(face(v)); });
+    if (out) {
+      var o = document.createElement('span');
+      o.className = 'lgdc-roll__out';
+      o.textContent = out;
+      row.appendChild(o);
+    }
+    card.appendChild(row);
+    return row;
+  }
+  function rollCard(kind, inner, seedBase, post) {
+    var card = document.createElement('div');
+    card.className = 'lgdc-roll';
+    var head = document.createElement('p');
+    head.className = 'lgdc-roll__head lgdc-micro';
+    head.innerHTML = '<i class="ph-light ph-dice-five" aria-hidden="true"></i>';
+    head.appendChild(document.createTextNode(/^chasse$/i.test(kind) ? 'Chasse' : /^portée$/i.test(kind) ? 'Portée' : 'Lancer de dés'));
+    card.appendChild(head);
+    if (post) tint(card, [post.style.getPropertyValue('--g1'), post.style.getPropertyValue('--g2')]);
+    var words = inner.trim().split(/\s+/).filter(Boolean);
+    var n = 0;
+    var roll = function (sides) { return die(seedBase + ':' + (n++) + ':' + sides, sides); };
+
+    if (/^portée$/i.test(kind)) {
+      var litter = roll(100);
+      var res = lookup('Portée', String(litter));
+      line(card, 'Portée', [litter], res);
+      card.dataset.mark = res;
+      return card;
+    }
+
+    if (/^chasse$/i.test(kind)) {
+      var territory = Object.keys(PREY).find(function (clan) { return plain(clan) === plain(words[0] || ''); });
+      if (!territory) return null;
+      var d100 = roll(100);
+      var prey = lookup('Chasse : ' + territory, String(d100));
+      tint(card, CLAN_TINT[territory]);
+      card.classList.add('is-hunt');
+      card.dataset.mark = prey;
+      line(card, 'Chasse : ' + words[0], [d100], prey);
+      var dice = words.slice(1).filter(function (w) { return /^d\d+$/i.test(w); });
+      var faces = dice.map(function (w) { return roll(+w.slice(1)); });
+      var step = 0, caught = false, over = false;
+      STEPS.forEach(function (stepName, st) {
+        var row = line(card, stepName, []);
+        row.classList.add('lgdc-roll__step');
+        var pair = faces.slice(st * 2, st * 2 + 2);
+        if (over || st < step || pair.length < 2) {
+          row.classList.add('is-off');
+          var off = document.createElement('span');
+          off.className = 'lgdc-micro lgdc-roll__diff';
+          off.textContent = st < step ? 'sautée' : 'non jouée';
+          row.appendChild(off);
+          return;
+        }
+        var plus = CLAN_STEP[territory] === st ? 1 : 0;
+        var score = pair[0] + pair[1] + plus;
+        pair.forEach(function (v) { row.appendChild(face(v)); });
+        var against = document.createElement('span');
+        against.className = 'lgdc-micro lgdc-roll__diff';
+        against.textContent = score + (plus ? ' (+1 du Clan)' : '') + ' contre ' + HUNT[prey][st];
+        var verdict = judge(pair, score, HUNT[prey][st]);
+        row.append(against, chip(verdict));
+        if (verdict[0] === 'fail' || verdict[0] === 'fumble') { over = true; return; }
+        step = st + (verdict[0] === 'crit' ? 2 : 1);
+        if (step >= 4) { caught = true; over = true; }
+      });
+      if (caught) ending(card, true, 'Proie attrapée', 'Chasse : ' + prey + ' (+' + HUNT[prey][4] + ')');
+      else ending(card, false, 'La proie s’enfuit');
+      return card;
+    }
+
+    // [lancer d8 d6 difficulté 13 +2]
+    var d = words.indexOf('difficulté');
+    var diff = d >= 0 ? parseInt(words[d + 1], 10) : 0;
+    var bonus = d >= 0 && words[d + 2] ? parseInt(words[d + 2], 10) || 0 : 0;
+    var list = (d >= 0 ? words.slice(0, d) : words).filter(function (w) { return /^d\d+$/i.test(w) && +w.slice(1) >= 2 && +w.slice(1) <= 100; });
+    if (!list.length) return null;
+    var values = list.map(function (w) { return roll(+w.slice(1)); });
+    list.forEach(function (w, k) { line(card, w, [values[k]]); });
+    var total = values.reduce(function (a, b) { return a + b; }, 0);
+    if (values.length > 1 || diff) {
+      var sum = document.createElement('p');
+      sum.className = 'lgdc-roll__total';
+      sum.innerHTML = '<span class="lgdc-micro">total</span><b></b>';
+      var scoreAll = total + (diff ? bonus : 0);
+      sum.querySelector('b').textContent = scoreAll;
+      if (diff) {
+        if (bonus) sum.querySelector('.lgdc-micro').textContent = 'total, bonus ' + (bonus > 0 ? '+' : '') + bonus;
+        var vs = document.createElement('span');
+        vs.className = 'lgdc-micro lgdc-roll__diff';
+        vs.textContent = 'difficulté ' + diff;
+        sum.append(vs, chip(judge(values, scoreAll, diff)));
+      }
+      card.appendChild(sum);
+      card.dataset.mark = scoreAll;
+    } else card.dataset.mark = values[0];
+    return card;
+  }
+  function plain(text) { return String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+  page.querySelectorAll('.lgdc-post').forEach(function (post) {
+    var content = post.querySelector('.lgdc-post__body .content');
+    if (!content) return;
+    var postId = post.id || (post.className.match(/post--(\d+)/) || [])[1] || '';
+    var date = post.querySelector('.lgdc-post__date');
+    var topicId = ((date && date.getAttribute('href')) || location.pathname).match(/\/t(\d+)/);
+    topicId = topicId ? topicId[1] : '';
+    var author = post.querySelector('a.lgdc-post__name, .lgdc-post__name a');
+    var userId = author ? ((author.getAttribute('href') || '').match(/\/u(\d+)/) || [])[1] || '0' : '0';
+    var found = 0;
+    var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    var texts = [];
+    for (var t = walker.nextNode(); t; t = walker.nextNode()) if (/\[(lancer|chasse|portée)[^\]]*\]/i.test(t.textContent)) texts.push(t);
+    texts.forEach(function (text) {
+      var re = /\[(lancer|chasse|portée)([^\]]*)\]/gi, m, last = 0, frag = document.createDocumentFragment(), src = text.textContent;
+      while ((m = re.exec(src))) {
+        frag.appendChild(document.createTextNode(src.slice(last, m.index)));
+        var card = postId && topicId ? rollCard(m[1], m[2], 'wildheart:' + topicId + ':' + postId + ':' + userId + ':' + (found++), post) : null;
+        frag.appendChild(card || document.createTextNode(m[0]));
+        last = re.lastIndex;
+      }
+      frag.appendChild(document.createTextNode(src.slice(last)));
+      text.replaceWith(frag);
     });
   });
   var posters = page.querySelector('.lgdc-fa-posters');

@@ -25,6 +25,10 @@
       who.style.setProperty('--g1', color);
       who.style.setProperty('--g2', ends[color] || color);
       box.replaceWith(who);
+      // lancer de dés du forum : la balise ne se calcule que dans le sujet
+      hit.querySelectorAll('.lgdc-search-hit__excerpt').forEach(function (text) {
+        if (/\[(lancer|chasse|portée)[^\]]*\]/i.test(text.innerHTML)) text.innerHTML = text.innerHTML.replace(/\[(lancer|chasse|portée)[^\]]*\]/gi, '(lancer de dés, à voir dans le sujet)');
+      });
       // « 1 Réponses » natif : accord et minuscule
       var forum = hit.querySelector('.lgdc-search-hit__forum');
       forum.lastChild.textContent = forum.lastChild.textContent.replace(/(\d+)\s*\S+\s*$/, function (m, n) { return n + (n === '0' || n === '1' ? ' réponse' : ' réponses'); });

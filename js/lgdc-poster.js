@@ -1,7 +1,6 @@
 /* Rédaction (posting_body) : la boîte des smileys devient repliable ;
-   le tableau natif des dés devient une liste de lignes,
-   un dé et un nombre de lancers par ligne, avec « Ajouter un dé » et un bouton pour retirer une ligne.
-   Les champs gardent les noms natifs (post_dice_N, nb_rolls_N) : Forumactif les lit à l'envoi comme avant. */
+   les dés du forum remplacent le module natif : une ligne par dé, avec « Ajouter un dé »,
+   et le lancer est écrit en balise dans le message (la fiche du sujet calcule les résultats). */
 (function () {
   'use strict';
   var page = document.querySelector('.lgdc-fa-posting');
@@ -43,21 +42,21 @@
     if (frame) { frame.addEventListener('load', dress); dress(); }
   }
 
+  // lancer de dés du forum : l'éditeur écrit une balise en fin de message ([lancer d8 d6 difficulté 13 +2],
+  // [chasse Orchidée d8 d12 …], [portée]) et la fiche du sujet calcule les dés à partir des numéros
+  // du message, du sujet et du compte. Le module natif de Forumactif n'est plus utilisé.
+  var area = document.querySelector('textarea[name="message"]');
+  var form = area && area.closest('form');
+  if (!form) return;
   var table = document.getElementById('list_dice');
-  if (!table) return;
 
   // chasse en un seul lancer : les deux attributs de chaque étape (guidebook, Les gestes)
   var GESTES = [['intelligence', 'volonte'], ['dexterite', 'volonte'], ['dexterite', 'intelligence'], ['puissance', 'intelligence']];
-
-  // les dés déjà choisis (aperçu, édition) : le script natif les a ajoutés au tableau au chargement
-  var model = table.querySelector('select[name^="post_dice_"]');
-  var options = Array.from(model.options).map(function (o) { return [o.value, o.textContent.trim()]; });
-  var chosen = Array.from(table.querySelectorAll('select[name^="post_dice_"]')).map(function (select) {
-    var n = select.name.slice(10);
-    var rolls = table.querySelector('input[name="nb_rolls_' + n + '"]');
-    return { dice: select.value, rolls: rolls ? rolls.value : '1' };
-  }).filter(function (d, i) { return d.dice || i === 0; });
-  var title = (table.closest('.panel').querySelector('h3') || {}).textContent || 'Lancer de dés';
+  var TERRITORIES = ['Crépuscule', 'Hêtre', 'Orchidée', 'Brouillard'];
+  var options = [['', 'Choisir un dé'], ['d4', 'd4'], ['d6', 'd6'], ['d8', 'd8'], ['d10', 'd10'], ['d12', 'd12']]
+    .concat(TERRITORIES.map(function (t) { return ['chasse ' + t, 'Chasse : ' + t]; }))
+    .concat([['portée', 'Portée']]);
+  var title = 'Lancer de dés';
 
   var box = document.createElement('div');
   box.className = 'lgdc-dice';
@@ -69,11 +68,9 @@
   add.innerHTML = '<i class="ph-light ph-plus" aria-hidden="true"></i>Ajouter un dé';
   box.append(list, add);
 
-  // renumérote les champs dans l'ordre affiché, comme le tableau natif (post_dice_0, post_dice_1…)
+  // numéro de chaque ligne et bouton pour la retirer
   function renumber() {
     Array.from(list.children).forEach(function (row, i) {
-      row.querySelector('select').name = 'post_dice_' + i;
-      row.querySelector('input').name = 'nb_rolls_' + i;
       row.querySelector('.lgdc-dice__n').textContent = String(i + 1);
       row.querySelector('.lgdc-dice__remove').hidden = list.children.length < 2;
     });
@@ -154,7 +151,7 @@
     picker.hidden = false;
     search.value = '';
     filter();
-    var value = li.querySelector('select').value;
+    var value = li.querySelector('.lgdc-dice__value').value;
     groups.querySelectorAll('.lgdc-dice__chip').forEach(function (chip) { chip.classList.toggle('is-on', chip.dataset.value === value); });
     search.focus();
   }
@@ -167,7 +164,7 @@
   }
   function choose(value) {
     if (!current) return;
-    var select = current.querySelector('select');
+    var select = current.querySelector('.lgdc-dice__value');
     select.value = value;
     current.querySelector('.lgdc-dice__pick span').textContent = dieName(value);
     close();
@@ -191,16 +188,11 @@
     li.className = 'lgdc-dice__row';
     var n = document.createElement('span');
     n.className = 'lgdc-dice__n';
-    // le select natif reste dans le formulaire (post_dice_N), caché derrière le bouton du sélecteur
-    var select = document.createElement('select');
-    select.hidden = true;
-    options.forEach(function (pair) {
-      var o = document.createElement('option');
-      o.value = pair[0];
-      o.textContent = pair[0] ? pair[1] : 'Choisir un dé';
-      if (pair[0] === dice) o.selected = true;
-      select.appendChild(o);
-    });
+    // le dé choisi, gardé dans un champ caché sans nom (rien n'est envoyé à Forumactif)
+    var select = document.createElement('input');
+    select.type = 'hidden';
+    select.className = 'lgdc-dice__value';
+    select.value = dice || '';
     var pick = document.createElement('button');
     pick.type = 'button';
     pick.className = 'lgdc-dice__pick';
@@ -228,7 +220,7 @@
     li.append(n, select, pick, label, remove);
     return li;
   }
-  chosen.forEach(function (d) { list.appendChild(row(d.dice, d.rolls)); });
+  list.appendChild(row('', '1'));
   add.addEventListener('click', function () {
     list.appendChild(row('', '1'));
     renumber();
@@ -236,20 +228,25 @@
   });
   renumber();
 
-  var heading = table.closest('.panel').querySelector('h3');
-  if (heading) heading.textContent = title.trim().replace(/^./, function (c) { return c.toUpperCase(); });
-  table.replaceWith(box);
-
-  // difficulté et bonus du test : écrits en fin de message sous la forme [difficulté 13 +2],
-  // que la fiche de résultat lit pour donner le verdict
-  var TAG = /\n*\[difficulté (\d+)(?: ([+-]\d+))?\]\s*$/;
-  var form = box.closest('form');
-  var area = form && form.querySelector('textarea[name="message"]');
-  function editor() {
-    try { return window.jQuery && area && jQuery(area).sceditor('instance'); } catch (e) { return null; }
+  if (table && table.closest('.panel')) {
+    var heading = table.closest('.panel').querySelector('h3');
+    if (heading) heading.textContent = title;
+    table.replaceWith(box);
+  } else {
+    var panel = document.createElement('div');
+    panel.className = 'panel lgdc-dice-panel';
+    panel.innerHTML = '<h3>' + title + '</h3>';
+    panel.appendChild(box);
+    (area.closest('.panel') || area).after(panel);
   }
-  function getText() { var ed = editor(); return ed && ed.val ? ed.val() : (area ? area.value : ''); }
-  function setText(text) { var ed = editor(); if (ed && ed.val) ed.val(text); if (area) area.value = text; }
+
+  // la balise du lancer, en fin de message
+  var TAG = /\n*\[(lancer|chasse|portée)([^\]]*)\]\s*$/i;
+  function editor() {
+    try { return window.jQuery && jQuery(area).sceditor('instance'); } catch (e) { return null; }
+  }
+  function getText() { var ed = editor(); return ed && ed.val ? ed.val() : area.value; }
+  function setText(text) { var ed = editor(); if (ed && ed.val) ed.val(text); area.value = text; }
   var test = document.createElement('div');
   test.className = 'lgdc-dice__test';
   test.innerHTML = '<label class="lgdc-micro">Difficulté <input type="number" min="1" max="99" class="lgdc-dice__diff" placeholder="—"></label>'
@@ -271,40 +268,68 @@
   }
   diff.addEventListener('input', mark);
   box.insertBefore(test, add);
-  // aperçu ou édition : la balise déjà écrite remplit les champs, puis quitte la zone de texte
-  var found = (area ? area.value : '').match(TAG);
-  if (found) {
-    diff.value = found[1];
-    bonus.value = found[2] ? +found[2] : '';
+
+  // les lignes choisies → la balise
+  function tag() {
+    var rows = Array.from(list.children).map(function (li) {
+      return { die: li.querySelector('.lgdc-dice__value').value, rolls: Math.max(1, Math.min(99, parseInt(li.querySelector('.lgdc-dice__rolls input').value, 10) || 1)) };
+    }).filter(function (r) { return r.die; });
+    if (!rows.length) return '';
+    var dice = [];
+    rows.forEach(function (r) { if (/^d\d+$/.test(r.die)) for (var n = 0; n < r.rolls; n++) dice.push(r.die); });
+    var hunt = rows.find(function (r) { return /^chasse /.test(r.die); });
+    if (hunt) return '[chasse ' + hunt.die.slice(7) + (dice.length ? ' ' + dice.slice(0, 8).join(' ') : '') + ']';
+    if (rows.some(function (r) { return r.die === 'portée'; })) return '[portée]';
+    if (!dice.length) return '';
+    var b = parseInt(bonus.value, 10);
+    return '[lancer ' + dice.join(' ') + (+diff.value > 0 ? ' difficulté ' + (+diff.value) + (b ? ' ' + (b > 0 ? '+' : '') + b : '') : '') + ']';
+  }
+  // la balise → les lignes (aperçu, édition d'un message)
+  function restore(kind, inner) {
+    var words = inner.trim().split(/\s+/).filter(Boolean);
+    list.innerHTML = '';
+    if (/^portée$/i.test(kind)) list.appendChild(row('portée', '1'));
+    else {
+      if (/^chasse$/i.test(kind)) {
+        var territory = TERRITORIES.find(function (t) { return plain(t) === plain(words[0] || ''); });
+        list.appendChild(row(territory ? 'chasse ' + territory : '', '1'));
+        words = words.slice(1);
+      }
+      var d = words.indexOf('difficulté');
+      if (d >= 0) { diff.value = words[d + 1] || ''; bonus.value = words[d + 2] ? parseInt(words[d + 2], 10) : ''; words = words.slice(0, d); }
+      words.filter(function (w) { return /^d\d+$/.test(w); }).forEach(function (w) { list.appendChild(row(w, '1')); });
+    }
+    if (!list.children.length) list.appendChild(row('', '1'));
+    renumber();
     mark();
+  }
+  var found = area.value.match(TAG);
+  if (found) {
+    restore(found[1], found[2]);
     var strip = function () { var text = getText(); if (TAG.test(text)) setText(text.replace(TAG, '')); };
     strip();
     setTimeout(strip, 300);
     setTimeout(strip, 1500);
   }
-  // aperçu : la balise devient une ligne lisible (les dés ne sont lancés qu'à l'envoi)
-  document.querySelectorAll('.postbody .content').forEach(function (content) {
+  // aperçu : le message n'a pas encore de numéro, les dés seront lancés à l'envoi ;
+  // revue du sujet : les lancers déjà postés se lisent dans le sujet
+  document.querySelectorAll('.postbody .content, .lgdc-fa-posting .content').forEach(function (content) {
+    var preview = content.previousElementSibling && content.previousElementSibling.classList.contains('h3');
     var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
-    for (var t = walker.nextNode(); t; t = walker.nextNode()) {
-      var m = t.textContent.match(/\[difficulté (\d+)(?: ([+-]\d+))?\]/);
-      if (!m) continue;
-      t.textContent = t.textContent.replace(m[0], '');
-      var plan = document.createElement('p');
-      plan.className = 'lgdc-roll__note';
-      plan.textContent = 'Test : difficulté ' + m[1] + (m[2] ? ', bonus ' + m[2] : '') + '. Les dés seront lancés à l’envoi.';
-      content.appendChild(plan);
-      break;
-    }
+    var texts = [];
+    for (var t = walker.nextNode(); t; t = walker.nextNode()) if (/\[(lancer|chasse|portée)[^\]]*\]/i.test(t.textContent)) texts.push(t);
+    texts.forEach(function (text) {
+      text.textContent = text.textContent.replace(/\[(lancer|chasse|portée)([^\]]*)\]/gi, function (all, kind, inner) {
+        if (!preview) return '(lancer de dés, à voir dans le sujet)';
+        return (/^chasse/i.test(kind) ? 'Chasse :' + inner.replace(/ d\d+/g, '') : /^portée/i.test(kind) ? 'Portée' : 'Lancer :' + inner)
+          + '. Les dés seront lancés à l’envoi.';
+      });
+    });
   });
-  if (form) form.addEventListener('submit', function () {
+  form.addEventListener('submit', function () {
     var text = getText().replace(TAG, '');
-    var picked = Array.from(list.querySelectorAll('select')).some(function (s) { return s.value; });
-    var hunting = Array.from(list.querySelectorAll('select')).some(function (s) { return /^chasse/i.test(dieName(s.value)); });
-    if (picked && !hunting && +diff.value > 0) {
-      var b = parseInt(bonus.value, 10);
-      text += '\n[difficulté ' + (+diff.value) + (b ? ' ' + (b > 0 ? '+' : '') + b : '') + ']';
-    }
-    setText(text);
+    var line = tag();
+    setText(line ? text + '\n' + line : text);
   }, true);
 
   // « Lancer une chasse » : le dé Chasse du territoire, puis les deux dés de chaque étape,
@@ -341,11 +366,11 @@
     bonus.value = '';
     mark();
   }
-  if (me && me !== '-1' && options.some(function (o) { return /^chasse/i.test(o[1]); })) {
+  if (me && me !== '-1') {
     var hunt = document.createElement('div');
     hunt.className = 'lgdc-dice__hunt';
     hunt.innerHTML = '<span class="lgdc-micro">Lancer une chasse</span>';
-    ['Crépuscule', 'Hêtre', 'Orchidée', 'Brouillard'].forEach(function (territory) {
+    TERRITORIES.forEach(function (territory) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'lgdc-dice__level';
