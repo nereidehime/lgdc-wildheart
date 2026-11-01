@@ -569,35 +569,35 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--line,
 .lgdc .lgdc-agree__go input:hover { background: var(--a2); }
 
 /* ==== INSCRIPTION, ÉTAPE 2 : le formulaire (profile_add_body en mode inscription, ciblé par #username_reg) ==== */
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) { box-sizing: border-box; max-width: 560px; margin: 34px auto 10px; padding: 30px 34px; background: var(--b1); border: 2px solid var(--line); border-radius: 10px; box-shadow: 0 0 0 4px var(--b1), 0 0 0 6px var(--line); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) { box-sizing: border-box; max-width: 560px; margin: 34px auto 10px; padding: 30px 34px; background: var(--b1); border: 2px solid var(--line); border-radius: 10px; box-shadow: 0 0 0 4px var(--b1), 0 0 0 6px var(--line); }
 .lgdc-fa-page .panel:has(> #ucp #username_reg), .lgdc-fa-page .panel:has(#ucp #username_reg) { padding: 0; background: none; border: 0; box-shadow: none; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) h1.page-title { margin: 0 0 8px; padding: 0; border: 0; font: italic 900 34px/1.1 var(--serif); letter-spacing: -.5px; text-transform: none; text-align: left; color: var(--ink-strong); }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) :is(.panel, .inner, fieldset) { margin: 0; padding: 0; background: none; border: 0; box-shadow: none; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) :is(.corners-top, .corners-bottom) { display: none; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) .panel p { margin: 0 0 20px; font: 400 13px/20px var(--sans); color: var(--ink-soft); }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) dl { display: flex; flex-direction: column; gap: 6px; margin: 0 0 16px; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) dt { margin: 0; text-align: left; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) dt label { font: 800 10px/14px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) dd { margin: 0; flex-wrap: wrap; align-items: center; gap: 8px; text-align: left; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) :is(input[type="text"], input[type="email"], input[type="password"]) { box-sizing: border-box; width: 100% !important; min-height: 42px; padding: 9px 12px; color: var(--ink-strong); background: var(--b2); border: 2px solid var(--line); border-radius: 5px; font: 500 14px/20px var(--sans); }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) :is(input[type="text"], input[type="email"], input[type="password"]):focus { border-color: var(--ink-strong); outline: 0; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) .password-container { position: relative; flex: 1 1 100%; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) .password-container input { padding-right: 40px !important; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) img.show_hide_pwd { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); cursor: pointer; opacity: .6; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) #cont_pwd { display: flex; gap: 6px; float: none; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) .pwd_img { padding: 3px 8px; border-radius: 4px; background: var(--b3); font: 800 9.5px/12px var(--sans); letter-spacing: .6px; text-transform: uppercase; color: var(--ink-soft); }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) dl:has(#wantsnews) dt { display: none; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) dd:has(#wantsnews) { display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) dd:has(#wantsnews) label { font: 400 13px/20px var(--sans); color: var(--ink); }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) #wantsnews { margin: 0; accent-color: var(--a1); }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) fieldset.submit-buttons { display: flex; gap: 10px; margin-top: 22px; padding-top: 20px; border-top: 2px solid var(--b3); font-size: 0; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) fieldset.submit-buttons input { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 12px 22px !important; border-radius: 5px; font: 800 11px/16px var(--sans); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) input.button1 { color: #fff; background: var(--a1); border: 0; }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) input.button1:hover { background: var(--a2); }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) input.button2 { color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); }
-.lgdc-fa-page #ucp:is(:has(#username_reg), :has(input[name="password_confirm"])) input.button2:hover { border-color: var(--a2); color: var(--a1); }
-.lgdc-fa-page #ucp:has(input[name="password_confirm"]) .cf-turnstile { margin: 4px 0 0; }
-.lgdc-fa-page #ucp:has(input[name="password_confirm"]) dl:has(#submit) { margin: 22px 0 0; padding-top: 20px; border-top: 2px solid var(--b3); }
-.lgdc-fa-page #ucp:has(input[name="password_confirm"]) dl:has(#submit) dt { display: none; }
-.lgdc-fa-page #ucp:has(input[name="password_confirm"]) dl:has(#submit) dd { display: flex; gap: 10px; font-size: 0; }
-.lgdc-fa-page #ucp:has(input[name="password_confirm"]) dl:has(#submit) input:is(.button1, .button2) { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 12px 22px !important; border-radius: 5px; font: 800 11px/16px var(--sans); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) h1.page-title { margin: 0 0 8px; padding: 0; border: 0; font: italic 900 34px/1.1 var(--serif); letter-spacing: -.5px; text-transform: none; text-align: left; color: var(--ink-strong); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) :is(.panel, .inner, fieldset) { margin: 0; padding: 0; background: none; border: 0; box-shadow: none; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) :is(.corners-top, .corners-bottom) { display: none; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) .panel p { margin: 0 0 20px; font: 400 13px/20px var(--sans); color: var(--ink-soft); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) dl { display: flex; flex-direction: column; gap: 6px; margin: 0 0 16px; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) dt { margin: 0; text-align: left; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) dt label { font: 800 10px/14px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--ink-soft); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) dd { margin: 0; flex-wrap: wrap; align-items: center; gap: 8px; text-align: left; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) :is(input[type="text"], input[type="email"], input[type="password"]) { box-sizing: border-box; width: 100% !important; min-height: 42px; padding: 9px 12px; color: var(--ink-strong); background: var(--b2); border: 2px solid var(--line); border-radius: 5px; font: 500 14px/20px var(--sans); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) :is(input[type="text"], input[type="email"], input[type="password"]):focus { border-color: var(--ink-strong); outline: 0; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) .password-container { position: relative; flex: 1 1 100%; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) .password-container input { padding-right: 40px !important; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) img.show_hide_pwd { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); cursor: pointer; opacity: .6; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) #cont_pwd { display: flex; gap: 6px; float: none; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) .pwd_img { padding: 3px 8px; border-radius: 4px; background: var(--b3); font: 800 9.5px/12px var(--sans); letter-spacing: .6px; text-transform: uppercase; color: var(--ink-soft); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) dl:has(#wantsnews) dt { display: none; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) dd:has(#wantsnews) { display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) dd:has(#wantsnews) label { font: 400 13px/20px var(--sans); color: var(--ink); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) #wantsnews { margin: 0; accent-color: var(--a1); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) fieldset.submit-buttons { display: flex; gap: 10px; margin-top: 22px; padding-top: 20px; border-top: 2px solid var(--b3); font-size: 0; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) fieldset.submit-buttons input { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 12px 22px !important; border-radius: 5px; font: 800 11px/16px var(--sans); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) input.button1 { color: #fff; background: var(--a1); border: 0; }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) input.button1:hover { background: var(--a2); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) input.button2 { color: var(--ink-strong); background: var(--b1); border: 2px solid var(--line); }
+.lgdc-fa-page :is(#ucp:has(#username_reg), #form_confirm) input.button2:hover { border-color: var(--a2); color: var(--a1); }
+.lgdc-fa-page #form_confirm .cf-turnstile { margin: 4px 0 0; }
+.lgdc-fa-page #form_confirm dl:has(#submit) { margin: 22px 0 0; padding-top: 20px; border-top: 2px solid var(--b3); }
+.lgdc-fa-page #form_confirm dl:has(#submit) dt { display: none; }
+.lgdc-fa-page #form_confirm dl:has(#submit) dd { display: flex; gap: 10px; font-size: 0; }
+.lgdc-fa-page #form_confirm dl:has(#submit) input:is(.button1, .button2) { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 12px 22px !important; border-radius: 5px; font: 800 11px/16px var(--sans); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; }
