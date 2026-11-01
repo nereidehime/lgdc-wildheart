@@ -340,10 +340,13 @@
       var title = o.titre ? node('h2', 'lgdc-' + kind + '__title', o.titre) : null;
       if (kind === 'tpl') {
         var top = node('div', 'lgdc-tpl__top');
-        if (/^https?:\/\//.test(o.image || '')) top.style.setProperty('--img', 'url("' + o.image.replace(/"/g, '') + '")');
+        // avec une image : bannière et avatar ; sans image : variante unie, sans avatar (comme la maquette)
+        var banner = /^https?:\/\//.test(o.image || '');
+        if (banner) top.style.setProperty('--img', 'url("' + o.image.replace(/"/g, '') + '")');
         else box.classList.add('lgdc-tpl--plain');
         if (title) top.appendChild(title);
-        box.append(top, avatar('lgdc-tpl__av'));
+        box.appendChild(top);
+        if (banner) box.appendChild(avatar('lgdc-tpl__av'));
         if (where(o)) box.appendChild(node('p', 'lgdc-tpl__where', where(o)));
         text.className = 'lgdc-tpl__text';
         box.appendChild(text);
