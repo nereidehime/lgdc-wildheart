@@ -360,10 +360,13 @@
     });
     return state;
   }
-  var topic = (location.search.match(/[?&]t=(\d+)/) || [])[1];
+  // après un aperçu, l'adresse n'a plus ?t= : les champs cachés du formulaire gardent le sujet et le mode
+  var hidden = function (name) { var input = form && form.querySelector('input[type="hidden"][name="' + name + '"]'); return input ? input.value : ''; };
+  var topic = (location.search.match(/[?&]t=(\d+)/) || [])[1] || hidden('t');
+  var replying = /mode=reply/.test(location.search) || hidden('mode') === 'reply';
   var me = window._userdata && String(window._userdata.user_id);
   var empty = !Array.from(list.querySelectorAll('select')).some(function (s) { return s.value; });
-  if (topic && me && me !== '-1' && /mode=reply/.test(location.search) && empty && !found) {
+  if (topic && me && me !== '-1' && replying && empty && !found) {
     var read = function (url) {
       return fetch(url, { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.text() : ''; })
         .then(function (html) { return new DOMParser().parseFromString(html, 'text/html'); });
