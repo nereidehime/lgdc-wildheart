@@ -1706,6 +1706,21 @@ section.lgdc-posts { display: flex; flex-direction: column; gap: 26px; }
 .lgdc .lgdc-gb__page h2 { margin: 0 0 16px; font: italic 900 38px/1 var(--serif); letter-spacing: -.5px; color: var(--ink-strong); }
 .lgdc .lgdc-gb__page p { font: 400 14.5px/25px var(--sans); color: var(--ink); }
 .lgdc .lgdc-gb__page p + p { margin-top: 14px; }
+/* guidebook : sous-titres et liste d'étapes (Débuter) */
+.lgdc .lgdc-gb__page .lgdc-gb__sub { margin: 28px 0 12px; font: italic 900 22px/1.15 var(--serif); letter-spacing: -.3px; color: var(--ink-strong); }
+.lgdc .lgdc-gb__steps { margin: 0; padding: 0; list-style: none; counter-reset: lgdc-step; }
+.lgdc .lgdc-gb__steps li { position: relative; min-height: 32px; padding: 9px 0 9px 50px; border-bottom: 2px solid var(--b3); font: 400 14.5px/24px var(--sans); color: var(--ink); counter-increment: lgdc-step; }
+.lgdc .lgdc-gb__steps li:last-child { border-bottom: 0; }
+/* crédits : le remerciement particulier, mis en avant (bloc sombre, nom en Playfair, filigrane) */
+.lgdc .lgdc-thanks { position: relative; isolation: isolate; overflow: hidden; margin: 6px 4px 4px; padding: 30px 34px 32px; background: var(--d2); border-radius: 10px; box-shadow: 0 0 0 4px var(--b1), 0 0 0 6px var(--line); }
+.lgdc .lgdc-thanks::after { content: attr(data-mark); position: absolute; right: -6px; bottom: -42px; z-index: -1; font: italic 900 150px/1 var(--serif); letter-spacing: -4px; color: var(--on-dark); opacity: .05; pointer-events: none; }
+.lgdc .lgdc-gb__page .lgdc-thanks__name { margin: 0 0 12px; font: italic 900 46px/1 var(--serif); letter-spacing: -1px; color: var(--a2); background: linear-gradient(90deg, var(--a2), #dfa283); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.lgdc .lgdc-gb__page .lgdc-thanks__txt { max-width: 640px; font: 400 15px/26px var(--sans); color: var(--on-dark); }
+.lgdc .lgdc-gb__page .lgdc-thanks__txt a:not([class]) { color: #dfa283; font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+/* liens dans le texte du guidebook */
+.lgdc .lgdc-gb__page p a:not([class]), .lgdc .lgdc-gbs__facts dd a:not([class]), .lgdc .lgdc-gb__steps a:not([class]) { color: var(--a1); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.lgdc .lgdc-gb__page p a:not([class]):hover, .lgdc .lgdc-gbs__facts dd a:not([class]):hover, .lgdc .lgdc-gb__steps a:not([class]):hover { color: var(--a2); }
+.lgdc .lgdc-gb__steps li::before { content: counter(lgdc-step); position: absolute; left: 0; top: 8px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 6px; background: var(--d2); font: italic 900 16px/1 var(--serif); color: var(--on-dark); }
 .lgdc-gb__page b { font-weight: 700; color: var(--ink-strong); }
 .lgdc-gb__page sup { line-height: 0; }
 
