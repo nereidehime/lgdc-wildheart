@@ -46,22 +46,8 @@
   var table = document.getElementById('list_dice');
   if (!table) return;
 
-  // tables de la chasse (guidebook, chapitre Le système), comme dans lgdc-forum.js
-  var PREY = {
-    'crépuscule': [[35, 'campagnol'], [60, 'lézard'], [85, 'oiseau'], [100, 'lapin']],
-    'hêtre': [[40, 'mulot'], [70, 'oiseau'], [100, 'écureuil']],
-    'orchidée': [[40, 'campagnol'], [85, 'oiseau'], [100, 'lapin']],
-    'brouillard': [[35, 'grenouille'], [55, 'campagnol'], [70, 'oiseau'], [100, 'poisson']]
-  };
-  var HUNT = {
-    campagnol: [10, 7, 7, 7], mulot: [10, 7, 7, 7], grenouille: [10, 7, 10, 7], 'lézard': [10, 7, 10, 7],
-    oiseau: [7, 10, 13, 7], 'écureuil': [7, 10, 13, 7], poisson: [10, 7, 13, 7], lapin: [7, 13, 13, 10]
-  };
-  var STEPS = ['Guetter', 'Se faufiler', 'Bondir', 'Mordre'];
+  // chasse en un seul lancer : les deux attributs de chaque étape (guidebook, Les gestes)
   var GESTES = [['intelligence', 'volonte'], ['dexterite', 'volonte'], ['dexterite', 'intelligence'], ['puissance', 'intelligence']];
-  function stepOf(name) {
-    return STEPS.findIndex(function (step) { return step.toLowerCase() === String(name).trim().toLowerCase(); });
-  }
 
   // les dés déjà choisis (aperçu, édition) : le script natif les a ajoutés au tableau au chargement
   var model = table.querySelector('select[name^="post_dice_"]');
@@ -256,8 +242,7 @@
 
   // difficulté et bonus du test : écrits en fin de message sous la forme [difficulté 13 +2],
   // que la fiche de résultat lit pour donner le verdict
-  var TAG = /\n*\[difficulté (\d+)(?: ([+-]\d+))?(?: chasse ([^,\]]+), ([^\]]+))?\]\s*$/;
-  var hunt = null;
+  var TAG = /\n*\[difficulté (\d+)(?: ([+-]\d+))?\]\s*$/;
   var form = box.closest('form');
   var area = form && form.querySelector('textarea[name="message"]');
   function editor() {
@@ -286,29 +271,27 @@
   }
   diff.addEventListener('input', mark);
   box.insertBefore(test, add);
-  // aperçu ou édition : la balise déjà écrite remplit les champs
+  // aperçu ou édition : la balise déjà écrite remplit les champs, puis quitte la zone de texte
   var found = (area ? area.value : '').match(TAG);
-  if (found) { diff.value = found[1]; bonus.value = found[2] ? +found[2] : ''; mark(); }
-  if (found && found[3] && HUNT[found[3]] && stepOf(found[4]) >= 0) hunt = { prey: found[3], step: stepOf(found[4]) };
-  // la balise reste hors de la zone de texte : les champs la gardent, l'envoi la réécrit
   if (found) {
+    diff.value = found[1];
+    bonus.value = found[2] ? +found[2] : '';
+    mark();
     var strip = function () { var text = getText(); if (TAG.test(text)) setText(text.replace(TAG, '')); };
     strip();
     setTimeout(strip, 300);
     setTimeout(strip, 1500);
   }
-  if (hunt) banner('Chasse en cours : ' + hunt.prey + ', étape ' + (hunt.step + 1) + ' sur 4 : ' + STEPS[hunt.step] + '.');
   // aperçu : la balise devient une ligne lisible (les dés ne sont lancés qu'à l'envoi)
   document.querySelectorAll('.postbody .content').forEach(function (content) {
     var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
     for (var t = walker.nextNode(); t; t = walker.nextNode()) {
-      var m = t.textContent.match(/\[difficulté (\d+)(?: ([+-]\d+))?(?: chasse ([^,\]]+), ([^\]]+))?\]/);
+      var m = t.textContent.match(/\[difficulté (\d+)(?: ([+-]\d+))?\]/);
       if (!m) continue;
       t.textContent = t.textContent.replace(m[0], '');
       var plan = document.createElement('p');
-      plan.className = 'lgdc-roll__note lgdc-roll__plan';
-      plan.textContent = (m[3] ? 'Chasse : ' + m[3] + ', ' + m[4] + '. ' : 'Test. ') + 'Difficulté ' + m[1]
-        + (m[2] ? ', bonus ' + m[2] : '') + '. Les dés seront lancés à l’envoi.';
+      plan.className = 'lgdc-roll__note';
+      plan.textContent = 'Test : difficulté ' + m[1] + (m[2] ? ', bonus ' + m[2] : '') + '. Les dés seront lancés à l’envoi.';
       content.appendChild(plan);
       break;
     }
@@ -316,119 +299,61 @@
   if (form) form.addEventListener('submit', function () {
     var text = getText().replace(TAG, '');
     var picked = Array.from(list.querySelectorAll('select')).some(function (s) { return s.value; });
-    if (picked && +diff.value > 0) {
+    var hunting = Array.from(list.querySelectorAll('select')).some(function (s) { return /^chasse/i.test(dieName(s.value)); });
+    if (picked && !hunting && +diff.value > 0) {
       var b = parseInt(bonus.value, 10);
-      text += '\n[difficulté ' + (+diff.value) + (b ? ' ' + (b > 0 ? '+' : '') + b : '')
-        + (hunt ? ' chasse ' + hunt.prey + ', ' + STEPS[hunt.step].toLowerCase() : '') + ']';
+      text += '\n[difficulté ' + (+diff.value) + (b ? ' ' + (b > 0 ? '+' : '') + b : '') + ']';
     }
     setText(text);
   }, true);
 
-  // chasse jouée en RP : l'éditeur retrouve dans le sujet la chasse en cours du joueur
-  // (dé Chasse, puis une étape par message) et préremplit l'étape suivante
-  function huntState(posts, me) {
-    var state = null;
-    posts.forEach(function (post) {
-      var link = post.querySelector('.lgdc-post__name a[href^="/u"]');
-      var id = link && (link.getAttribute('href').match(/^\/u(\d+)/) || [])[1];
-      var content = post.querySelector('.content');
-      if (id !== me || !content) return;
-      var html = content.innerHTML;
-      var rolled = html.match(/'Chasse : ([^']+)'\s*:\s*<strong>(\d+)<\/strong>/i);
-      if (rolled) {
-        var clan = plain(rolled[1]);
-        var table = PREY[Object.keys(PREY).find(function (k) { return plain(k) === clan; })];
-        var hit = table && table.find(function (step) { return +rolled[2] <= step[0]; });
-        state = hit ? { prey: hit[1], step: 0, clan: clan } : null;
-        return;
-      }
-      var tag = content.textContent.match(/\[difficulté (\d+)(?: ([+-]\d+))?(?: chasse ([^,\]]+), ([^\]]+))?\]/);
-      if (!state || !tag || tag[3] !== state.prey || stepOf(tag[4]) !== state.step) return;
-      var faces = [];
-      html.replace(/'([^']+)'\s*:\s*<strong>([^<]+)<\/strong>/g, function (all, die, values) {
-        if (/chasse|portée/i.test(die)) return;
-        values.split(/[,\s]+/).forEach(function (v) { if (/^\d+$/.test(v)) faces.push(+v); });
-      });
-      if (!faces.length) return;
-      var score = faces.reduce(function (a, b) { return a + b; }, 0) + (tag[2] ? +tag[2] : 0);
-      var pair = faces.length === 2 && faces[0] === faces[1];
-      if (pair && faces[0] === 1) state = null;
-      else if (pair && faces[0] >= 6) state.step += 2;
-      else if (score >= +tag[1]) state.step += 1;
-      else state = null;
-      if (state && state.step >= 4) state = null;
-    });
-    return state;
-  }
-  // après un aperçu, l'adresse n'a plus ?t= : les champs cachés du formulaire gardent le sujet et le mode
-  var hidden = function (name) { var input = form && form.querySelector('input[type="hidden"][name="' + name + '"]'); return input ? input.value : ''; };
-  var topic = (location.search.match(/[?&]t=(\d+)/) || [])[1] || hidden('t');
-  var replying = /mode=reply/.test(location.search) || hidden('mode') === 'reply';
+  // « Lancer une chasse » : le dé Chasse du territoire, puis les deux dés de chaque étape,
+  // lus dans les attributs du profil ; la fiche du message déroule la chasse
   var me = window._userdata && String(window._userdata.user_id);
-  var empty = !Array.from(list.querySelectorAll('select')).some(function (s) { return s.value; });
-  if (topic && me && me !== '-1' && replying && empty && !found) {
-    var read = function (url) {
-      return fetch(url, { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.text() : ''; })
-        .then(function (html) { return new DOMParser().parseFromString(html, 'text/html'); });
-    };
-    read('/t' + topic + '-').then(function (first) {
-      // la dernière page du sujet, s'il y en a plusieurs
-      var last = 0;
-      first.querySelectorAll('a[href]').forEach(function (a) {
-        var m = a.getAttribute('href').match(new RegExp('^/t' + topic + 'p(\\d+)-'));
-        if (m && +m[1] > last) last = +m[1];
+  var stats = null;
+  function loadStats() {
+    if (stats) return stats;
+    stats = fetch('/u' + me, { credentials: 'same-origin' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (html) {
+      var found = {};
+      new DOMParser().parseFromString(html, 'text/html').querySelectorAll('#lgdc-prof-raw > div').forEach(function (field) {
+        var dt = field.querySelector('dt');
+        var dd = field.querySelector('dd');
+        // « d8 » ou « 8 » ; le libellé natif peut finir par « : »
+        var size = dd && (dd.textContent.match(/d?(\d+)/i) || [])[1];
+        if (dt && size) found[plain(dt.textContent.replace(/[\s:]+$/, '').trim())] = 'd' + size;
       });
-      return (last ? read('/t' + topic + 'p' + last + '-') : Promise.resolve(null)).then(function (end) {
-        var posts = Array.from(first.querySelectorAll('article.lgdc-post'));
-        if (end) posts = posts.concat(Array.from(end.querySelectorAll('article.lgdc-post')));
-        return huntState(posts, me);
-      });
-    }).then(function (state) {
-      if (!state) return;
-      return read('/u' + me).then(function (profile) {
-        var stats = {};
-        profile.querySelectorAll('#lgdc-prof-raw > div').forEach(function (field) {
-          var dt = field.querySelector('dt');
-          var dd = field.querySelector('dd');
-          // « d8 » ou « 8 » ; le libellé natif peut finir par « : »
-          var size = dd && (dd.textContent.match(/d?(\d+)/i) || [])[1];
-          if (dt && size) stats[plain(dt.textContent.replace(/[\s:]+$/, '').trim())] = 'd' + size;
-        });
-        prefill(state, stats);
-      });
-    }).catch(function () {});
+      return found;
+    }).catch(function () { return {}; });
+    return stats;
   }
-  function prefill(state, stats) {
-    hunt = { prey: state.prey, step: state.step };
-    var dice = GESTES[state.step].map(function (attr) { return stats[attr] || ''; });
+  function huntWith(territory, attrs) {
+    var chasse = options.find(function (o) { return o[0] && /^chasse/i.test(o[1]) && plain(o[1]).indexOf(plain(territory)) >= 0; });
     list.innerHTML = '';
-    dice.forEach(function (die) {
-      var pair = options.find(function (o) { return o[0] && o[1].toLowerCase() === die; });
-      list.appendChild(row(pair ? pair[0] : '', '1'));
+    list.appendChild(row(chasse ? chasse[0] : '', '1'));
+    GESTES.forEach(function (pair) {
+      pair.forEach(function (attr) {
+        var die = options.find(function (o) { return o[0] && o[1].toLowerCase() === attrs[attr]; });
+        list.appendChild(row(die ? die[0] : '', '1'));
+      });
     });
     renumber();
-    diff.value = HUNT[state.prey][state.step];
-    var clanBonus = (state.clan === 'crepuscule' && state.step === 0) || (state.clan === 'orchidee' && state.step === 2) ? 1 : 0;
-    bonus.value = clanBonus || '';
+    diff.value = '';
+    bonus.value = '';
     mark();
-    banner('Chasse en cours : ' + state.prey + ', étape ' + (state.step + 1) + ' sur 4 : '
-      + STEPS[state.step] + '. Dés et difficulté préremplis' + (clanBonus ? ', avec le +1 du Clan.' : '.'));
   }
-  function banner(text) {
-    var info = document.createElement('p');
-    info.className = 'lgdc-dice__hunt';
-    info.innerHTML = '<span></span><button type="button">Ne pas tester ici</button>';
-    info.querySelector('span').textContent = text;
-    info.querySelector('button').addEventListener('click', function () {
-      hunt = null;
-      list.innerHTML = '';
-      list.appendChild(row('', '1'));
-      renumber();
-      diff.value = '';
-      bonus.value = '';
-      mark();
-      info.remove();
+  if (me && me !== '-1' && options.some(function (o) { return /^chasse/i.test(o[1]); })) {
+    var hunt = document.createElement('div');
+    hunt.className = 'lgdc-dice__hunt';
+    hunt.innerHTML = '<span class="lgdc-micro">Lancer une chasse</span>';
+    ['Crépuscule', 'Hêtre', 'Orchidée', 'Brouillard'].forEach(function (territory) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lgdc-dice__level';
+      b.textContent = territory;
+      b.title = 'Chasse sur le territoire du ' + territory;
+      b.addEventListener('click', function () { loadStats().then(function (attrs) { huntWith(territory, attrs); }); });
+      hunt.appendChild(b);
     });
-    box.insertBefore(info, list);
+    box.insertBefore(hunt, list);
   }
 })();

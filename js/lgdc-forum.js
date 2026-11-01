@@ -194,20 +194,33 @@
     'brouillard': [[35, 'grenouille'], [55, 'campagnol'], [70, 'oiseau'], [100, 'poisson']]
   };
   var LITTER = [[4, '1 chaton'], [14, '2 chatons'], [34, '3 chatons'], [59, '4 chatons'], [79, '5 chatons'], [91, '6 chatons'], [97, '7 chatons'], [100, '8 chatons']];
-  // chasse jouée en RP, une étape par message : difficultés par proie (Guetter, Se faufiler, Bondir, Mordre) et points
+  // chasse en un seul lancer : dé Chasse, puis deux dés par étape (guidebook, La chasse)
+  // difficultés par proie (Guetter, Se faufiler, Bondir, Mordre) et points pour la pile
   var HUNT = {
     campagnol: [10, 7, 7, 7, 1], mulot: [10, 7, 7, 7, 1], grenouille: [10, 7, 10, 7, 1], 'lézard': [10, 7, 10, 7, 1],
     oiseau: [7, 10, 13, 7, 1], 'écureuil': [7, 10, 13, 7, 2], poisson: [10, 7, 13, 7, 2], lapin: [7, 13, 13, 10, 3]
   };
   var STEPS = ['Guetter', 'Se faufiler', 'Bondir', 'Mordre'];
-  function stepIndex(name) {
-    return STEPS.findIndex(function (step) { return step.toLowerCase() === name.trim().toLowerCase(); });
-  }
+  // capacité de Clan : +1 en Guetter pour le Crépuscule, +1 en Bondir pour l'Orchidée
+  var CLAN_STEP = { 'crépuscule': 0, 'orchidée': 2 };
   function note(card, text) {
     var p = document.createElement('p');
     p.className = 'lgdc-roll__note';
     p.textContent = text;
     card.appendChild(p);
+  }
+  // critique : double de 6 ou plus ; échec spectaculaire : double 1 (guidebook, Le test)
+  function judge(faces, score, diff) {
+    var pair = faces.length === 2 && faces[0] === faces[1];
+    return pair && faces[0] === 1 ? ['fumble', 'Échec spectaculaire']
+      : pair && faces[0] >= 6 ? ['crit', 'Critique']
+      : score >= diff ? ['win', 'Réussite'] : ['fail', 'Échec'];
+  }
+  function chip(verdict) {
+    var tag = document.createElement('span');
+    tag.className = 'lgdc-roll__verdict is-' + verdict[0];
+    tag.textContent = verdict[1];
+    return tag;
   }
   function lookup(die, value) {
     var name = die.toLowerCase();
@@ -223,12 +236,8 @@
     var check = null;
     var walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
     for (var t = walker.nextNode(); t; t = walker.nextNode()) {
-      var m = t.textContent.match(/\[difficulté (\d+)(?: ([+-]\d+))?(?: chasse ([^,\]]+), ([^\]]+))?\]/);
-      if (m) {
-        check = { diff: +m[1], bonus: m[2] ? +m[2] : 0 };
-        if (m[3] && HUNT[m[3].trim()] && stepIndex(m[4]) >= 0) { check.prey = m[3].trim(); check.step = stepIndex(m[4]); }
-        t.textContent = t.textContent.replace(m[0], '');
-      }
+      var m = t.textContent.match(/\[difficulté (\d+)(?: ([+-]\d+))?\]/);
+      if (m) { check = { diff: +m[1], bonus: m[2] ? +m[2] : 0 }; t.textContent = t.textContent.replace(m[0], ''); }
     }
     var starts = [];
     content.childNodes.forEach(function (node) {
@@ -253,7 +262,7 @@
       head.className = 'lgdc-roll__head lgdc-micro';
       head.innerHTML = '<i class="ph-light ph-dice-five" aria-hidden="true"></i>Lancer de dés';
       card.appendChild(head);
-      var total = 0, count = 0, faces = [], found = null;
+      var total = 0, count = 0, faces = [], prey = null, territory = null, plainRows = [];
       rolls.forEach(function (roll) {
         var row = document.createElement('div');
         row.className = 'lgdc-roll__row';
@@ -268,7 +277,10 @@
           face.textContent = value;
           row.appendChild(face);
           var result = lookup(roll.die, value);
-          if (result && HUNT[result]) found = result;
+          if (result && HUNT[result] && !prey) {
+            prey = result;
+            territory = Object.keys(PREY).find(function (clan) { return roll.die.toLowerCase().indexOf(clan) >= 0; });
+          }
           if (result) {
             special = true;
             var out = document.createElement('span');
@@ -279,44 +291,71 @@
           else if (/^\d+$/.test(value)) { total += +value; count++; faces.push(+value); }
         });
         if (special) row.classList.add('is-special');
+        else plainRows.push(row);
         card.appendChild(row);
       });
-      var tested = check && count > 0 && i === 0;
-      if (count > 1 || tested) {
-        var sum = document.createElement('p');
-        sum.className = 'lgdc-roll__total';
-        sum.innerHTML = '<span class="lgdc-micro">total</span><b></b>';
-        var score = total + (tested ? check.bonus : 0);
-        sum.querySelector('b').textContent = score;
-        if (tested) {
-          if (check.bonus) sum.querySelector('.lgdc-micro').textContent = 'total, bonus ' + (check.bonus > 0 ? '+' : '') + check.bonus;
-          // critique : double de 6 ou plus ; échec spectaculaire : double 1 (guidebook, Le test)
-          var pair = faces.length === 2 && faces[0] === faces[1];
-          var verdict = pair && faces[0] === 1 ? ['fumble', 'Échec spectaculaire']
-            : pair && faces[0] >= 6 ? ['crit', 'Critique']
-            : score >= check.diff ? ['win', 'Réussite'] : ['fail', 'Échec'];
+
+      if (prey && faces.length >= 2) {
+        // la chasse se déroule dans l'ordre : arrêt au premier échec, un critique saute l'étape suivante
+        head.lastChild.textContent = 'Chasse';
+        plainRows.forEach(function (row) { row.remove(); });
+        var step = 0, caught = false, over = false;
+        STEPS.forEach(function (name, s) {
+          var row = document.createElement('div');
+          row.className = 'lgdc-roll__row lgdc-roll__step';
+          var label = document.createElement('span');
+          label.className = 'lgdc-roll__die';
+          label.textContent = name;
+          row.appendChild(label);
+          var pair = faces.slice(s * 2, s * 2 + 2);
+          if (over || s < step || pair.length < 2) {
+            row.classList.add('is-off');
+            var off = document.createElement('span');
+            off.className = 'lgdc-micro lgdc-roll__diff';
+            off.textContent = s < step ? 'sautée' : 'non jouée';
+            row.appendChild(off);
+            card.appendChild(row);
+            return;
+          }
+          var plus = CLAN_STEP[territory] === s ? 1 : 0;
+          var score = pair[0] + pair[1] + plus;
+          pair.forEach(function (v) {
+            var face = document.createElement('b');
+            face.className = 'lgdc-roll__face';
+            face.textContent = v;
+            row.appendChild(face);
+          });
           var against = document.createElement('span');
           against.className = 'lgdc-micro lgdc-roll__diff';
-          against.textContent = 'difficulté ' + check.diff;
-          var tag = document.createElement('span');
-          tag.className = 'lgdc-roll__verdict is-' + verdict[0];
-          tag.textContent = verdict[1];
-          sum.append(against, tag);
-        }
-        card.appendChild(sum);
-        if (tested && check.prey) {
-          var prey = check.prey;
-          head.lastChild.textContent = 'Chasse : ' + prey + ', étape ' + (check.step + 1) + ' sur 4 : ' + STEPS[check.step];
-          if (verdict[0] === 'fail' || verdict[0] === 'fumble') note(card, 'La proie s’enfuit.');
-          else {
-            var next = check.step + (verdict[0] === 'crit' ? 2 : 1);
-            if (verdict[0] === 'crit' && next < 5) note(card, 'Critique : l’étape suivante est sautée.');
-            if (next >= 4) note(card, 'Proie attrapée. À indiquer en fin de message : Chasse : ' + prey + ' (+' + HUNT[prey][4] + ')');
-            else note(card, 'Étape suivante : ' + STEPS[next] + ', difficulté ' + HUNT[prey][next] + '.');
+          against.textContent = score + (plus ? ' (+1 du Clan)' : '') + ' contre ' + HUNT[prey][s];
+          var verdict = judge(pair, score, HUNT[prey][s]);
+          row.append(against, chip(verdict));
+          card.appendChild(row);
+          if (verdict[0] === 'fail' || verdict[0] === 'fumble') { over = true; return; }
+          step = s + (verdict[0] === 'crit' ? 2 : 1);
+          if (step >= 4) { caught = true; over = true; }
+        });
+        if (caught) note(card, 'Proie attrapée. À indiquer en fin de message : Chasse : ' + prey + ' (+' + HUNT[prey][4] + ')');
+        else note(card, 'La proie s’enfuit.');
+      }
+      else {
+        var tested = check && count > 0 && i === 0;
+        if (count > 1 || tested) {
+          var sum = document.createElement('p');
+          sum.className = 'lgdc-roll__total';
+          sum.innerHTML = '<span class="lgdc-micro">total</span><b></b>';
+          var score = total + (tested ? check.bonus : 0);
+          sum.querySelector('b').textContent = score;
+          if (tested) {
+            if (check.bonus) sum.querySelector('.lgdc-micro').textContent = 'total, bonus ' + (check.bonus > 0 ? '+' : '') + check.bonus;
+            var against = document.createElement('span');
+            against.className = 'lgdc-micro lgdc-roll__diff';
+            against.textContent = 'difficulté ' + check.diff;
+            sum.append(against, chip(judge(faces, score, check.diff)));
           }
+          card.appendChild(sum);
         }
       }
-      if (found) note(card, 'Première étape : Guetter, difficulté ' + HUNT[found][0] + '.');
       nodes.slice(1).forEach(function (node) { node.remove(); });
       start.after(card);
     });

@@ -2663,6 +2663,8 @@ a.sceditor-button.lgdc-editor-icon:hover, a.sceditor-button.lgdc-editor-icon.act
 .lgdc-roll__verdict.is-crit { background: var(--a1); }
 .lgdc-roll__verdict.is-fail { background: #8a837a; }
 .lgdc-roll__verdict.is-fumble { background: #bf5531; }
+.lgdc-roll__step .lgdc-roll__die { min-width: 86px; }
+.lgdc-roll__step.is-off { opacity: .45; }
 .lgdc .lgdc-roll__note { margin: 10px 0 0; font: 400 13px/19px var(--sans); color: var(--ink); }
 .lgdc .lgdc-dice__hunt { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 12px; padding: 10px 14px; background: var(--b3); border-radius: 5px; font: 400 13px/19px var(--sans); color: var(--ink-strong); }
 .lgdc .lgdc-dice__hunt button { padding: 0 !important; color: var(--ink-soft); background: none; border: 0; font: 800 10px/16px var(--sans); letter-spacing: .6px; text-transform: uppercase; cursor: pointer; }
