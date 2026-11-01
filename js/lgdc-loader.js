@@ -36,6 +36,10 @@
   if (document.querySelector('.lgdc-fa-mp')) page.push(load(base + 'lgdc-mp.js').catch(report));
   if (document.querySelector('.lgdc-fa-search, .lgdc-fa-results-posts')) page.push(load(base + 'lgdc-recherche.js').catch(report));
   if (document.querySelector('.lgdc-fa-posting')) page.push(load(base + 'lgdc-poster.js').catch(report));
+  // fiche de présentation (Persona) : nouveau sujet dans les présentations, modification d'une fiche, ou fiche affichée
+  var editorText = document.querySelector('textarea#text_editor_textarea');
+  if (document.querySelector('.persona') || location.href.indexOf('/post?f=7&mode=newtopic') >= 0
+    || (editorText && editorText.value.indexOf('<div class="persona">') >= 0)) page.push(load(base + 'lgdc-fiche.js').catch(report));
   if (document.getElementById('switcheroo')) {
     load(base + 'lgdc-comptes.js').catch(report);
     load(base + 'lgdc-switcheroo.js').catch(report);

@@ -122,8 +122,10 @@
     var color = who && who.style && who.style.color || '#a39c92';
     var avatar = card.querySelector('.lgdc-fa-avatar img');
     var src = avatar && avatar.getAttribute('src');
+    // la flèche native de Forumactif mène au dernier message du sujet
+    var jump = box.querySelector('a.last-post-icon[href]');
     return {
-      href: topic.getAttribute('href'), title: topic.textContent.trim(), date: date,
+      href: topic.getAttribute('href'), jump: jump ? jump.getAttribute('href') : topic.getAttribute('href'), title: topic.textContent.trim(), date: date,
       name: who ? who.textContent.trim() : '', profile: profile && profile.getAttribute('href'),
       color: color, end: groupEnds[color] || color,
       avatar: src && !/\/(pp-blank|no_?avatar)[^/]*$/i.test(src) ? src : null
@@ -163,11 +165,32 @@
   }
   function lastLink(last) {
     var a = el('a', 'lgdc-cw__last');
-    a.href = last.href;
+    a.href = last.jump;
+    a.title = 'Aller au dernier message';
     var meta = el('span', 'lgdc-micro');
     meta.append('par ', whoNode(last, 'span'), ', ' + last.date);
-    a.append(el('span', 'lgdc-cw__topic', last.title), meta);
+    var topic = el('span', 'lgdc-cw__topic', last.title);
+    topic.appendChild(jumpIcon());
+    a.append(topic, meta);
     return a;
+  }
+  function jumpIcon() {
+    var i = el('i', 'ph-light ph-arrow-right lgdc-jump');
+    i.setAttribute('aria-hidden', 'true');
+    return i;
+  }
+  // titre du dernier sujet, cliquable, suivi d'une flèche vers le dernier message
+  function topicLine(last, cls) {
+    var line = el('span', cls);
+    var title = el('a', null, last.title);
+    title.href = last.href;
+    var go = el('a', 'lgdc-jump-link');
+    go.href = last.jump;
+    go.title = 'Aller au dernier message';
+    go.setAttribute('aria-label', 'Aller au dernier message');
+    go.appendChild(jumpIcon());
+    line.append(title, go);
+    return line;
   }
   document.querySelectorAll('.lgdc-fa-card').forEach(function (card) {
     var id = card.dataset.forumId;
@@ -205,12 +228,12 @@
       var cin = el('div', 'lgdc-cc__in');
       var ghost = el('h3', 'lgdc-cc__ghost'), ga = el('a', null, name); ga.href = link; ghost.appendChild(ga);
       cin.appendChild(ghost);
-      var r = el('a', 'lgdc-cc__ring'); r.href = last ? last.href : link; r.setAttribute('aria-label', 'Dernier message'); r.appendChild(ring(last));
+      var r = el('a', 'lgdc-cc__ring'); r.href = last ? last.jump : link; r.setAttribute('aria-label', 'Dernier message'); r.appendChild(ring(last));
       if (!last) r.querySelector('.lgdc-ring__in').appendChild(el('i', 'ph-light ph-paw-print'));
       cin.appendChild(r);
       if (last) {
         var by = el('span', 'lgdc-micro lgdc-cc__by'); by.append('par ', whoNode(last, 'a'));
-        cin.append(el('span', 'lgdc-cc__topic', last.title), by, el('span', 'lgdc-micro lgdc-cc__date', last.date));
+        cin.append(topicLine(last, 'lgdc-cc__topic'), by, el('span', 'lgdc-micro lgdc-cc__date', last.date));
       } else cin.appendChild(el('span', 'lgdc-cc__topic', 'aucun message pour l’instant'));
       cin.appendChild(countLine('lgdc-cc__count', n));
       if (subs && !subs.hidden && subs.firstElementChild) cin.appendChild(subs.firstElementChild);
