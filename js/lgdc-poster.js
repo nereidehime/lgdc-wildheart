@@ -290,6 +290,13 @@
   var found = (area ? area.value : '').match(TAG);
   if (found) { diff.value = found[1]; bonus.value = found[2] ? +found[2] : ''; mark(); }
   if (found && found[3] && HUNT[found[3]] && stepOf(found[4]) >= 0) hunt = { prey: found[3], step: stepOf(found[4]) };
+  // la balise reste hors de la zone de texte : les champs la gardent, l'envoi la réécrit
+  if (found) {
+    var strip = function () { var text = getText(); if (TAG.test(text)) setText(text.replace(TAG, '')); };
+    strip();
+    setTimeout(strip, 300);
+    setTimeout(strip, 1500);
+  }
   if (hunt) banner('Chasse en cours : ' + hunt.prey + ', étape ' + (hunt.step + 1) + ' sur 4 : ' + STEPS[hunt.step] + '.');
   // aperçu : la balise devient une ligne lisible (les dés ne sont lancés qu'à l'envoi)
   document.querySelectorAll('.postbody .content').forEach(function (content) {
@@ -380,8 +387,9 @@
         profile.querySelectorAll('#lgdc-prof-raw > div').forEach(function (field) {
           var dt = field.querySelector('dt');
           var dd = field.querySelector('dd');
-          var die = dd && (dd.textContent.match(/d\d+/i) || [])[0];
-          if (dt && die) stats[plain(dt.textContent.trim())] = die.toLowerCase();
+          // « d8 » ou « 8 » ; le libellé natif peut finir par « : »
+          var size = dd && (dd.textContent.match(/d?(\d+)/i) || [])[1];
+          if (dt && size) stats[plain(dt.textContent.replace(/[\s:]+$/, '').trim())] = 'd' + size;
         });
         prefill(state, stats);
       });
