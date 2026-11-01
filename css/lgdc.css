@@ -2149,6 +2149,9 @@ tw::before {
 .lgdc-adm { --g1: #6f9a8b; margin: 0 0 6px; background: var(--tb); border: 2px solid var(--line); border-radius: 10px; overflow: hidden; }
 .lgdc-adm--no { --g1: #bf5531; }
 .lgdc-adm--fix { --g1: #b08a3c; }
+.lgdc-adm--info { --g1: #bf5531; }
+.lgdc .lgdc-adm__head { display: grid; place-items: center; width: 64px; height: 64px; margin: 24px 26px 0; font-size: 36px; color: var(--g1); background: color-mix(in srgb, var(--g1) 14%, var(--tb)); border-radius: 50%; }
+.lgdc .lgdc-adm__head + .lgdc-adm__title { margin-top: 16px; }
 .lgdc .lgdc-post__body .lgdc-adm p.lgdc-adm__label { padding: 10px 24px; color: #fff; background: var(--g1); }
 .lgdc .lgdc-adm__title { margin: 22px 26px 10px; font: italic 900 26px/1.05 var(--serif); color: var(--ink-strong); }
 .lgdc .lgdc-post__body .lgdc-adm p:not(.lgdc-adm__label) { margin: 0 26px; font: 400 13.5px/23px var(--sans); }

@@ -391,15 +391,16 @@
     ['modele=tpl', 'RP : bannière'], ['modele=tpl2', 'RP : colonne'], ['modele=brk', 'RP : bandeau'], ['modele=frm', 'RP : encadré']
   ];
   var level = window._userdata ? Number(window._userdata.user_level) : 0;
-  if (level > 0) MODELS.push(['staff=fix', 'Staff : retouches'], ['staff=ok', 'Staff : fiche validée'], ['staff=no', 'Staff : fiche refusée']);
+  if (level > 0) MODELS.push(['staff=info', 'Staff : annonce'], ['staff=fix', 'Staff : retouches'], ['staff=ok', 'Staff : fiche validée'], ['staff=no', 'Staff : fiche refusée']);
   // champs utiles à chaque modèle
-  var USES = { tpl: ['titre', 'lune', 'lieu', 'moment', 'avec', 'image'], tpl2: ['titre', 'lune', 'lieu', 'moment', 'avec', 'image'], brk: ['titre', 'lune', 'lieu', 'moment'], frm: ['titre', 'lune', 'lieu', 'moment'], staff: ['titre'], staffok: ['pour', 'titre'] };
+  var USES = { tpl: ['titre', 'lune', 'lieu', 'moment', 'avec', 'image'], tpl2: ['titre', 'lune', 'lieu', 'moment', 'avec', 'image'], brk: ['titre', 'lune', 'lieu', 'moment'], frm: ['titre', 'lune', 'lieu', 'moment'], staff: ['titre'], staffok: ['pour', 'titre'], staffinfo: ['icone', 'titre'] };
   var LAYOUT = /^\s*\[(modele|staff)=([^\]]*)\]\s*\n?/i;
   var moon = document.querySelector('[data-lgdc-moon]');
   var lay = document.createElement('div');
   lay.className = 'lgdc-layout';
   lay.innerHTML = '<label class="lgdc-micro lgdc-layout__kind">Modèle <select data-l="kind"></select></label>'
     + '<label class="lgdc-micro" data-f="pour">Pseudo du membre <input type="text" data-l="pour" maxlength="60" title="Le titre devient « Bienvenue parmi nous, pseudo ». Ton mot va dans le message ; la suite à faire s’ajoute toute seule."></label>'
+    + '<label class="lgdc-micro" data-f="icone">Icône <input type="text" data-l="icone" maxlength="40" placeholder="megaphone" title="Le nom d’une icône Phosphor (phosphoricons.com), par exemple megaphone, scroll, paw-print, seal-check."></label>'
     + '<label class="lgdc-micro" data-f="titre">Titre <input type="text" data-l="titre" maxlength="120"></label>'
     + '<label class="lgdc-micro" data-f="lune">Lune <input type="number" min="1" max="999" data-l="lune"></label>'
     + '<label class="lgdc-micro" data-f="lieu">Lieu <input type="text" data-l="lieu" maxlength="80"></label>'
@@ -412,7 +413,7 @@
   if (moon && /^\d+$/.test(moon.textContent.trim())) field('lune').value = moon.textContent.trim();
   function shape() {
     var v = field('kind').value, k = v.split('=')[1] || '';
-    var uses = v ? USES[v === 'staff=ok' ? 'staffok' : /^staff/.test(v) ? 'staff' : k] : [];
+    var uses = v ? USES[USES[v.replace('=', '')] ? v.replace('=', '') : /^staff/.test(v) ? 'staff' : k] : [];
     lay.querySelectorAll('[data-f]').forEach(function (f) { f.hidden = uses.indexOf(f.dataset.f) < 0; });
   }
   field('kind').addEventListener('change', shape);
@@ -484,7 +485,7 @@
     var text = getText().replace(LAYOUT, '').replace(/\[dialogue\]/gi, '[dialogue=' + ink.value + ']');
     var v = field('kind').value;
     if (v) {
-      var k = v.split('=')[1], uses = USES[v === 'staff=ok' ? 'staffok' : /^staff/.test(v) ? 'staff' : k];
+      var k = v.split('=')[1], uses = USES[USES[v.replace('=', '')] ? v.replace('=', '') : /^staff/.test(v) ? 'staff' : k];
       var parts = [v].concat(uses.map(function (key) {
         var val = field(key).value.replace(/[|\]\[\n]/g, ' ').trim();
         return val ? key + '=' + val : '';

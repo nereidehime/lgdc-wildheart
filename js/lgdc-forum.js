@@ -255,7 +255,7 @@
   // [modele=brk|titre=…|lune=…|lieu=…|moment=…|avec=…|image=…|couleur=#…|tw=…] pour un RP, [staff=ok|titre=…] pour le staff.
   // Le reste du message devient le texte du modèle, aux couleurs du Clan de l'auteur.
   var MOMENTS = { 'aube': 'ph-sun-horizon', 'matin': 'ph-sun', 'midi': 'ph-sun', 'après-midi': 'ph-sun', 'crépuscule': 'ph-sun-horizon', 'nuit': 'ph-moon-stars' };
-  var STAFF = { fix: 'Ajustements demandés', ok: 'Fiche validée', no: 'Fiche refusée' };
+  var STAFF = { info: 'Le staff', fix: 'Ajustements demandés', ok: 'Fiche validée', no: 'Fiche refusée' };
   function node(tag, cls, text) {
     var n = document.createElement(tag);
     if (cls) n.className = cls;
@@ -331,6 +331,13 @@
     if (staff) {
       box = node('div', 'lgdc-adm lgdc-adm--' + kind);
       box.append(node('p', 'lgdc-adm__label', STAFF[kind]));
+      // annonce : une grande icône Phosphor en entête, au choix du staff
+      if (kind === 'info') {
+        var head = node('div', 'lgdc-adm__head'), ico = node('i', 'ph-light ph-' + ((o.icone || '').toLowerCase().replace(/[^a-z0-9-]/g, '') || 'megaphone'));
+        ico.setAttribute('aria-hidden', 'true');
+        head.appendChild(ico);
+        box.appendChild(head);
+      }
       // fiche validée : le staff donne seulement le pseudo, le titre de bienvenue en découle
       var title = o.titre || (kind === 'ok' && o.pour ? 'Bienvenue parmi nous, ' + o.pour : '');
       if (title) box.appendChild(node('h2', 'lgdc-adm__title', title));
