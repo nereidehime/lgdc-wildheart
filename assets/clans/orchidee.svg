@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 450" role="img" aria-label="Clan de l'Orchidée">
+  <title>Clan de l'Orchidée</title>
+  <!-- un sabot de Vénus sur sa tige, avec une feuille -->
+  <defs>
+  <mask id="m">
+    <rect width="460" height="450" fill="#fff"/>
+    <g fill="#000">
+      <path d="M230 146 Q270 196 258 252 Q246 274 230 276 Q214 274 202 252 Q190 196 230 146 Z"/>
+      <path d="M208 280 Q170 268 140 290 Q118 306 112 338 Q106 362 88 380 Q118 370 128 344 Q136 322 156 310 Q180 298 212 300 Z"/>
+      <path d="M252 280 Q290 268 320 290 Q342 306 348 338 Q354 362 372 380 Q342 370 332 344 Q324 322 304 310 Q280 298 248 300 Z"/>
+      <ellipse cx="230" cy="324" rx="50" ry="52"/>
+      <path d="M230 372 Q236 398 224 430" stroke="#000" stroke-width="11" fill="none" stroke-linecap="round"/>
+      <path d="M231 404 Q282 366 330 372 Q300 410 231 404 Z"/>
+    </g>
+    <path d="M206 296 Q230 286 254 296 Q230 306 206 296 Z" fill="#fff"/>
+  </mask>
+  </defs>
+  <path d="M40 30 L138 126 L334 126 L420 38 L420 415 L40 415 Z" fill="currentColor" mask="url(#m)"/>
+</svg>

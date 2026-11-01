@@ -441,33 +441,35 @@
     var holder = mark.parentElement.closest('p') || mark.parentElement;
     var form = node('form', 'lgdc-pform');
     form.noValidate = true;
-    form.innerHTML = '<label class="lgdc-pform__f">Nom du forum<input name="nom" required maxlength="80"></label>'
-      + '<label class="lgdc-pform__f">Lien du forum<input name="lien" type="url" required placeholder="https://…"></label>'
-      + '<label class="lgdc-pform__f">Genre<input name="genre" required maxlength="80" placeholder="RPG animalier, fantasy, city…"></label>'
+    form.innerHTML = '<label class="lgdc-pform__f">Nom du forum<input name="nom" maxlength="80"></label>'
+      + '<label class="lgdc-pform__f">Lien du forum<input name="lien" type="url" placeholder="https://…"></label>'
+      + '<label class="lgdc-pform__f">Genre<input name="genre" maxlength="80" placeholder="RPG animalier, fantasy, city…"></label>'
       + '<fieldset class="lgdc-pform__f lgdc-pform__where"><legend>Emplacements souhaités</legend>'
       + '<label><input type="checkbox" name="place" value="Accueil"><span><b>Accueil</b>sur l’index et en pied de page</span></label>'
       + '<label><input type="checkbox" name="place" value="Pied de page"><span><b>Pied de page</b>sur toutes les pages</span></label>'
       + '<label><input type="checkbox" name="place" value="Échange de fiches"><span><b>Échange de fiches</b>sans bouton</span></label></fieldset>'
-      + '<label class="lgdc-pform__f">Bouton 50×50<input name="bouton" type="url" placeholder="Pour l’accueil ou le pied de page"></label>'
-      + '<label class="lgdc-pform__f">Ta fiche partenaire<input name="fiche" type="url" placeholder="Pour un échange de fiches"></label>'
-      + '<label class="lgdc-pform__f lgdc-pform__wide">Mini-contexte<textarea name="contexte" rows="4" required placeholder="L’univers de ton forum en quelques lignes"></textarea></label>'
+      + '<label class="lgdc-pform__f">Bouton 50×50<input name="bouton" type="url" placeholder="https://…"></label>'
+      + '<label class="lgdc-pform__f">Ta fiche partenaire<input name="fiche" type="url" placeholder="https://…"></label>'
+      + '<label class="lgdc-pform__f lgdc-pform__wide">Mini-contexte<textarea name="contexte" rows="4" placeholder="L’univers de ton forum en quelques lignes"></textarea></label>'
       + '<label class="lgdc-pform__f lgdc-pform__wide">Un mot pour nous<textarea name="mot" rows="3" placeholder="Facultatif"></textarea></label>'
       + '<div class="lgdc-pform__end"><button type="submit">Préparer ma demande</button><span class="lgdc-pform__msg" role="status"></span></div>';
     holder.replaceWith(form);
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var f = form.elements, msg = form.querySelector('.lgdc-pform__msg');
-      // le bouton n'est demandé que pour un emplacement avec bouton, la fiche pour un échange
+      // rien n'est obligatoire : seules les lignes remplies vont dans la demande
       var places = Array.from(form.querySelectorAll('[name="place"]:checked')).map(function (c) { return c.value; });
-      if (!places.length) { msg.textContent = 'Choisis au moins un emplacement.'; return; }
-      f.bouton.required = places.some(function (p) { return p !== 'Échange de fiches'; });
-      f.fiche.required = places.indexOf('Échange de fiches') >= 0;
-      if (!form.checkValidity()) { form.reportValidity(); return; }
       var v = function (k) { return f[k].value.replace(/\[|\]/g, '').trim(); };
-      var text = '[b]Forum :[/b] [url=' + v('lien') + ']' + v('nom') + '[/url]\n[b]Genre :[/b] ' + v('genre')
-        + '\n[b]Emplacements :[/b] ' + places.join(', ') + (v('bouton') ? '\n[b]Bouton :[/b] [img]' + v('bouton') + '[/img]' : '')
-        + (v('fiche') ? '\n[b]Fiche partenaire :[/b] [url=' + v('fiche') + ']' + v('fiche') + '[/url]' : '')
-        + '\n\n[b]Contexte :[/b]\n[quote]' + v('contexte') + '[/quote]' + (v('mot') ? '\n' + v('mot') : '');
+      var name = v('nom') || v('lien');
+      var lines = [
+        name ? '[b]Forum :[/b] ' + (v('lien') ? '[url=' + v('lien') + ']' + name + '[/url]' : name) : '',
+        v('genre') ? '[b]Genre :[/b] ' + v('genre') : '',
+        places.length ? '[b]Emplacements :[/b] ' + places.join(', ') : '',
+        v('bouton') ? '[b]Bouton :[/b] [img]' + v('bouton') + '[/img]' : '',
+        v('fiche') ? '[b]Fiche partenaire :[/b] [url=' + v('fiche') + ']' + v('fiche') + '[/url]' : ''
+      ].filter(Boolean);
+      var text = [lines.join('\n'), v('contexte') ? '[b]Contexte :[/b]\n[quote]' + v('contexte') + '[/quote]' : '', v('mot')].filter(Boolean).join('\n\n');
+      if (!text) { msg.textContent = 'Le formulaire est vide.'; return; }
       var area = document.querySelector('textarea[name="message"]'), ed = null;
       try { ed = area && window.jQuery && jQuery(area).sceditor('instance'); } catch (err) {}
       if (area) {

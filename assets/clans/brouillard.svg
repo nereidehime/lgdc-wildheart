@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 450" role="img" aria-label="Clan du Brouillard">
+  <title>Clan du Brouillard</title>
+  <!-- des massettes du marais qui sortent d'un banc de brume -->
+  <defs>
+  <mask id="m">
+    <rect width="460" height="450" fill="#fff"/>
+    <g fill="#000" stroke="#000"><path d="M150 430 Q144 313 140.4 196" stroke-width="9" fill="none" stroke-linecap="round"/><ellipse cx="141.0" cy="230" rx="12" ry="34" transform="rotate(-7.2 141.0 230)"/><path d="M204 430 Q208 295 210.4 160" stroke-width="9" fill="none" stroke-linecap="round"/><ellipse cx="210.0" cy="194" rx="12" ry="34" transform="rotate(4.8 210.0 194)"/><path d="M262 430 Q259 315 257.2 200" stroke-width="9" fill="none" stroke-linecap="round"/><ellipse cx="257.5" cy="234" rx="12" ry="34" transform="rotate(-3.6 257.5 234)"/><path d="M316 430 Q323 303 327.2 176" stroke-width="9" fill="none" stroke-linecap="round"/><ellipse cx="326.5" cy="210" rx="12" ry="34" transform="rotate(8.4 326.5 210)"/><path d="M176 430 Q168 330 122 262" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M290 430 Q300 340 350 286" stroke-width="7" fill="none" stroke-linecap="round"/></g>
+    <g stroke="#000"><path d="M60 322 Q115 304 170 322 T280 322 T390 322" stroke-width="30" fill="none" stroke-linecap="round"/>
+      <path d="M-20 372 Q40 354 100 372 T220 372 T340 372 T480 372" stroke-width="34" fill="none"/>
+      <path d="M120 418 Q180 400 240 418 T360 418 T480 418" stroke-width="30" fill="none"/></g>
+  </mask>
+  </defs>
+  <path d="M40 30 L138 126 L334 126 L420 38 L420 415 L40 415 Z" fill="currentColor" mask="url(#m)"/>
+</svg>
