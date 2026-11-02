@@ -704,9 +704,13 @@
     var roll = function (sides) { return die(seedBase + ':' + (n++) + ':' + sides, sides); };
 
     if (/^portée$/i.test(kind)) {
-      var litter = roll(100);
-      var res = lookup('Portée', String(litter));
-      line(card, 'Portée', [litter], res);
+      // une tentative sur deux ne donne rien (01 à 50) ; le nombre de chatons est tiré en premier
+      // pour que les lancers postés avant cette règle gardent leur résultat
+      var litter = roll(100), chance = roll(100);
+      var none = chance <= 50;
+      line(card, 'Tentative', [chance], none ? 'pas de portée cette lune' : 'réussie');
+      var res = none ? 'pas de portée' : lookup('Portée', String(litter));
+      if (!none) line(card, 'Chatons', [litter], res);
       card.dataset.mark = res;
       return card;
     }
