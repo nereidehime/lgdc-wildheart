@@ -201,8 +201,8 @@
     oiseau: [5, 7, 10, 5, 2], 'écureuil': [5, 7, 10, 5, 4], poisson: [7, 5, 10, 5, 4], lapin: [5, 10, 10, 7, 6]
   };
   var STEPS = ['Guetter', 'Se faufiler', 'Bondir', 'Mordre'];
-  // capacité de Clan : +1 en Guetter pour le Crépuscule, +1 en Bondir pour l'Orchidée
-  var CLAN_STEP = { 'crépuscule': 0, 'orchidée': 2 };
+  // capacité de Clan à la chasse : Guetter (Crépuscule), Se faufiler (Brouillard), Bondir (Orchidée), Mordre (Hêtre)
+  var CLAN_STEP = { 'crépuscule': 0, 'brouillard': 1, 'orchidée': 2, 'hêtre': 3 };
   // dégradé des dés : le territoire de la chasse, sinon le groupe de l'auteur
   var CLAN_TINT = { 'crépuscule': ['#8e7f9a', '#b59ab8'], 'hêtre': ['#b07a4f', '#c99566'], 'orchidée': ['#c2a24f', '#d1b46a'], 'brouillard': ['#8a99a4', '#7fa39a'] };
   function tint(card, pair) {

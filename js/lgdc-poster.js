@@ -51,7 +51,7 @@
   var table = document.getElementById('list_dice');
 
   // chasse en un seul lancer : les deux attributs de chaque étape (guidebook, Les gestes)
-  var GESTES = [['intelligence', 'volonte'], ['dexterite', 'volonte'], ['dexterite', 'intelligence'], ['puissance', 'intelligence']];
+  var GESTES = [['intelligence', 'volonte'], ['dexterite', 'volonte'], ['dexterite', 'intelligence'], ['puissance', 'dexterite']];
   var TERRITORIES = ['Crépuscule', 'Hêtre', 'Orchidée', 'Brouillard'];
   var options = [['', 'Choisir un dé'], ['d4', 'd4'], ['d6', 'd6'], ['d8', 'd8'], ['d10', 'd10'], ['d12', 'd12']]
     .concat(TERRITORIES.map(function (t) { return ['chasse ' + t, 'Chasse : ' + t]; }))

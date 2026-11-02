@@ -12,7 +12,7 @@
   var probe = document.createElement('span');
   // toujours dans cet ordre : Staff, Crépuscule, Hêtre, Orchidée, Brouillard, Solitaires
   var GROUPS = [
-    { color: '#cb7a53', end: '#dfa283', sym: 'staff', desc: 'Les administrateurs et modérateurs du forum. Pour une question, un MP à l’un d’eux suffit.' },
+    { color: '#cb7a53', end: '#dfa283', sym: 'staff', desc: 'Les administrateurs et modérateurs du forum. Pour une question, écrivez-leur sur le forum ou sur le Discord.' },
     { color: '#8e7f9a', end: '#b59ab8', sym: 'clan-crepuscule', clan: true, terr: 'Les rochers du plateau', traits: 'Disciplinés, vigilants, endurants, froids & inflexibles' },
     { color: '#b07a4f', end: '#c99566', sym: 'clan-hetre', clan: true, terr: 'La futaie de hêtres', traits: 'Sages, pieux, hospitaliers, bornés & rancuniers' },
     { color: '#c2a24f', end: '#d1b46a', sym: 'clan-orchidee', clan: true, terr: 'Les prairies de la lisière', traits: 'Courageux, francs, fougueux, colériques & imprudents' },
