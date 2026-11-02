@@ -28,7 +28,8 @@
   function report(error) { console.warn(error); }
   var page = [];
   if (document.querySelector('.lgdc-fa-card, .lgdc-fa-home')) page.push(load(base + 'lgdc-index.js').catch(report));
-  if (document.querySelector('.lgdc-clans')) page.push(load(base + 'lgdc-clans.js').catch(report));
+  // les effectifs de la bande viennent du registre, lu une fois la bande prête
+  if (document.querySelector('.lgdc-clans')) page.push(load(base + 'lgdc-clans.js').then(function () { return load(base + 'lgdc-registre.js'); }).catch(report));
   if (document.querySelector('.lgdc-fa-viewforum, .lgdc-fa-viewtopic')) page.push(load(base + 'lgdc-forum.js').catch(report));
   if (document.querySelector('.lgdc-fa-profile')) page.push(load(base + 'lgdc-profil.js').catch(report));
   if (document.querySelector('.lgdc-fa-memberlist')) page.push(load(base + 'lgdc-membres.js').catch(report));
@@ -59,6 +60,7 @@
 
   var mount = document.getElementById('lgdc-guidebook-mount');
   if (mount) page.push(load(base + 'lgdc-guidebook.js').then(function () {
+    load(base + 'lgdc-registre.js').catch(report);
     var names;
     function loadNames() {
       var tab = document.getElementById('lgdc-gb-noms');
