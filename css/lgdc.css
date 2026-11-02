@@ -3102,7 +3102,7 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 .lgdc-gbr__list { display: grid; gap: 12px; margin: 0; padding: 16px 18px; list-style: none; background: var(--b1); border: 2px solid var(--line); border-left: 6px solid var(--g1); border-radius: 6px; }
 .lgdc-gbr__item { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; padding-bottom: 12px; border-bottom: 2px solid var(--b3); }
 .lgdc-gbr__item:last-child { padding-bottom: 0; border-bottom: 0; }
-.lgdc-gbr__thumb { width: 64px; height: 64px; overflow: hidden; background: #ece7df; border: 2px solid var(--line); border-radius: 5px; }
+.lgdc-gbr__thumb { width: 64px; height: 100%; overflow: hidden; background: #ece7df; border: 2px solid var(--line); border-radius: 5px; filter: grayscale(1); }
 .lgdc-gbr__thumb img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
 .lgdc .lgdc-gb__page .lgdc-gbr__body p { margin: 0; }
 .lgdc .lgdc-gb__page .lgdc-gbr__top { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
