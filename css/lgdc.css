@@ -2,11 +2,12 @@
    WILDHEART — header de forum RPG La Guerre des Clans
    Préfixe : .lgdc-  (évite les conflits avec les classes Forumactif)
    Pierre claire, cadres de 2px, blocs brun-noir, accent orange ;
-   titres en Playfair italique, micro-libellés en Inter, noms aux couleurs des groupes.
+   titres en Playfair italique, micro-libellés en Google Sans, noms aux couleurs des groupes.
    ========================================================================= */
 
 /* Blank Theme impose dl { display: grid; 220px auto } dans le header : on revient au flux normal,
    sans spécificité ajoutée pour que les listes à classe gardent leur propre grille. */
+:root { --sans: "Google Sans", "Helvetica Neue", Arial, sans-serif; }
 .lgdc :where(dl) { display: block; grid-template-columns: none; gap: 0; }
 .lgdc :where(h1, h2, h3, h4, h5, h6) { padding: 0; }
 
@@ -28,7 +29,6 @@
   --a1: #bf5531;
   --a2: #cb7a53;
 
-  --sans: Inter, "Helvetica Neue", Arial, sans-serif;
   --wide: "obviously-wide", "neue-haas-grotesk-display", Arial, sans-serif;
   --serif: "Playfair Display", Georgia, serif;
   /* SVG intégrés : les masques externes sont bloqués en file://. */
@@ -823,7 +823,7 @@ html:has(#lgdc-header) { scroll-padding-top: 70px; }
 #truesight {
   max-width: 260px;
   padding: 12px 14px;
-  font: 400 12.5px/18px Inter, Arial, sans-serif;
+  font: 400 12.5px/18px var(--sans);
   color: #ece7df;
   background: #191715;
   border-radius: 5px;
@@ -836,7 +836,7 @@ html:has(#lgdc-header) { scroll-padding-top: 70px; }
 #truesight .ts-image { grid-row: span 2; }
 #truesight .ts-image img { display: block; max-width: 60px; border-radius: 3px; }
 #truesight .ts-head {
-  font: 800 10px/14px Inter, Arial, sans-serif;
+  font: 800 10px/14px var(--sans);
   letter-spacing: 1px;
   text-transform: uppercase;
   background: linear-gradient(90deg, #bf5531, #cb7a53);
@@ -938,19 +938,19 @@ html:has(#lgdc-header) { scroll-padding-top: 70px; }
   opacity: 0;
   transform: translate(-50%, -48%);
   transition: opacity .3s, transform .4s cubic-bezier(.22, .61, .36, 1);
-  font: 400 12.5px/20px Inter, Arial, sans-serif;
+  font: 400 12.5px/20px var(--sans);
 }
 .monomer-modal.monomer-open, .monomer-overlay.monomer-open { opacity: 1; }
 .monomer-modal.monomer-open { transform: translate(-50%, -50%); }
 .switcheroo__form { padding: 28px; background: #ece7df; border: 2px solid #ece7df; border-radius: 5px; }
 .switcheroo__form-row { display: flex; flex-direction: column; align-items: stretch; gap: 8px; margin-bottom: 16px; }
-.switcheroo__form-label { margin: 0; font: 800 10px/14px Inter, Arial, sans-serif; letter-spacing: 1px; text-transform: uppercase; color: #191715; }
+.switcheroo__form-label { margin: 0; font: 800 10px/14px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: #191715; }
 .switcheroo__form-input { width: 100%; padding: 10px 12px; font: inherit; color: #191715; background: #dfdad2; border: 2px solid #ece7df !important; border-radius: 5px; cursor: text; }
 .switcheroo__form-input:focus { outline: none; border-color: #cb7a53 !important; }
 .switcheroo__form-button {
   float: right;
   padding: 12px 20px;
-  font: 800 10px/12px Inter, Arial, sans-serif;
+  font: 800 10px/12px var(--sans);
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #ece7df;
@@ -1787,7 +1787,7 @@ section.lgdc-posts { display: flex; flex-direction: column; gap: 26px; }
 
 .lgdc-gb__prologue { margin: 0; padding: 28px 32px; border-radius: 5px; background: var(--d2); }
 .lgdc--dark .lgdc-gb__prologue { box-shadow: inset 0 0 0 2px var(--line); }
-/* texte courant lisible : Inter, pas de Playfair italique sur un long paragraphe */
+/* texte courant lisible : Google Sans, pas de Playfair italique sur un long paragraphe */
 .lgdc .lgdc-gb__page .lgdc-gb__prologue p { font: 400 14.5px/25px var(--sans); text-align: justify; color: #ece7df; }
 /* carte de la réserve : image Inkarnate, étiquettes et repères posés en pourcentage */
 .lgdc-map { margin: 18px 0 0; }
@@ -1818,13 +1818,13 @@ section.lgdc-posts { display: flex; flex-direction: column; gap: 26px; }
 tw {
   display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px;
   margin: 12px 0 16px; padding: 12px 16px;
-  font: 400 13px/20px var(--sans, Inter, sans-serif);
+  font: 400 13px/20px var(--sans);
   color: #ece7df; background: #191715;
   border-radius: 5px;
 }
 tw::before {
   content: "Avertissement";
-  font: 800 10px/20px var(--sans, Inter, sans-serif); letter-spacing: 1.5px; text-transform: uppercase;
+  font: 800 10px/20px var(--sans); letter-spacing: 1.5px; text-transform: uppercase;
   color: #cb7a53;
 }
 .lgdc--dark tw { box-shadow: inset 0 0 0 2px var(--line); }
@@ -2033,7 +2033,7 @@ tw::before {
 
 /* ---------- CODES DE MESSAGES (à coller dans les posts) ----------
    Grammaire Wildheart : avatars carrés, coins à 6 px, couleur du Clan en aplat (--g1, --g2 dans l'attribut style),
-   titres en Playfair italique, micro-libellés en Inter, intertitres numérotés.
+   titres en Playfair italique, micro-libellés en Google Sans, intertitres numérotés.
    .lgdc-tpl RP à bannière (--plain sans image), .lgdc-tpl2 variante, .lgdc-app fiche (--list : liens, chronologie), .lgdc-adm staff */
 .lgdc-tpl, .lgdc-tpl2, .lgdc-app, .lgdc-adm { --tb: var(--b2); --c: color-mix(in srgb, var(--g1) 60%, var(--ink-strong)); --gd: color-mix(in srgb, var(--g1) 72%, #1d1b19); position: relative; text-align: left; color: var(--ink); }
 .lgdc .lgdc-post__body :is(.lgdc-tpl, .lgdc-tpl2, .lgdc-app, .lgdc-adm) p { margin: 0; }
@@ -2901,7 +2901,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
   --pf-strong: var(--ink-strong, #1d1b19);
   --pf-soft: var(--ink-soft, #5f5850);
   --pf-accent: var(--a1, #bf5531);
-  font: 400 13.5px/22px var(--sans, Inter, "Helvetica Neue", Arial, sans-serif);
+  font: 400 13.5px/22px var(--sans);
   color: var(--pf-ink);
 }
 .personaForm fieldset, .personaForm legend { all: unset; box-sizing: border-box; }
@@ -2917,7 +2917,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
 /* un champ : libellé en micro-texte, aide en dessous, saisie */
 .personaForm .field { margin: 0 0 14px; }
 .personaForm .field > .field { margin: 0; }
-.personaForm label { display: block; margin-bottom: 4px; font: 800 9.5px/14px var(--sans, Inter, sans-serif); letter-spacing: 1.5px; text-transform: uppercase; color: var(--pf-strong); }
+.personaForm label { display: block; margin-bottom: 4px; font: 800 9.5px/14px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: var(--pf-strong); }
 .personaForm .description { margin: -2px 0 6px; font-size: 12px; line-height: 18px; color: var(--pf-soft); }
 .personaForm .description a { color: var(--pf-accent); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
 .personaForm .field.columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 14px; }
@@ -2927,7 +2927,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
 
 .personaForm :is(input[type="text"], input[type="number"], textarea, select) {
   display: block; width: 100%; min-height: 40px; margin: 0; padding: 9px 12px;
-  font: 400 13.5px/22px var(--sans, Inter, sans-serif); color: var(--pf-strong);
+  font: 400 13.5px/22px var(--sans); color: var(--pf-strong);
   background: var(--pf-field); border: 2px solid var(--pf-line); border-radius: 5px;
   transition: border-color .2s;
 }
@@ -2949,7 +2949,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
 
 /* erreurs renvoyées par le plugin */
 .personaForm .input-error, .personaForm .input-error:focus { border-color: var(--pf-accent); }
-.personaForm .input-error-message { margin-top: 4px; font: 600 12px/18px var(--sans, Inter, sans-serif); color: var(--pf-accent); }
+.personaForm .input-error-message { margin-top: 4px; font: 600 12px/18px var(--sans); color: var(--pf-accent); }
 
 /* aperçu de l'avatar : carré, cadre en tirets tant qu'il est vide */
 .image-preview { position: relative; overflow: hidden; border: 2px dashed var(--pf-line, #d2cbc1); border-radius: 5px; background: var(--pf-field, #ece8e2); }
@@ -2960,7 +2960,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
 /* choix personnalisés (input radio) */
 .choice-input { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px; margin: 4px 0; }
 .choice-input > input { position: absolute; opacity: 0; pointer-events: none; }
-label.choice { margin: 0; padding: 9px 12px; font: 600 12.5px/18px var(--sans, Inter, sans-serif); letter-spacing: 0; text-transform: none; color: var(--pf-ink, #4f4943); background: var(--pf-field, #ece8e2); border: 2px solid var(--pf-line, #d2cbc1); border-radius: 5px; cursor: pointer; }
+label.choice { margin: 0; padding: 9px 12px; font: 600 12.5px/18px var(--sans); letter-spacing: 0; text-transform: none; color: var(--pf-ink, #4f4943); background: var(--pf-field, #ece8e2); border: 2px solid var(--pf-line, #d2cbc1); border-radius: 5px; cursor: pointer; }
 input[type="radio"]:checked + label.choice { color: var(--pf-strong, #1d1b19); border-color: var(--pf-strong, #1d1b19); }
 input[type="radio"]:focus-visible + label.choice { outline: 2px solid var(--pf-strong, #1d1b19); outline-offset: 2px; }
 
@@ -2968,7 +2968,7 @@ input[type="radio"]:focus-visible + label.choice { outline: 2px solid var(--pf-s
 .duplicable-field:has(.delete-field) { position: relative; padding-right: 32px; }
 .delete-field { position: absolute; top: 24px; right: 0; display: grid; place-items: center; width: 24px; height: 24px; padding: 0; font-size: 15px; line-height: 1; color: var(--pf-soft, #5f5850); background: none; border: 2px solid var(--pf-line, #d2cbc1); border-radius: 5px; cursor: pointer; }
 .delete-field:hover { color: var(--pf-accent, #bf5531); border-color: var(--pf-accent, #bf5531); }
-.addField { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; font: 800 9.5px/14px var(--sans, Inter, sans-serif); letter-spacing: 1.5px; text-transform: uppercase; color: var(--pf-strong, #1d1b19); background: var(--b3, #dfdad2); border: 0; border-radius: 5px; cursor: pointer; }
+.addField { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; font: 800 9.5px/14px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: var(--pf-strong, #1d1b19); background: var(--b3, #dfdad2); border: 0; border-radius: 5px; cursor: pointer; }
 .addField:hover { color: #fff; background: var(--pf-accent, #bf5531); }
 
 /* liens et chronologie : chaque entrée se remplit dans une rangée séparée */
@@ -2993,7 +2993,7 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 .persona-options-button:hover { background: var(--b2, #e8e4dd); }
 .persona-code-parameters { display: none; position: relative; padding: 10px; background: var(--b3, #dfdad2); border-radius: 5px; }
 .persona-code-parameters.open { display: block; }
-.persona-code-parameters .copy-button { position: absolute; right: 10px; padding: 0; font: 800 9.5px/14px var(--sans, Inter, sans-serif); letter-spacing: 1.5px; text-transform: uppercase; background: none; border: 0; cursor: pointer; }
+.persona-code-parameters .copy-button { position: absolute; right: 10px; padding: 0; font: 800 9.5px/14px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; background: none; border: 0; cursor: pointer; }
 
 /* chargement : la fiche reste invisible jusqu'à ce que le plugin l'ait construite */
 .persona:not(.loaded) { display: block; min-height: 600px; color: transparent !important; background: var(--b2, #e8e4dd); border-radius: 10px; }
@@ -3001,20 +3001,20 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 /* champs masqués selon le rang, et listes cherchables (astuces, bonus de gestes) */
 .personaForm [hidden] { display: none !important; }
 .personaForm .wh-store { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.personaForm input.wh-search { display: block; width: 100%; min-height: 40px; margin: 0 0 8px; padding: 9px 12px; font: 400 13.5px/22px var(--sans, Inter, sans-serif); color: var(--pf-strong); background: var(--pf-field); border: 2px solid var(--pf-line); border-radius: 5px; }
+.personaForm input.wh-search { display: block; width: 100%; min-height: 40px; margin: 0 0 8px; padding: 9px 12px; font: 400 13.5px/22px var(--sans); color: var(--pf-strong); background: var(--pf-field); border: 2px solid var(--pf-line); border-radius: 5px; }
 .personaForm input.wh-search:focus { outline: none; border-color: var(--pf-strong); }
 .personaForm .wh-picks { display: grid; gap: 4px; max-height: 300px; overflow: auto; padding: 4px; background: var(--b3, #dfdad2); border-radius: 5px; scrollbar-width: thin; }
-.personaForm .wh-pick { display: grid; grid-template-columns: auto 170px 110px minmax(0, 1fr); gap: 4px 12px; align-items: center; margin: 0; padding: 9px 12px; font: 400 13px/19px var(--sans, Inter, sans-serif); letter-spacing: 0; text-transform: none; color: var(--pf-ink); background: var(--pf-field); border: 2px solid transparent; border-radius: 5px; cursor: pointer; }
+.personaForm .wh-pick { display: grid; grid-template-columns: auto 170px 110px minmax(0, 1fr); gap: 4px 12px; align-items: center; margin: 0; padding: 9px 12px; font: 400 13px/19px var(--sans); letter-spacing: 0; text-transform: none; color: var(--pf-ink); background: var(--pf-field); border: 2px solid transparent; border-radius: 5px; cursor: pointer; }
 .personaForm .wh-pick:hover { border-color: var(--pf-line); }
 .personaForm .wh-pick:has(input:checked), .personaForm .wh-pick:has(select:not([value="0"]) option:checked:not([value="0"])) { border-color: var(--pf-strong); }
 .personaForm .wh-pick input { width: 16px; height: 16px; margin: 0; accent-color: var(--pf-strong); cursor: pointer; }
 .personaForm .wh-pick__n { margin: 0; font: italic 900 16px/1.2 var(--serif, "Playfair Display", Georgia, serif); letter-spacing: 0; text-transform: none; color: var(--pf-strong); }
-.personaForm .wh-pick__v { font: 800 9px/12px var(--sans, Inter, sans-serif); letter-spacing: 1px; text-transform: uppercase; color: var(--pf-soft); }
+.personaForm .wh-pick__v { font: 800 9px/12px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--pf-soft); }
 .personaForm .wh-pick--step { grid-template-columns: 130px 170px minmax(0, 1fr) 84px; cursor: default; }
 .personaForm .wh-pick--step select { min-height: 32px; padding: 4px 8px; font-size: 12.5px; }
 .personaForm .wh-pick--step .wh-select select { padding-right: 28px; }
 .personaForm .wh-pick--step .wh-select > i { right: 8px; }
-.personaForm .wh-check { margin: 0 0 14px; padding: 10px 14px; font: 600 12.5px/18px var(--sans, Inter, sans-serif); color: var(--pf-strong); background: var(--b3, #dfdad2); border-radius: 5px; }
+.personaForm .wh-check { margin: 0 0 14px; padding: 10px 14px; font: 600 12.5px/18px var(--sans); color: var(--pf-strong); background: var(--b3, #dfdad2); border-radius: 5px; }
 .personaForm .wh-check[data-state="error"] { color: #fff; background: var(--a1, #bf5531); }
 .personaForm .wh-check:empty { display: none; }
 /* ==== FIN PERSONA ==== */

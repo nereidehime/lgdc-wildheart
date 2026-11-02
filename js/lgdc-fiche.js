@@ -120,7 +120,7 @@ ${famille}
 const WH_ASTUCES = [
   ["Coup puissant", "Griffe", 1, "+4 dégâts par niveau sur un coup.", [], 2, false],
   ["Plaquage", "Griffe", 1, "Un coup qui touche ralentit aussi la cible.", [], 1, false],
-  ["Riposte", "Griffe", 1, "Quand une attaque le rate, il frappe aussitôt en retour.", [], 1, false],
+  ["Riposte", "Griffe", 1, "Quand une attaque le rate, son coup suivant touche sans test.", [], 1, false],
   ["Griffes au ventre", "Griffe", 2, "Toujours : +3 dégâts contre une cible ralentie ou en crise.", ["Coup puissant", "Plaquage"], 1, false],
   ["Rage du sang", "Griffe", 2, "Toujours : en crise, +2 pour Frapper, Bondir et Mordre.", ["Plaquage", "Riposte"], 1, false],
   ["Furie", "Griffe", 3, "Deux attaques dans le même tour.", ["Griffes au ventre", "Rage du sang"], 1, true],
@@ -133,7 +133,7 @@ const WH_ASTUCES = [
   ["Effacer son odeur", "Ombre", 1, "Toujours : −2 pour qui le piste.", [], 1, false],
   ["Feinte", "Ombre", 1, "Le coup touche sans test.", [], 1, false],
   ["Tromperie", "Ombre", 1, "+2 par niveau pour Convaincre en mentant ou en dupant.", [], 2, false],
-  ["Embuscade", "Ombre", 2, "Frapper en premier sans que la cible puisse l’empêcher, avec +5 dégâts sur ce coup.", ["Effacer son odeur", "Feinte"], 1, false],
+  ["Embuscade", "Ombre", 2, "Le premier coup d’un combat touche sans test et fait +5 dégâts.", ["Effacer son odeur", "Feinte"], 1, false],
   ["Démasquer", "Ombre", 2, "Après un test de Réfléchir réussi, le joueur de la cible lui confie ce que son personnage cherche vraiment.", ["Feinte", "Tromperie"], 1, false],
   ["Ombre parmi les ombres", "Ombre", 3, "Fuir sans test et sans laisser de trace : personne ne peut le pister jusqu’à la fin du sujet.", ["Embuscade", "Démasquer"], 1, true],
   ["Vigilance", "Cœur", 1, "Toujours : +1 par niveau pour Guetter.", [], 2, false],
