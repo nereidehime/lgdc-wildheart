@@ -3127,7 +3127,9 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 .lgdc .lgdc-gb__page .lgdc-gbr__more p { font-size: 15px; line-height: 1.55; }
 @media (max-width: 560px) { .lgdc-gbr__more > div { grid-template-columns: 1fr; } }
 /* Index : la Cbox, dans Qui est en ligne */
-.lgdc-cbox iframe { display: block; width: 100%; height: 280px; margin-top: 10px; border: 2px solid var(--line); border-radius: 5px; background: #ece8e2; }
+.lgdc-qeel__low:has(.lgdc-cbox) { grid-template-columns: minmax(0, 1fr) 210px minmax(0, 1.2fr); align-items: start; }
+@media (max-width: 900px) { .lgdc-qeel__low:has(.lgdc-cbox) { grid-template-columns: minmax(0, 1fr) 210px; } .lgdc-qeel__low .lgdc-cbox { grid-column: 1 / -1; } }
+.lgdc-cbox iframe { display: block; width: 100%; height: 420px; margin-top: 10px; border: 2px solid var(--line); border-radius: 5px; background: #ece8e2; }
 /* Lisibilité : textes de lecture à 15 px minimum, infos d’appoint à 13 px, étiquettes en capitales à 11 px.
    Ce bloc vient après les règles d’origine : il ne change que la taille et l’interligne. */
 .lgdc,
