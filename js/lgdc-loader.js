@@ -39,7 +39,7 @@
   // formulaires Persona : nouveau sujet dans leur forum, modification d'un de leurs messages, ou message affiché
   var editorText = document.querySelector('textarea#text_editor_textarea');
   var personaShown = document.querySelector('.persona');
-  [['fiche', 7, 'lgdc-fiche.js'], ['liens', 2, 'lgdc-liens.js'], ['chronologie', 25, 'lgdc-chronologie.js']].forEach(function (persona) {
+  [['fiche', 7, 'lgdc-fiche.js'], ['liens', 2, 'lgdc-liens.js'], ['chronologie', 25, 'lgdc-chronologie.js'], ['prelien', 6, 'lgdc-prelien.js']].forEach(function (persona) {
     var tag = '"name":"' + persona[0] + '"';
     if (location.href.indexOf('/post?f=' + persona[1] + '&mode=newtopic') >= 0
       || (editorText && editorText.value.indexOf('<div class="persona">{' + tag) >= 0)

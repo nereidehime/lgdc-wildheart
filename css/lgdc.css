@@ -2075,6 +2075,8 @@ tw::before {
 /* 3. fiche : en-tête de couleur avec avatar carré, intertitres numérotés, tuiles à micro-libellé */
 .lgdc-app { --tb: var(--b2); margin: 0 0 6px; padding: 0 0 30px; background: var(--tb); border: 2px solid var(--line); border-radius: 10px; overflow: hidden; }
 .lgdc-app__top { display: block; padding: 34px 34px 28px; background: var(--gd); }
+.lgdc-app__head { display: flex; align-items: center; gap: 22px; }
+.lgdc-app__head .lgdc-app__lav { flex: none; }
 .lgdc .lgdc-post__body .lgdc-app__k { color: rgba(255, 255, 255, .85); }
 .lgdc .lgdc-app__name { margin: 6px 0 0; font: italic 900 52px/.95 var(--serif); letter-spacing: -1px; color: #fff; }
 .lgdc .lgdc-post__body p.lgdc-app__quote { margin-top: 12px; font: italic 400 15px/22px var(--serif); color: rgba(255, 255, 255, .92); }
