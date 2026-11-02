@@ -41,7 +41,7 @@ function whFiche(data) {
   const taille = (d) => parseInt(d.slice(1), 10);
   const rang = data.rang || "Guerrier";
   const bonusPV = rang === "Chaton" ? 5 : rang.startsWith("Apprenti") ? 10 : 15;
-  const pv = taille(de("puissance")) + bonusPV;
+  const pv = taille(de("puissance")) + bonusPV + (/(^|, )Inébranlable(,|$)/.test(String(data.astuces ?? "")) ? 5 : 0);
   const esquive = taille(de("dexterite")) + 2;
   const vies = rang === "Chef" ? ", 9 vies" : "";
   const barre = (nom, k) => {
@@ -124,14 +124,14 @@ const WH_ASTUCES = [
   ["Griffes au ventre", "Griffe", 2, "Toujours : +3 dégâts contre une cible ralentie ou en crise.", ["Coup puissant", "Plaquage"], 1, false],
   ["Rage du sang", "Griffe", 2, "Toujours : en crise, +2 pour Frapper, Bondir et Mordre.", ["Plaquage", "Riposte"], 1, false],
   ["Furie", "Griffe", 3, "Deux attaques dans le même tour.", ["Griffes au ventre", "Rage du sang"], 1, true],
-  ["Bond mortel", "Chasse", 1, "+2 points par niveau sur une chasse réussie.", [], 2, false],
+  ["Bond mortel", "Chasse", 1, "+1 point par niveau sur une chasse réussie.", [], 2, false],
   ["Pistage", "Chasse", 1, "Toujours : +2 pour Pister ou Réfléchir.", [], 1, false],
-  ["Mâchoire sûre", "Chasse", 1, "Si la chasse échoue à l’étape Mordre, la proie est quand même attrapée.", [], 1, false],
+  ["Flair", "Chasse", 1, "Si la chasse échoue à l’étape Guetter, relancer la chasse.", [], 1, false],
   ["Partage du gibier", "Chasse", 2, "Une chasse réussie retire l’altération affaibli à tous les camarades du RP.", ["Bond mortel", "Pistage"], 1, false],
-  ["Patte légère", "Chasse", 2, "Si la chasse échoue à l’étape Se faufiler ou Bondir, relancer la chasse.", ["Pistage", "Mâchoire sûre"], 1, false],
-  ["Traque", "Chasse", 3, "Toujours : toute chasse ratée peut être relancée une fois.", ["Partage du gibier", "Patte légère"], 1, true],
+  ["Patte légère", "Chasse", 2, "Si la chasse échoue à l’étape Se faufiler ou Bondir, relancer la chasse.", ["Pistage", "Flair"], 1, false],
+  ["Traque", "Chasse", 3, "Toujours : ses chasses réussies rapportent le double de points.", ["Partage du gibier", "Patte légère"], 1, true],
   ["Effacer son odeur", "Ombre", 1, "Toujours : −2 pour qui le piste.", [], 1, false],
-  ["Feinte", "Ombre", 1, "La cible ne peut pas esquiver.", [], 1, false],
+  ["Feinte", "Ombre", 1, "Le coup touche sans test.", [], 1, false],
   ["Tromperie", "Ombre", 1, "+2 par niveau pour Convaincre en mentant ou en dupant.", [], 2, false],
   ["Embuscade", "Ombre", 2, "Frapper en premier sans que la cible puisse l’empêcher, avec +5 dégâts sur ce coup.", ["Effacer son odeur", "Feinte"], 1, false],
   ["Démasquer", "Ombre", 2, "Après un test de Réfléchir réussi, le joueur de la cible lui confie ce que son personnage cherche vraiment.", ["Feinte", "Tromperie"], 1, false],
@@ -144,7 +144,7 @@ const WH_ASTUCES = [
   ["Ralliement", "Cœur", 3, "Chaque camarade présent relance un test raté, puis gagne +2 à son prochain test.", ["Inébranlable", "Parole d’Assemblée"], 1, true],
   ["Connaissance des plantes", "Herbe", 1, "Toujours : +1 par niveau pour Soigner.", [], 2, false],
   ["Apaiser", "Herbe", 1, "Retire une altération d’Intelligence ou de Volonté : désorienté, effrayé ou enragé.", [], 1, false],
-  ["Lire les signes", "Herbe", 1, "Interpréter un rêve ou un présage.", [], 1, false],
+  ["Lire les signes", "Herbe", 1, "Après un test de Réfléchir réussi (difficulté 10), interpréter un rêve ou un présage.", [], 1, false],
   ["Main sûre", "Herbe", 2, "Un soin rend tous les points de vie et retire toutes les altérations.", ["Connaissance des plantes", "Apaiser"], 1, false],
   ["Messager des Étoiles", "Herbe", 2, "Une fois par lune, demander au staff un vrai présage du Clan des Étoiles pour l’intrigue.", ["Apaiser", "Lire les signes"], 1, false],
   ["Souffle des Étoiles", "Herbe", 3, "Un camarade qui tombe à 0 point de vie reste à 1 point de vie et peut agir.", ["Main sûre", "Messager des Étoiles"], 1, true],
