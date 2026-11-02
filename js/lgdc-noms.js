@@ -79,23 +79,26 @@
     while (tires.length < nombre) {
       tires.push(disponibles.splice(Math.floor(Math.random() * disponibles.length), 1)[0]);
     }
+    var guerrier = rang.value === 'guerrier';
     var choix = noms[rang.value].filter(function (nom) {
+      if (guerrier && ((garde.pre && nom.pre !== garde.pre) || (garde.suf && nom.suf !== garde.suf))) return false;
       if (!tires.length) return true;
       var premier = tires[0].bit;
-      if (rang.value !== 'guerrier') return Boolean(nom.b & premier);
+      if (!guerrier) return Boolean(nom.b & premier);
+      // une moitié gardée ne compte plus pour les filtres : seule l'autre doit y répondre
+      if (garde.pre && garde.suf) return true;
+      if (garde.pre || garde.suf) {
+        var libre = garde.pre ? nom.b : nom.a;
+        return tires.some(function (tire) { return libre & tire.bit; });
+      }
       if (tires.length === 1) return (nom.a & premier) && (nom.b & premier);
       var second = tires[1].bit;
       return ((nom.a & premier) && (nom.b & second)) || ((nom.a & second) && (nom.b & premier));
     });
-    if (rang.value === 'guerrier') {
-      choix = choix.filter(function (nom) {
-        return (!garde.pre || nom.pre === garde.pre) && (!garde.suf || nom.suf === garde.suf);
-      });
-    }
     var autres = choix.filter(function (nom) { return nom.texte !== resultat.textContent; });
     if (autres.length) choix = autres;
     if (!choix.length) {
-      actuel = null;
+      // les boutons restent, pour pouvoir libérer une moitié gardée
       montrer();
       resultat.textContent = 'Aucune combinaison';
       selection.textContent = 'Modifie les filtres ou relance le tirage pour trouver un nom compatible.';
