@@ -67,7 +67,7 @@
       names.catch(function (error) {
         names = null;
         var result = document.getElementById('lgdc-noms-resultat');
-        if (result) result.textContent = 'Le générateur est indisponible. Rouvrez cet onglet pour réessayer.';
+        if (result) result.textContent = 'Le générateur est indisponible. Rouvre cet onglet pour réessayer.';
         report(error);
       });
     }
@@ -75,13 +75,13 @@
     window.addEventListener('hashchange', loadNames);
     loadNames();
   }).catch(function (error) {
-    mount.textContent = 'Le guidebook est momentanément indisponible. Rechargez la page pour réessayer.';
+    mount.textContent = 'Le guidebook est momentanément indisponible. Recharge la page pour réessayer.';
     report(error);
   }));
 
   var combat = document.getElementById('lgdc-combat-mount');
   if (combat) page.push(load(base + 'lgdc-combat.js').catch(function (error) {
-    combat.textContent = 'Le suivi de combat est momentanément indisponible. Rechargez la page pour réessayer.';
+    combat.textContent = 'Le suivi de combat est momentanément indisponible. Recharge la page pour réessayer.';
     report(error);
   }));
 
