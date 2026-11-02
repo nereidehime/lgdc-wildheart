@@ -3131,9 +3131,7 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 .lgdc-qeel__low:has(.lgdc-cbox) > .lgdc-today, .lgdc-qeel__low:has(.lgdc-cbox) > .lgdc-stats { height: 100%; }
 .lgdc-qeel__low:has(.lgdc-cbox) > .lgdc-stats { text-align: center; }
 @media (max-width: 900px) { .lgdc-qeel__low:has(.lgdc-cbox) { grid-template-columns: minmax(0, 1fr) 210px; } .lgdc-qeel__low .lgdc-cbox { grid-column: 1 / -1; } }
-.lgdc-cbox iframe { display: block; width: 100%; height: 420px; margin-top: 10px; border: 2px solid var(--line); border-radius: 5px; background: #ece8e2; }
-/* la Cbox ne voit pas le thème du forum : en sombre, on inverse ses couleurs (le hue-rotate garde les teintes) */
-[data-color-scheme="dark"] .lgdc-cbox iframe { filter: invert(1) hue-rotate(180deg); background: #191715; }
+.lgdc-cbox iframe { display: block; width: 100%; height: 420px; margin-top: 10px; border: 2px solid var(--line); border-radius: 5px; background: var(--b1); }
 /* Lisibilité : textes de lecture à 15 px minimum, infos d’appoint à 13 px, étiquettes en capitales à 11 px.
    Ce bloc vient après les règles d’origine : il ne change que la taille et l’interligne. */
 .lgdc,

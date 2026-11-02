@@ -29,6 +29,12 @@
     document.documentElement.dataset.colorScheme = on ? 'dark' : 'light';
     store('color-scheme', on ? 'dark' : 'light');
     if (themeBtn) themeBtn.setAttribute('aria-pressed', String(on));
+    // la Cbox a son propre thème (12271 clair, 12272 sombre) : on recharge l'iframe seulement s'il change
+    var cbox = document.getElementById('lgdc-cbox');
+    if (cbox && cbox.src) {
+      var src = cbox.src.replace(/theme=\d+/, 'theme=' + (on ? '12272' : '12271'));
+      if (src !== cbox.src) cbox.src = src;
+    }
   }
   setDark((store('lgdc-theme') || store('color-scheme')) === 'dark');
 
