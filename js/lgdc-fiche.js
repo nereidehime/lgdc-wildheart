@@ -59,7 +59,7 @@ function whFiche(data) {
     : "";
   // astuces : infobulle Truesight avec l'effet de chacune
   const astuces = String(data.astuces ?? "").split(",").map((s) => s.trim()).filter(Boolean).map((n) => {
-    const a = (typeof WH_ASTUCES !== "undefined" ? WH_ASTUCES : []).find(([nom]) => nom === n);
+    const a = (typeof WH_ASTUCES !== "undefined" ? WH_ASTUCES : []).find(([nom]) => nom === n.replace(/ \(niv\. \d\)$/, ""));
     return a ? `<b class="lgdc-tip" data-tooltip-head="${whText(n)}" title="${whText(a[3])}">${whText(n)}</b>` : whText(n);
   }).join(", ");
 
@@ -116,33 +116,38 @@ ${famille}
 // RÈGLES DU FORMULAIRE : rangs selon l'âge, champs selon le rang, dés vérifiés,
 // astuces et bonus de gestes choisis dans des listes cherchables.
 // =========================================================================
-// nom, arbre, rang (le rang II demande un rang I du même arbre, le rang III un rang II), effet
+// nom, arbre, rang, effet, astuces requises avant, niveaux possibles, toutes requises (sinon une seule)
 const WH_ASTUCES = [
-  ["Coup puissant", "Griffe", 1, "+5 dégâts sur un coup."],
-  ["Plaquage", "Griffe", 1, "La cible est ralentie."],
-  ["Griffes au ventre", "Griffe", 2, "Jusqu’à la fin du combat, +3 dégâts sur chaque coup contre une cible ralentie ou en crise."],
-  ["Riposte", "Griffe", 2, "Quand une attaque le rate, il frappe aussitôt en retour."],
-  ["Furie", "Griffe", 3, "Deux attaques dans le même tour."],
-  ["Bond mortel", "Chasse", 1, "+2 points sur une chasse réussie."],
-  ["Pistage", "Chasse", 1, "+2 pour Pister ou Réfléchir."],
-  ["Mâchoire sûre", "Chasse", 2, "Si la chasse échoue à l’étape Mordre, la proie est quand même attrapée."],
-  ["Patte légère", "Chasse", 2, "Si la chasse échoue à l’étape Se faufiler, relancer la chasse."],
-  ["Traque", "Chasse", 3, "Relancer une chasse ratée, quelle que soit l’étape."],
-  ["Effacer son odeur", "Ombre", 1, "−2 pour qui la piste."],
-  ["Course", "Ombre", 1, "Fuir sans test."],
-  ["Feinte", "Ombre", 2, "La cible ne peut pas esquiver."],
-  ["Tromperie", "Ombre", 2, "+2 pour Convaincre en mentant ou en dupant."],
-  ["Embuscade", "Ombre", 3, "Frapper en premier sans que la cible puisse l’empêcher, avec +5 dégâts sur ce coup."],
-  ["Vigilance", "Cœur", 1, "+2 pour Guetter."],
-  ["Feulement", "Cœur", 1, "La cible est effrayée."],
-  ["Rempart", "Cœur", 2, "Prendre les dégâts d’un camarade."],
-  ["Parole d’Assemblée", "Cœur", 2, "+2 pour Convaincre devant les Clans."],
-  ["Ralliement", "Cœur", 3, "Chaque camarade présent gagne +2 à son prochain test."],
-  ["Connaissance des plantes", "Herbe", 1, "+2 pour Soigner."],
-  ["Apaiser", "Herbe", 1, "Retire une altération d’Intelligence ou de Volonté : désorienté, effrayé ou enragé."],
-  ["Remède de voyage", "Herbe", 2, "Utiliser un remède hors du camp."],
-  ["Lire les signes", "Herbe", 2, "Interpréter un rêve ou un présage."],
-  ["Main sûre", "Herbe", 3, "Un soin rend tous les points de vie et retire toutes les altérations."],
+  ["Coup puissant", "Griffe", 1, "+4 dégâts par niveau sur un coup.", [], 2, false],
+  ["Plaquage", "Griffe", 1, "Un coup qui touche ralentit aussi la cible.", [], 1, false],
+  ["Riposte", "Griffe", 1, "Quand une attaque le rate, il frappe aussitôt en retour.", [], 1, false],
+  ["Griffes au ventre", "Griffe", 2, "Toujours : +3 dégâts contre une cible ralentie ou en crise.", ["Coup puissant", "Plaquage"], 1, false],
+  ["Rage du sang", "Griffe", 2, "Toujours : en crise, +2 pour Frapper, Bondir et Mordre.", ["Plaquage", "Riposte"], 1, false],
+  ["Furie", "Griffe", 3, "Deux attaques dans le même tour.", ["Griffes au ventre", "Rage du sang"], 1, true],
+  ["Bond mortel", "Chasse", 1, "+2 points par niveau sur une chasse réussie.", [], 2, false],
+  ["Pistage", "Chasse", 1, "Toujours : +2 pour Pister ou Réfléchir.", [], 1, false],
+  ["Mâchoire sûre", "Chasse", 1, "Si la chasse échoue à l’étape Mordre, la proie est quand même attrapée.", [], 1, false],
+  ["Partage du gibier", "Chasse", 2, "Une chasse réussie retire l’altération affaibli à tous les camarades du RP.", ["Bond mortel", "Pistage"], 1, false],
+  ["Patte légère", "Chasse", 2, "Si la chasse échoue à l’étape Se faufiler ou Bondir, relancer la chasse.", ["Pistage", "Mâchoire sûre"], 1, false],
+  ["Traque", "Chasse", 3, "Toujours : toute chasse ratée peut être relancée une fois.", ["Partage du gibier", "Patte légère"], 1, true],
+  ["Effacer son odeur", "Ombre", 1, "Toujours : −2 pour qui le piste.", [], 1, false],
+  ["Feinte", "Ombre", 1, "La cible ne peut pas esquiver.", [], 1, false],
+  ["Tromperie", "Ombre", 1, "+2 par niveau pour Convaincre en mentant ou en dupant.", [], 2, false],
+  ["Embuscade", "Ombre", 2, "Frapper en premier sans que la cible puisse l’empêcher, avec +5 dégâts sur ce coup.", ["Effacer son odeur", "Feinte"], 1, false],
+  ["Démasquer", "Ombre", 2, "Après un test de Réfléchir réussi, le joueur de la cible lui confie ce que son personnage cherche vraiment.", ["Feinte", "Tromperie"], 1, false],
+  ["Ombre parmi les ombres", "Ombre", 3, "Fuir sans test et sans laisser de trace : personne ne peut le pister jusqu’à la fin du sujet.", ["Embuscade", "Démasquer"], 1, true],
+  ["Vigilance", "Cœur", 1, "Toujours : +1 par niveau pour Guetter.", [], 2, false],
+  ["Rempart", "Cœur", 1, "Prendre les dégâts d’un camarade.", [], 1, false],
+  ["Feulement", "Cœur", 1, "La cible est effrayée.", [], 1, false],
+  ["Inébranlable", "Cœur", 2, "Toujours : +5 points de vie, et jamais effrayé.", ["Vigilance", "Rempart"], 1, false],
+  ["Parole d’Assemblée", "Cœur", 2, "Toujours : +2 pour Convaincre ou Feuler face à un autre Clan.", ["Rempart", "Feulement"], 1, false],
+  ["Ralliement", "Cœur", 3, "Chaque camarade présent relance un test raté, puis gagne +2 à son prochain test.", ["Inébranlable", "Parole d’Assemblée"], 1, true],
+  ["Connaissance des plantes", "Herbe", 1, "Toujours : +1 par niveau pour Soigner.", [], 2, false],
+  ["Apaiser", "Herbe", 1, "Retire une altération d’Intelligence ou de Volonté : désorienté, effrayé ou enragé.", [], 1, false],
+  ["Lire les signes", "Herbe", 1, "Interpréter un rêve ou un présage.", [], 1, false],
+  ["Main sûre", "Herbe", 2, "Un soin rend tous les points de vie et retire toutes les altérations.", ["Connaissance des plantes", "Apaiser"], 1, false],
+  ["Messager des Étoiles", "Herbe", 2, "Une fois par lune, demander au staff un vrai présage du Clan des Étoiles pour l’intrigue.", ["Apaiser", "Lire les signes"], 1, false],
+  ["Souffle des Étoiles", "Herbe", 3, "Un camarade qui tombe à 0 point de vie reste à 1 point de vie et peut agir.", ["Main sûre", "Messager des Étoiles"], 1, true],
 ];
 const WH_GESTES = [
   ["Guetter", "Intelligence + Volonté", "voir, écouter, flairer"],
@@ -219,7 +224,7 @@ function whFormRules(form) {
 
   // listes cherchables : une ligne par astuce ou par geste, filtrée par la recherche
   const astucesBox = form.querySelector("[data-wh-astuces]");
-  astucesBox.innerHTML = WH_ASTUCES.map(([n, arbre, rang, d], i) => `<label class="wh-pick" for="wh-a-${i}"><input type="checkbox" value="${n}" id="wh-a-${i}"><span class="wh-pick__n">${n}</span><span class="wh-pick__v">${arbre} ${"I".repeat(rang)}</span><span class="wh-pick__d">${d}</span></label>`).join("");
+  astucesBox.innerHTML = WH_ASTUCES.map(([n, arbre, rang, d, req, max], i) => `<label class="wh-pick" for="wh-a-${i}">${max > 1 ? `<select id="wh-a-${i}" data-astuce="${n}"><option value="0">0</option><option value="1">1</option><option value="2">2</option></select>` : `<input type="checkbox" value="${n}" id="wh-a-${i}" data-astuce="${n}">`}<span class="wh-pick__n">${n}${max > 1 ? " ×2" : ""}</span><span class="wh-pick__v">${arbre} ${["", "I", "II", "III"][rang]}</span><span class="wh-pick__d">${d}</span></label>`).join("");
   const bonusBox = form.querySelector("[data-wh-bonus]");
   bonusBox.innerHTML = WH_GESTES.map(([n, de, d], i) => `<div class="wh-pick wh-pick--step"><label class="wh-pick__n" for="wh-b-${i}">${n}</label><span class="wh-pick__v">${de}</span><span class="wh-pick__d">${d}</span><div class="wh-select"><select id="wh-b-${i}" data-geste="${n}"><option value="0">aucun</option><option value="2">+2</option><option value="4">+4</option></select><i class="ph-light ph-caret-down" aria-hidden="true"></i></div></div>`).join("");
   form.querySelectorAll("[data-wh-search]").forEach((q) => {
@@ -230,9 +235,12 @@ function whFormRules(form) {
     });
   });
   // reprend les valeurs déjà enregistrées (édition d'une fiche)
-  String($("astuces").value).split(",").map((s) => s.trim()).forEach((n) => {
-    const c = [...astucesBox.querySelectorAll("input")].find((x) => x.value === n);
-    if (c) c.checked = true;
+  String($("astuces").value).split(",").map((s) => s.trim()).forEach((s) => {
+    const m = s.match(/^(.*?)(?: \(niv\. (\d)\))?$/);
+    const c = astucesBox.querySelector(`[data-astuce="${m[1]}"]`);
+    if (!c) return;
+    if (c.tagName === "SELECT") c.value = m[2] || "1";
+    else c.checked = true;
   });
   String($("bonus").value).split(",").forEach((s) => {
     const m = s.match(/\+(\d)\s+en\s+(.+)/);
@@ -268,6 +276,7 @@ function whFormRules(form) {
     if (r === "Chaton") {
       // un chaton n'a ni astuce, ni bonus, et ses quatre dés sont des d6
       astucesBox.querySelectorAll("input").forEach((c) => { c.checked = false; });
+      astucesBox.querySelectorAll("select").forEach((c) => { c.value = "0"; });
       bonusBox.querySelectorAll("select").forEach((s) => { s.value = "0"; });
       WH_ATTRS.forEach((k) => { $(k).value = "d6"; });
     }
@@ -280,14 +289,18 @@ function whFormRules(form) {
     const des = WH_ATTRS.map((k) => parseInt($(k).value.slice(1), 10));
     const total = whAmeliorations(known ? a : 0);
     const coutDes = whDiceCost(r, des);
-    const choisies = [...astucesBox.querySelectorAll("input:checked")].map((c) => c.value);
-    const coutAstuces = Math.max(0, choisies.length - rules.astuces);
+    // astuces choisies et leur niveau
+    const niveaux = new Map([...astucesBox.querySelectorAll("[data-astuce]")]
+      .map((c) => [c.dataset.astuce, c.tagName === "SELECT" ? Number(c.value) : (c.checked ? 1 : 0)])
+      .filter(([, v]) => v > 0));
+    const choisies = [...niveaux.keys()];
+    const coutAstuces = Math.max(0, [...niveaux.values()].reduce((x, y) => x + y, 0) - rules.astuces);
     const bonus = [...bonusBox.querySelectorAll("select")].filter((s) => s.value !== "0");
     const coutBonus = bonus.reduce((n, s) => n + Number(s.value) / 2, 0);
     const utilisees = (Number.isFinite(coutDes) ? coutDes : 0) + coutAstuces + coutBonus;
 
     // les champs cachés que lit le plugin
-    $("astuces").value = choisies.join(", ");
+    $("astuces").value = choisies.map((n) => niveaux.get(n) > 1 ? `${n} (niv. ${niveaux.get(n)})` : n).join(", ");
     $("bonus").value = bonus.map((s) => `+${s.value} en ${s.dataset.geste}`).join(", ");
 
     hint("astuces").textContent = r === "Chaton"
@@ -295,11 +308,10 @@ function whFormRules(form) {
       : `Au rang ${r.toLowerCase()}, on commence avec ${rules.astuces} astuce${rules.astuces > 1 ? "s" : ""}. Chaque astuce en plus coûte une amélioration.`;
     hint("bonus").textContent = "Chaque +2 sur un geste coûte une amélioration, jusqu’à +4 par geste.";
     const check = hint("check");
-    // dans un arbre, chaque rang demande une astuce du rang précédent
-    const rangDe = (n) => WH_ASTUCES.find((x) => x[0] === n);
-    const sansBase = choisies.map(rangDe).find((x) => x && x[2] > 1 && !choisies.some((o) => { const y = rangDe(o); return y && y[1] === x[1] && y[2] === x[2] - 1; }));
+    // dans une voie, chaque rang demande une astuce du rang précédent
+    const sansBase = choisies.map((n) => WH_ASTUCES.find((x) => x[0] === n)).find((x) => x && x[4].length && !(x[6] ? x[4].every((r) => niveaux.has(r)) : x[4].some((r) => niveaux.has(r))));
     if (sansBase) {
-      check.textContent = `« ${sansBase[0]} » demande d’abord une astuce de rang ${"I".repeat(sansBase[2] - 1)} de l’arbre ${sansBase[1]}.`;
+      check.textContent = `« ${sansBase[0]} » demande d’abord ${sansBase[4].map((r) => `« ${r} »`).join(sansBase[6] ? " et " : " ou ")}, dans la voie ${sansBase[1]}.`;
       check.dataset.state = "error";
     } else if (!Number.isFinite(coutDes)) {
       check.textContent = `Ces dés ne correspondent à aucune répartition de départ au rang ${r.toLowerCase()}. Voir le guidebook, chapitre Le système.`;

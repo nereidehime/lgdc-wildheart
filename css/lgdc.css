@@ -3018,3 +3018,15 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 .personaForm .wh-check[data-state="error"] { color: #fff; background: var(--a1, #bf5531); }
 .personaForm .wh-check:empty { display: none; }
 /* ==== FIN PERSONA ==== */
+/* Guidebook : les cinq voies d'astuces */
+.lgdc-gbv { margin-top: 14px; padding: 16px 18px; background: var(--b1); border: 2px solid var(--line); border-left: 6px solid var(--tc); border-radius: 5px; }
+.lgdc-gbv header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.lgdc-gbv h4 { margin: 0; font: italic 900 22px/1 var(--serif); color: color-mix(in srgb, var(--tc) 60%, var(--ink-strong)); }
+.lgdc-gbv header span { color: var(--ink-soft); }
+.lgdc-gbv__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.lgdc-gbv p.lgdc-gbv__rank { margin: 0 0 6px; font: 800 10px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.lgdc-gbv ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.lgdc-gbv li b { font-weight: 700; color: var(--ink-strong); }
+.lgdc .lgdc-gbv li p { margin: 2px 0 0; font-size: 12.5px; line-height: 1.45; }
+.lgdc-gbv__tag { margin-left: 6px; padding: 1px 6px; font: 800 9.5px/1.6 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: color-mix(in srgb, var(--tc) 65%, var(--ink-strong)); background: color-mix(in srgb, var(--tc) 14%, transparent); border-radius: 3px; }
+@media (max-width: 600px) { .lgdc-gbv__cols { grid-template-columns: 1fr; } }
