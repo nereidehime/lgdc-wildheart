@@ -101,12 +101,12 @@
       // les boutons restent, pour pouvoir libérer une moitié gardée
       montrer();
       resultat.textContent = 'Aucune combinaison';
-      selection.textContent = 'Modifie les filtres ou relance le tirage pour trouver un nom compatible.';
+      selection.textContent = 'Modifiez les filtres ou relancez le tirage pour trouver un nom compatible.';
       return;
     }
     actuel = choix[Math.floor(Math.random() * choix.length)];
     resultat.textContent = actuel.texte;
-    selection.textContent = garde.pre && garde.suf ? 'Les deux moitiés sont gardées : libère-en une pour tirer d’autres noms.' : '';
+    selection.textContent = garde.pre && garde.suf ? 'Les deux moitiés sont gardées : libérez-en une pour tirer d’autres noms.' : '';
     montrer();
   }
   form.addEventListener('submit', function (event) {

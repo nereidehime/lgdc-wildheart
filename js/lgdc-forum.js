@@ -193,12 +193,12 @@
     'orchidée': [[40, 'campagnol'], [85, 'oiseau'], [100, 'lapin']],
     'brouillard': [[35, 'grenouille'], [55, 'campagnol'], [70, 'oiseau'], [100, 'poisson']]
   };
-  var LITTER = [[4, '1 chaton'], [14, '2 chatons'], [34, '3 chatons'], [59, '4 chatons'], [79, '5 chatons'], [91, '6 chatons'], [97, '7 chatons'], [100, '8 chatons']];
+  var LITTER = [[8, '1 chaton'], [25, '2 chatons'], [50, '3 chatons'], [75, '4 chatons'], [92, '5 chatons'], [100, '6 chatons']];
   // chasse en un seul lancer : dé Chasse, puis deux dés par étape (guidebook, La chasse)
   // difficultés par proie (Guetter, Se faufiler, Bondir, Mordre) et points pour la pile
   var HUNT = {
-    campagnol: [10, 7, 7, 7, 1], mulot: [10, 7, 7, 7, 1], grenouille: [10, 7, 10, 7, 1], 'lézard': [10, 7, 10, 7, 1],
-    oiseau: [7, 10, 13, 7, 1], 'écureuil': [7, 10, 13, 7, 2], poisson: [10, 7, 13, 7, 2], lapin: [7, 13, 13, 10, 3]
+    campagnol: [7, 5, 5, 5, 2], mulot: [7, 5, 5, 5, 2], grenouille: [7, 5, 7, 5, 2], 'lézard': [7, 5, 7, 5, 2],
+    oiseau: [5, 7, 10, 5, 2], 'écureuil': [5, 7, 10, 5, 4], poisson: [7, 5, 10, 5, 4], lapin: [5, 10, 10, 7, 6]
   };
   var STEPS = ['Guetter', 'Se faufiler', 'Bondir', 'Mordre'];
   // capacité de Clan : +1 en Guetter pour le Crépuscule, +1 en Bondir pour l'Orchidée
