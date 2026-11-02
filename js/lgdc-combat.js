@@ -9,7 +9,7 @@
 (function () {
   'use strict';
   var ATTRS = [['D', 'Dextérité'], ['I', 'Intelligence'], ['P', 'Puissance'], ['V', 'Volonté']];
-  var RANGS = ['Chaton', 'Apprenti', 'Guerrier', 'Guérisseur', 'Lieutenant', 'Chef', 'Ancien'];
+  var RANGS = ['Chaton', 'Apprenti', 'Apprenti guérisseur', 'Guerrier', 'Reine', 'Guérisseur', 'Lieutenant', 'Chef', 'Ancien'];
   var GESTES = { Frapper: ['P', 'P'], Bondir: ['D', 'I'], Mordre: ['P', 'D'] };
   // altérations : le dé (ou les dés) qu'elles font baisser d'une taille
   var ALT = { ralenti: ['D'], 'désorienté': ['I'], affaibli: ['P'], 'effrayé': ['V'], 'enragé': ['D', 'I'], 'empoisonné': ['P', 'V'] };
@@ -24,7 +24,7 @@
     ['Feinte', 'Ombre I : le coup touche sans test'],
     ['Embuscade', 'Ombre II : le premier coup du combat touche sans test, +5 dégâts'],
     ['Inébranlable', 'Cœur II, toujours : +5 points de vie, jamais effrayé'],
-    ['Feulement', 'Cœur I : la cible est effrayée, que le coup touche ou non']
+    ['Feulement', 'Cœur I : la cible est effrayée, sans test, que le coup touche ou non']
   ];
   var DECLARABLE = ['Coup puissant', 'Plaquage', 'Riposte', 'Furie', 'Feinte', 'Embuscade', 'Feulement'];
   var $ = function (id) { return document.getElementById(id); };
@@ -47,6 +47,7 @@
     }).join('');
     return '<div class="box" data-cat="' + i + '"><label class="f"><span class="micro">Nom du chat</span><input type="text" data-k="nom" value="' + (ex.nom || '') + '"></label>'
       + '<label class="f"><span class="micro">Rang</span><select data-k="rang">' + RANGS.map(function (r) { return '<option' + (r === (ex.rang || 'Guerrier') ? ' selected' : '') + '>' + r + '</option>'; }).join('') + '</select></label>'
+      + '<label class="f"><span class="micro">Vies restantes, pour un chef</span><select data-k="vies">' + [9, 8, 7, 6, 5, 4, 3, 2, 1].map(function (n) { return '<option>' + n + '</option>'; }).join('') + '</select></label>'
       + '<div class="dice">' + dice + '</div><p class="micro" style="margin:8px 0 6px">Bonus de gestes</p><div class="dice" style="grid-template-columns:repeat(3,minmax(0,1fr))">' + bon + '</div>'
       + '<p class="micro" style="margin:8px 0 6px">Astuces de combat</p><div class="checks">' + ast + '</div></div>';
   }
@@ -58,7 +59,8 @@
     ATTRS.forEach(function (a) { c[a[0]] = +box.querySelector('[data-k=' + a[0] + ']').value; });
     box.querySelectorAll('[data-a]').forEach(function (el) { var v = el.tagName === 'SELECT' ? +el.value : (el.checked ? 1 : 0); if (v) c.ast[el.dataset.a] = v; });
     box.querySelectorAll('[data-b]').forEach(function (el) { c.bonus[el.dataset.b] = +el.value; });
-    var base = c.rang === 'Chaton' ? 5 : c.rang === 'Apprenti' ? 10 : 15;
+    var base = c.rang === 'Chaton' ? 5 : c.rang.indexOf('Apprenti') === 0 ? 10 : 15;
+    c.vies = +box.querySelector('[data-k=vies]').value || 9;
     c.max = c.P + base + (c.ast['Inébranlable'] ? 5 : 0);
     c.pv = c.max;
     return c;
@@ -82,7 +84,7 @@
     var k = GESTES[g], d1 = die(at, k[0]), d2 = die(at, k[1]);
     var bonus = (at.bonus[g] || 0) + d1.malus + d2.malus;
     var rage = at.ast['Rage du sang'] && crise(at) ? 2 : 0;
-    var lien = +$('lien').value || 0;
+    var lien = at.lienUsed ? 0 : (+$('lien').value || 0);
     bonus += rage + lien;
     var decl = [].slice.call(document.querySelectorAll('#declare input:checked')).map(function (x) { return x.value; });
     var auto = decl.some(function (n) { return n === 'Feinte' || n === 'Riposte' || n === 'Embuscade'; });
@@ -100,7 +102,8 @@
       var spent = c.spent.length ? 'Astuces dépensées : ' + c.spent.join(', ') + '.' : 'Aucune astuce dépensée.';
       return '<div class="box cat' + (i === S.next && !S.over ? ' is-turn' : '') + (crise(c) ? ' is-crise' : '') + '"><div class="name"><h3>' + esc(c.nom) + '</h3>' + (crise(c) ? '<span class="badge">En crise</span>' : '') + '</div>'
         + '<div class="row"><span class="pv">' + Math.max(0, c.pv) + ' / ' + c.max + ' PV</span><button type="button" data-pv="-1" data-i="' + i + '">−1</button><button type="button" data-pv="1" data-i="' + i + '">+1</button></div>'
-        + '<div class="bar"><i style="width:' + pct + '%"></i></div><p class="stat">Esquive ' + esquive(c) + '. ' + spent + '</p><div class="chips">' + chips + '</div></div>';
+        + '<div class="bar"><i style="width:' + pct + '%"></i></div><p class="stat">Esquive ' + esquive(c) + '.' + (c.rang === 'Chef' ? ' ' + c.vies + ' vie' + (c.vies > 1 ? 's' : '') + '.' : '') + ' ' + spent + '</p><div class="chips">' + chips + '</div>'
+        + (crise(c) && !S.over ? '<p style="margin:12px 0 0"><button type="button" data-give="' + i + '">Se rendre ou fuir</button></p>' : '') + '</div>';
     }).join('');
   }
   function renderTurn() {
@@ -117,6 +120,7 @@
     }
     $('geste').value = at.geste || 'Frapper';
     $('lien').value = '0';
+    $('lien').disabled = !!at.lienUsed;
     $('turn-title').textContent = 'Tour ' + S.tour + ' : ' + at.nom + ' attaque ' + de.nom;
     $('declare').innerHTML = DECLARABLE.filter(function (n) {
       if (!available(at, n)) return false;
@@ -189,8 +193,13 @@
     S.firstCoup = false;
     S.log.push(line);
     $('result').innerHTML = html;
-    if (de.pv <= 0) {
-      S.over = de.nom + ' tombe à 0 : se rendre ou se sacrifier' + (de.rang === 'Chef' ? ', ou perdre une de ses neuf vies' : '') + ', au choix de son joueur ou de sa joueuse.';
+    if (de.pv <= 0 && de.rang === 'Chef' && de.vies > 1) {
+      de.vies--;
+      de.pv = Math.floor(de.max / 2);
+      S.log.push(de.nom + ' perd une vie et se relève avec ' + de.pv + ' points de vie. Vies restantes : ' + de.vies + '.');
+      $('result').innerHTML += ' ' + esc(de.nom) + ' perd une vie et se relève avec ' + de.pv + ' points de vie.';
+    } else if (de.pv <= 0) {
+      S.over = de.nom + ' tombe à 0 : se rendre ou se sacrifier' + (de.rang === 'Chef' ? ', puisque c’est sa dernière vie' : '') + ', au choix de son joueur ou de sa joueuse.';
       S.log.push(S.over);
     }
     if (crit && hit && de.pv > 0) {
@@ -232,6 +241,7 @@
   $('prep').addEventListener('click', function () {
     var p = plan();
     history.push(JSON.stringify(S));
+    if (p.lien) { S.cats[S.next].lienUsed = true; S.cats[S.next].spent.push('Lien'); }
     S.pending = { at: S.next, g: p.g, sizes: p.sizes, bonus: p.bonus, diff: p.diff, decl: p.decl, auto: p.auto, crit: $('crit-choice').value, left: p.decl.indexOf('Furie') >= 0 ? 2 : 1 };
     S.log.push(S.cats[S.next].nom + ' prépare son coup : ' + p.g + (p.decl.length ? ', astuces ' + p.decl.join(', ') : '') + '.');
     $('result').className = 'res hide';
@@ -243,6 +253,12 @@
       history.push(JSON.stringify(S));
       var c = S.cats[+t.dataset.i], k = c.alt.indexOf(t.dataset.alt);
       if (k >= 0) c.alt.splice(k, 1); else c.alt.push(t.dataset.alt);
+      render();
+    } else if (t.dataset.give !== undefined && S) {
+      history.push(JSON.stringify(S));
+      S.over = S.cats[+t.dataset.give].nom + ' se rend ou fuit : hors de combat, avec une conséquence pour l’histoire.';
+      S.pending = null;
+      S.log.push(S.over);
       render();
     } else if (t.dataset.pv !== undefined && S) {
       history.push(JSON.stringify(S));

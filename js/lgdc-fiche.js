@@ -138,7 +138,7 @@ const WH_ASTUCES = [
   ["Ombre parmi les ombres", "Ombre", 3, "Fuir sans test et sans laisser de trace : personne ne peut le pister jusqu’à la fin du sujet.", ["Embuscade", "Démasquer"], 1, true],
   ["Vigilance", "Cœur", 1, "Toujours : +1 par niveau pour Guetter.", [], 2, false],
   ["Rempart", "Cœur", 1, "Prendre les dégâts d’un camarade.", [], 1, false],
-  ["Feulement", "Cœur", 1, "La cible est effrayée.", [], 1, false],
+  ["Feulement", "Cœur", 1, "La cible est effrayée, sans test.", [], 1, false],
   ["Inébranlable", "Cœur", 2, "Toujours : +5 points de vie, et jamais effrayé.", ["Vigilance", "Rempart"], 1, false],
   ["Parole d’Assemblée", "Cœur", 2, "Toujours : +2 pour Convaincre ou Feuler face à un autre Clan.", ["Rempart", "Feulement"], 1, false],
   ["Ralliement", "Cœur", 3, "Chaque camarade présent relance un test raté, puis gagne +2 à son prochain test.", ["Inébranlable", "Parole d’Assemblée"], 1, true],
