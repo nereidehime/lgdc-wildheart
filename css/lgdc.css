@@ -3034,7 +3034,7 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 .lgdc-sc { --ok: #5f7d4f; --ko: #a8483a; max-width: 860px; margin: 0 auto; padding: 28px 16px 60px; font: 400 15px/1.6 var(--sans); color: var(--ink); }
 .lgdc.lgdc--dark.lgdc-sc, [data-color-scheme="dark"] .lgdc-sc { --ok: #8fb07c; --ko: #d8796a; }
 .lgdc-sc * { box-sizing: border-box; }
-.lgdc-sc .lgdc-sc__steps { display: grid; gap: 8px; margin: -14px 0 26px; padding-left: 22px; }
+.lgdc-sc .lgdc-sc__steps { display: grid; gap: 8px; margin: 10px 0 26px; padding-left: 22px; }
 .lgdc-sc .lgdc-sc__title { margin: 0 0 6px; font: italic 900 40px/1 var(--serif); color: var(--ink-strong); }
 .lgdc-sc h2 { margin: 0 0 14px; font: italic 900 24px/1.1 var(--serif); color: var(--ink-strong); }
 .lgdc-sc h3 { margin: 0 0 10px; font: italic 900 20px/1.1 var(--serif); color: var(--ink-strong); }
