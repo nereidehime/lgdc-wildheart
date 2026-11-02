@@ -4,7 +4,7 @@
   var mount = document.getElementById("lgdc-combat-mount");
   if (!mount) return;
   mount.className = "lgdc lgdc-sc";
-  mount.innerHTML = "<h1 class=\"lgdc-sc__title\">Suivi de combat</h1>\n  <ol class=\"lead lgdc-sc__steps\"><li><b>Avant d’écrire</b>, collez le bloc « État du combat » du message précédent dans <i>Reprendre un combat</i>, puis entrez les deux dés affichés dans ce message : l’outil calcule ce que le coup a donné, et vous le racontez dans votre RP.</li><li><b>Préparez votre coup</b> : geste, astuces, et l’altération voulue en cas de critique, puis cliquez sur <i>Préparer mon message</i>.</li><li><b>Dans votre message</b>, collez la balise de dés et le nouveau bloc « État du combat ». Le joueur suivant reprendra à partir de lui.</li></ol>\n\n  <!-- 1. Les combattants -->\n  <section class=\"box\" id=\"setup\">\n    <h2>Les combattants</h2>\n    <div class=\"grid2\" id=\"setup-cats\"></div>\n    <div class=\"row\" style=\"margin-top:6px\">\n      <label class=\"f\" style=\"min-width:240px\"><span class=\"micro\">Qui provoque le combat ?</span><select id=\"first\"><option value=\"0\">Le premier chat</option><option value=\"1\">Le second chat</option></select></label>\n      <button class=\"main\" id=\"start\" type=\"button\">Commencer le combat</button>\n    </div>\n    <details style=\"margin-top:10px\">\n      <summary class=\"micro\" style=\"cursor:pointer\">Reprendre un combat en cours</summary>\n      <p style=\"margin-top:10px\">Collez le dernier bloc « État du combat » du sujet :</p>\n      <textarea id=\"resume-in\"></textarea>\n      <div class=\"row\" style=\"margin-top:8px\"><button id=\"resume\" type=\"button\">Reprendre</button><span id=\"resume-err\" class=\"err\"></span></div>\n    </details>\n  </section>\n\n  <!-- 2. Le combat -->\n  <section id=\"fight\" class=\"hide\">\n    <div class=\"grid2\" id=\"status\"></div>\n\n    <div class=\"box\" id=\"turn\">\n      <h2 id=\"turn-title\"></h2>\n      <div id=\"incoming\" class=\"editor hide\" style=\"margin-bottom:16px\">\n        <span class=\"micro\">Le coup du message précédent</span>\n        <p id=\"incoming-desc\" style=\"margin:6px 0 10px\"></p>\n        <div class=\"row\"><input type=\"number\" id=\"d1\" min=\"1\" style=\"width:90px\" aria-label=\"Premier dé\"><input type=\"number\" id=\"d2\" min=\"1\" style=\"width:90px\" aria-label=\"Second dé\"><button class=\"main\" id=\"resolve\" type=\"button\">Résoudre</button></div>\n        <p class=\"err\" id=\"dice-err\"></p>\n      </div>\n      <div class=\"grid2\" id=\"plan\">\n        <div>\n          <label class=\"f\"><span class=\"micro\">Geste</span><select id=\"geste\"><option>Frapper</option><option>Bondir</option><option>Mordre</option></select></label>\n          <p class=\"micro\" style=\"margin:12px 0 6px\">Astuces à déclarer</p>\n          <div class=\"checks\" id=\"declare\"></div>\n        </div>\n        <div>\n          <div class=\"editor\">\n            <span class=\"micro\">La balise à mettre dans votre message</span>\n            <code id=\"tag\"></code>\n            <button type=\"button\" id=\"copy-tag\">Copier la balise</button>\n            <p class=\"stat\" id=\"tag-note\"></p>\n          </div>\n          <label class=\"f\" style=\"margin-top:14px\"><span class=\"micro\">En cas de critique, altération infligée</span><select id=\"crit-choice\"><option>ralenti</option><option>désorienté</option><option>affaibli</option><option>effrayé</option><option>enragé</option><option>empoisonné</option></select></label>\n          <button class=\"main\" id=\"prep\" type=\"button\">Préparer mon message</button>\n        </div>\n      </div>\n      <div id=\"result\" class=\"res hide\"></div>\n    </div>\n\n    <div class=\"box\">\n      <h3>État du combat, à coller dans votre message</h3>\n      <textarea id=\"state-out\" readonly></textarea>\n      <div class=\"row\" style=\"margin-top:8px\"><button type=\"button\" id=\"copy-state\">Copier</button><button type=\"button\" id=\"undo\">Annuler le dernier tour</button><button type=\"button\" id=\"reset\">Nouveau combat</button></div>\n    </div>\n\n    <div class=\"box\">\n      <h3>Journal</h3>\n      <ol class=\"log\" id=\"log\"></ol>\n    </div>\n  </section>";
+  mount.innerHTML = "<h1 class=\"lgdc-sc__title\">Suivi de combat</h1>\n  <ol class=\"lead lgdc-sc__steps\"><li><b>Avant d’écrire</b>, collez le bloc « État du combat » du message précédent dans <i>Reprendre un combat</i>, puis entrez les deux dés affichés dans ce message : l’outil calcule ce que le coup a donné, et vous le racontez dans votre RP.</li><li><b>Préparez votre coup</b> : geste, astuces, et l’altération voulue en cas de critique, puis cliquez sur <i>Préparer mon message</i>.</li><li><b>Dans votre message</b>, collez la balise de dés et le nouveau bloc « État du combat ». Le joueur suivant reprendra à partir de lui.</li></ol><p class=\"lead\">L’outil suit un duel. Dans un combat à plusieurs, suivez chaque duel à part. Les soins, les neuf vies du chef et les capacités de rôle se règlent avec les boutons de points de vie et les pastilles d’altération.</p>\n\n  <!-- 1. Les combattants -->\n  <section class=\"box\" id=\"setup\">\n    <h2>Les combattants</h2>\n    <div class=\"grid2\" id=\"setup-cats\"></div>\n    <div class=\"row\" style=\"margin-top:6px\">\n      <label class=\"f\" style=\"min-width:240px\"><span class=\"micro\">Qui provoque le combat ?</span><select id=\"first\"><option value=\"0\">Le premier chat</option><option value=\"1\">Le second chat</option></select></label>\n      <button class=\"main\" id=\"start\" type=\"button\">Commencer le combat</button>\n    </div>\n    <details style=\"margin-top:10px\">\n      <summary class=\"micro\" style=\"cursor:pointer\">Reprendre un combat en cours</summary>\n      <p style=\"margin-top:10px\">Collez le dernier bloc « État du combat » du sujet :</p>\n      <textarea id=\"resume-in\"></textarea>\n      <div class=\"row\" style=\"margin-top:8px\"><button id=\"resume\" type=\"button\">Reprendre</button><span id=\"resume-err\" class=\"err\"></span></div>\n    </details>\n  </section>\n\n  <!-- 2. Le combat -->\n  <section id=\"fight\" class=\"hide\">\n    <div class=\"grid2\" id=\"status\"></div>\n\n    <div class=\"box\" id=\"turn\">\n      <h2 id=\"turn-title\"></h2>\n      <div id=\"incoming\" class=\"editor hide\" style=\"margin-bottom:16px\">\n        <span class=\"micro\">Le coup du message précédent</span>\n        <p id=\"incoming-desc\" style=\"margin:6px 0 10px\"></p>\n        <div class=\"row\"><input type=\"number\" id=\"d1\" min=\"1\" style=\"width:90px\" aria-label=\"Premier dé\"><input type=\"number\" id=\"d2\" min=\"1\" style=\"width:90px\" aria-label=\"Second dé\"><button class=\"main\" id=\"resolve\" type=\"button\">Résoudre</button></div>\n        <p class=\"err\" id=\"dice-err\"></p>\n      </div>\n      <div class=\"grid2\" id=\"plan\">\n        <div>\n          <label class=\"f\"><span class=\"micro\">Geste</span><select id=\"geste\"><option>Frapper</option><option>Bondir</option><option>Mordre</option></select></label>\n          <p class=\"micro\" style=\"margin:12px 0 6px\">Astuces à déclarer</p>\n          <div class=\"checks\" id=\"declare\"></div>\n        </div>\n        <div>\n          <div class=\"editor\">\n            <span class=\"micro\">La balise à mettre dans votre message</span>\n            <code id=\"tag\"></code>\n            <button type=\"button\" id=\"copy-tag\">Copier la balise</button>\n            <p class=\"stat\" id=\"tag-note\"></p>\n          </div>\n          <label class=\"f\" style=\"margin-top:14px\"><span class=\"micro\">Bonus de lien</span><select id=\"lien\"><option value=\"0\">aucun</option><option value=\"1\">+1, une émotion</option><option value=\"2\">+2, deux émotions</option><option value=\"3\">+3, trois émotions</option></select></label>\n          <label class=\"f\"><span class=\"micro\">En cas de critique</span><select id=\"crit-choice\"><option value=\"\">+2 au prochain test d’un allié</option><option>ralenti</option><option>désorienté</option><option>affaibli</option><option>effrayé</option><option>enragé</option><option>empoisonné</option></select></label>\n          <button class=\"main\" id=\"prep\" type=\"button\">Préparer mon message</button>\n        </div>\n      </div>\n      <div id=\"result\" class=\"res hide\"></div>\n    </div>\n\n    <div class=\"box\">\n      <h3>État du combat, à coller dans votre message</h3>\n      <textarea id=\"state-out\" readonly></textarea>\n      <div class=\"row\" style=\"margin-top:8px\"><button type=\"button\" id=\"copy-state\">Copier</button><button type=\"button\" id=\"undo\">Annuler le dernier tour</button><button type=\"button\" id=\"reset\">Nouveau combat</button></div>\n    </div>\n\n    <div class=\"box\">\n      <h3>Journal</h3>\n      <ol class=\"log\" id=\"log\"></ol>\n    </div>\n  </section>";
 })();
 (function () {
   'use strict';
@@ -23,9 +23,10 @@
     ['Furie', 'Griffe III : deux attaques dans le même tour'],
     ['Feinte', 'Ombre I : le coup touche sans test'],
     ['Embuscade', 'Ombre II : le premier coup du combat touche sans test, +5 dégâts'],
-    ['Inébranlable', 'Cœur II, toujours : +5 points de vie, jamais effrayé']
+    ['Inébranlable', 'Cœur II, toujours : +5 points de vie, jamais effrayé'],
+    ['Feulement', 'Cœur I : la cible est effrayée, que le coup touche ou non']
   ];
-  var DECLARABLE = ['Coup puissant', 'Plaquage', 'Riposte', 'Furie', 'Feinte', 'Embuscade'];
+  var DECLARABLE = ['Coup puissant', 'Plaquage', 'Riposte', 'Furie', 'Feinte', 'Embuscade', 'Feulement'];
   var $ = function (id) { return document.getElementById(id); };
   var S = null, history = [];
 
@@ -81,10 +82,11 @@
     var k = GESTES[g], d1 = die(at, k[0]), d2 = die(at, k[1]);
     var bonus = (at.bonus[g] || 0) + d1.malus + d2.malus;
     var rage = at.ast['Rage du sang'] && crise(at) ? 2 : 0;
-    bonus += rage;
+    var lien = +$('lien').value || 0;
+    bonus += rage + lien;
     var decl = [].slice.call(document.querySelectorAll('#declare input:checked')).map(function (x) { return x.value; });
     var auto = decl.some(function (n) { return n === 'Feinte' || n === 'Riposte' || n === 'Embuscade'; });
-    return { at: at, de: de, g: g, sizes: [d1.size, d2.size], bonus: bonus, rage: rage, diff: esquive(de), decl: decl, auto: auto };
+    return { at: at, de: de, g: g, sizes: [d1.size, d2.size], bonus: bonus, rage: rage, lien: lien, diff: esquive(de), decl: decl, auto: auto };
   }
 
   // ---------- affichage ----------
@@ -114,6 +116,7 @@
       return;
     }
     $('geste').value = at.geste || 'Frapper';
+    $('lien').value = '0';
     $('turn-title').textContent = 'Tour ' + S.tour + ' : ' + at.nom + ' attaque ' + de.nom;
     $('declare').innerHTML = DECLARABLE.filter(function (n) {
       if (!available(at, n)) return false;
@@ -129,6 +132,7 @@
     $('tag').textContent = tagOf(p) + (p.decl.indexOf('Furie') >= 0 ? ' ' + tagOf(p) : '');
     var notes = [];
     if (p.rage) notes.push('Rage du sang +2 compris.');
+    if (p.lien) notes.push('Lien +' + p.lien + ' compris : écrivez dans le message envers qui.');
     if (p.auto) notes.push('Le coup touchera sans test : les dés servent aux dégâts.');
     if (p.decl.length) notes.push('À écrire dans le message : astuce' + (p.decl.length > 1 ? 's' : '') + ' ' + p.decl.join(', ') + '.');
     $('tag-note').textContent = notes.join(' ');
@@ -143,7 +147,7 @@
       lines.push(c.nom + ' : ' + bits.join(', ') + '.' + (c.spent.length ? ' Astuces dépensées : ' + c.spent.join(', ') + '.' : ''));
     });
     if (S.over) lines.push(S.over);
-    else if (S.pending) lines.push('Coup de ' + S.cats[S.pending.at].nom + ' dans ce message : ' + S.pending.g + (S.pending.decl.length ? ', astuces ' + S.pending.decl.join(', ') : '') + ', en cas de critique : ' + S.pending.crit + '. Au joueur suivant de reprendre ce bloc et d’entrer les dés.');
+    else if (S.pending) lines.push('Coup de ' + S.cats[S.pending.at].nom + ' dans ce message : ' + S.pending.g + (S.pending.decl.length ? ', astuces ' + S.pending.decl.join(', ') : '') + ', en cas de critique : ' + (S.pending.crit || '+2 au prochain test d’un allié') + '. Au joueur suivant de reprendre ce bloc et d’entrer les dés.');
     else lines.push('À ' + S.cats[S.next].nom + ' de préparer son coup.');
     lines.push('[size=9]Code de reprise : WHC1:' + btoa(unescape(encodeURIComponent(JSON.stringify(S)))) + '[/size]');
     $('state-out').value = lines.join('\n');
@@ -189,7 +193,15 @@
       S.over = de.nom + ' tombe à 0 : se rendre ou se sacrifier' + (de.rang === 'Chef' ? ', ou perdre une de ses neuf vies' : '') + ', au choix de son joueur ou de sa joueuse.';
       S.log.push(S.over);
     }
-    if (crit && hit && de.pv > 0 && !hasAlt(de, p.crit) && !(p.crit === 'effrayé' && de.ast['Inébranlable'])) { de.alt.push(p.crit); S.log.push('Critique : altération ' + p.crit + ' pour ' + de.nom + '.'); }
+    if (crit && hit && de.pv > 0) {
+      if (p.crit && !hasAlt(de, p.crit) && !(p.crit === 'effrayé' && de.ast['Inébranlable'])) { de.alt.push(p.crit); S.log.push('Critique : altération ' + p.crit + ' pour ' + de.nom + '.'); }
+      else if (!p.crit) S.log.push('Critique : ' + at.nom + ' donne +2 au prochain test d’un allié.');
+    }
+    // Feulement : la cible est effrayée, que le coup touche ou non
+    if (p.decl.indexOf('Feulement') >= 0) {
+      if (at.spent.indexOf('Feulement') < 0) at.spent.push('Feulement');
+      if (de.pv > 0 && !hasAlt(de, 'effrayé') && !de.ast['Inébranlable']) { de.alt.push('effrayé'); S.log.push('Feulement : altération effrayé pour ' + de.nom + '.'); }
+    }
     // Furie : la seconde attaque suit, sans les astuces déjà jouées
     if (!S.over && p.left > 1) { p.left--; p.decl = []; p.auto = false; }
     else { S.pending = null; if (!S.over) S.next = 1 - S.next; }
