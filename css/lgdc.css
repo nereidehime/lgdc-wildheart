@@ -1920,6 +1920,12 @@ tw::before {
 .lgdc-noms__generator output { display: block; text-wrap: balance; font: italic 900 30px/1.2 var(--serif); color: var(--ink-strong); }
 .lgdc .lgdc-noms__tirage p { margin: 10px 0 0; font-size: 12.5px; line-height: 20px; }
 .lgdc .lgdc-noms__tirage p:empty { display: none; }
+.lgdc-noms__verrous { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+.lgdc-noms__verrous:empty { display: none; }
+.lgdc .lgdc-noms__verrou { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 7px 12px; font: 500 13px/18px var(--sans); color: var(--ink); background: var(--b3); border: 1px solid var(--line); border-radius: 5px; cursor: pointer; }
+.lgdc .lgdc-noms__verrou:hover { border-color: var(--ink-soft); }
+.lgdc .lgdc-noms__verrou[aria-pressed="true"] { color: var(--ink-strong); border-color: var(--ink-strong); }
+.lgdc-noms__verrou i { font-size: 16px; }
 .lgdc--dark .lgdc-noms__generator select { color-scheme: dark; }
 
 /* chapitre « Le système » : tableaux de règles à plusieurs colonnes */

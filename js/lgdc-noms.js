@@ -17,7 +17,7 @@
   }
   function ajouter(rangNom, texte, premier, second) {
     if (rangNom === 'guerrier' && cle(premier) === cle(second)) return;
-    noms[rangNom].push({texte: texte, a: banque.evocations[cle(premier)] || 0,
+    noms[rangNom].push({texte: texte, pre: premier, suf: second, a: banque.evocations[cle(premier)] || 0,
       b: banque.evocations[cle(second)] || 0});
   }
   banque.basesChaton.forEach(function (mot) {
@@ -45,6 +45,32 @@
     noms[key] = Array.from(new Map(noms[key].map(function (nom) { return [nom.texte, nom]; })).values());
   });
 
+  // guerrier : on peut garder le préfixe ou le suffixe qui plaît et continuer à tirer l'autre moitié
+  var verrous = document.createElement('div');
+  verrous.className = 'lgdc-noms__verrous';
+  resultat.after(verrous);
+  var garde = {pre: '', suf: ''}, actuel = null;
+  function bouton(cote, mot) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'lgdc-noms__verrou';
+    b.setAttribute('aria-pressed', String(garde[cote] === mot));
+    var icone = document.createElement('i');
+    icone.className = 'ph-light ' + (garde[cote] === mot ? 'ph-lock-simple' : 'ph-lock-simple-open');
+    icone.setAttribute('aria-hidden', 'true');
+    b.append(icone, (garde[cote] === mot ? 'Gardé : ' : 'Garder ') + '« ' + mot + ' »');
+    b.addEventListener('click', function () {
+      garde[cote] = garde[cote] === mot ? '' : mot;
+      montrer();
+    });
+    return b;
+  }
+  function montrer() {
+    verrous.replaceChildren();
+    if (rang.value !== 'guerrier' || !actuel) return;
+    verrous.append(bouton('pre', actuel.pre), bouton('suf', actuel.suf));
+  }
+
   function generer() {
     var coches = cases.filter(function (caseFiltre) { return caseFiltre.checked; }).map(function (caseFiltre) { return caseFiltre.value; });
     var disponibles = banque.filtres.filter(function (filtre) { return coches.includes(filtre.id); });
@@ -61,21 +87,33 @@
       var second = tires[1].bit;
       return ((nom.a & premier) && (nom.b & second)) || ((nom.a & second) && (nom.b & premier));
     });
+    if (rang.value === 'guerrier') {
+      choix = choix.filter(function (nom) {
+        return (!garde.pre || nom.pre === garde.pre) && (!garde.suf || nom.suf === garde.suf);
+      });
+    }
     var autres = choix.filter(function (nom) { return nom.texte !== resultat.textContent; });
     if (autres.length) choix = autres;
     if (!choix.length) {
+      actuel = null;
+      montrer();
       resultat.textContent = 'Aucune combinaison';
       selection.textContent = 'Modifie les filtres ou relance le tirage pour trouver un nom compatible.';
       return;
     }
-    resultat.textContent = choix[Math.floor(Math.random() * choix.length)].texte;
-    selection.textContent = '';
+    actuel = choix[Math.floor(Math.random() * choix.length)];
+    resultat.textContent = actuel.texte;
+    selection.textContent = garde.pre && garde.suf ? 'Les deux moitiés sont gardées : libère-en une pour tirer d’autres noms.' : '';
+    montrer();
   }
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     generer();
   });
-  form.addEventListener('change', generer);
+  form.addEventListener('change', function (event) {
+    if (event.target === rang) garde = {pre: '', suf: ''};
+    generer();
+  });
   document.getElementById('lgdc-noms-effacer').addEventListener('click', function () {
     cases.forEach(function (caseFiltre) { caseFiltre.checked = false; });
     generer();
