@@ -2901,7 +2901,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
   --pf-strong: var(--ink-strong, #1d1b19);
   --pf-soft: var(--ink-soft, #5f5850);
   --pf-accent: var(--a1, #bf5531);
-  font: 400 13.5px/22px var(--sans);
+  font: 400 13.5px/22px var(--sans, 'Google Sans', "Helvetica Neue", Arial, sans-serif);
   color: var(--pf-ink);
 }
 .personaForm fieldset, .personaForm legend { all: unset; box-sizing: border-box; }
@@ -2917,7 +2917,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
 /* un champ : libellé en micro-texte, aide en dessous, saisie */
 .personaForm .field { margin: 0 0 14px; }
 .personaForm .field > .field { margin: 0; }
-.personaForm label { display: block; margin-bottom: 4px; font: 800 9.5px/14px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: var(--pf-strong); }
+.personaForm label { display: block; margin-bottom: 4px; font: 800 9.5px/14px var(--sans, 'Google Sans', sans-serif); letter-spacing: 1.5px; text-transform: uppercase; color: var(--pf-strong); }
 .personaForm .description { margin: -2px 0 6px; font-size: 12px; line-height: 18px; color: var(--pf-soft); }
 .personaForm .description a { color: var(--pf-accent); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
 .personaForm .field.columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 14px; }
@@ -2927,7 +2927,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
 
 .personaForm :is(input[type="text"], input[type="number"], textarea, select) {
   display: block; width: 100%; min-height: 40px; margin: 0; padding: 9px 12px;
-  font: 400 13.5px/22px var(--sans); color: var(--pf-strong);
+  font: 400 13.5px/22px var(--sans, 'Google Sans', sans-serif); color: var(--pf-strong);
   background: var(--pf-field); border: 2px solid var(--pf-line); border-radius: 5px;
   transition: border-color .2s;
 }
@@ -2949,7 +2949,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
 
 /* erreurs renvoyées par le plugin */
 .personaForm .input-error, .personaForm .input-error:focus { border-color: var(--pf-accent); }
-.personaForm .input-error-message { margin-top: 4px; font: 600 12px/18px var(--sans); color: var(--pf-accent); }
+.personaForm .input-error-message { margin-top: 4px; font: 600 12px/18px var(--sans, 'Google Sans', sans-serif); color: var(--pf-accent); }
 
 /* aperçu de l'avatar : carré, cadre en tirets tant qu'il est vide */
 .image-preview { position: relative; overflow: hidden; border: 2px dashed var(--pf-line, #d2cbc1); border-radius: 5px; background: var(--pf-field, #ece8e2); }
@@ -2960,7 +2960,7 @@ html, body, .lgdc, .lgdc * { scrollbar-width: thin; scrollbar-color: var(--ink-s
 /* choix personnalisés (input radio) */
 .choice-input { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px; margin: 4px 0; }
 .choice-input > input { position: absolute; opacity: 0; pointer-events: none; }
-label.choice { margin: 0; padding: 9px 12px; font: 600 12.5px/18px var(--sans); letter-spacing: 0; text-transform: none; color: var(--pf-ink, #4f4943); background: var(--pf-field, #ece8e2); border: 2px solid var(--pf-line, #d2cbc1); border-radius: 5px; cursor: pointer; }
+label.choice { margin: 0; padding: 9px 12px; font: 600 12.5px/18px var(--sans, 'Google Sans', sans-serif); letter-spacing: 0; text-transform: none; color: var(--pf-ink, #4f4943); background: var(--pf-field, #ece8e2); border: 2px solid var(--pf-line, #d2cbc1); border-radius: 5px; cursor: pointer; }
 input[type="radio"]:checked + label.choice { color: var(--pf-strong, #1d1b19); border-color: var(--pf-strong, #1d1b19); }
 input[type="radio"]:focus-visible + label.choice { outline: 2px solid var(--pf-strong, #1d1b19); outline-offset: 2px; }
 
@@ -2968,7 +2968,7 @@ input[type="radio"]:focus-visible + label.choice { outline: 2px solid var(--pf-s
 .duplicable-field:has(.delete-field) { position: relative; padding-right: 32px; }
 .delete-field { position: absolute; top: 24px; right: 0; display: grid; place-items: center; width: 24px; height: 24px; padding: 0; font-size: 15px; line-height: 1; color: var(--pf-soft, #5f5850); background: none; border: 2px solid var(--pf-line, #d2cbc1); border-radius: 5px; cursor: pointer; }
 .delete-field:hover { color: var(--pf-accent, #bf5531); border-color: var(--pf-accent, #bf5531); }
-.addField { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; font: 800 9.5px/14px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; color: var(--pf-strong, #1d1b19); background: var(--b3, #dfdad2); border: 0; border-radius: 5px; cursor: pointer; }
+.addField { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; font: 800 9.5px/14px var(--sans, 'Google Sans', sans-serif); letter-spacing: 1.5px; text-transform: uppercase; color: var(--pf-strong, #1d1b19); background: var(--b3, #dfdad2); border: 0; border-radius: 5px; cursor: pointer; }
 .addField:hover { color: #fff; background: var(--pf-accent, #bf5531); }
 
 /* liens et chronologie : chaque entrée se remplit dans une rangée séparée */
@@ -2993,7 +2993,7 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 .persona-options-button:hover { background: var(--b2, #e8e4dd); }
 .persona-code-parameters { display: none; position: relative; padding: 10px; background: var(--b3, #dfdad2); border-radius: 5px; }
 .persona-code-parameters.open { display: block; }
-.persona-code-parameters .copy-button { position: absolute; right: 10px; padding: 0; font: 800 9.5px/14px var(--sans); letter-spacing: 1.5px; text-transform: uppercase; background: none; border: 0; cursor: pointer; }
+.persona-code-parameters .copy-button { position: absolute; right: 10px; padding: 0; font: 800 9.5px/14px var(--sans, 'Google Sans', sans-serif); letter-spacing: 1.5px; text-transform: uppercase; background: none; border: 0; cursor: pointer; }
 
 /* chargement : la fiche reste invisible jusqu'à ce que le plugin l'ait construite */
 .persona:not(.loaded) { display: block; min-height: 600px; color: transparent !important; background: var(--b2, #e8e4dd); border-radius: 10px; }
@@ -3001,20 +3001,20 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 /* champs masqués selon le rang, et listes cherchables (astuces, bonus de gestes) */
 .personaForm [hidden] { display: none !important; }
 .personaForm .wh-store { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.personaForm input.wh-search { display: block; width: 100%; min-height: 40px; margin: 0 0 8px; padding: 9px 12px; font: 400 13.5px/22px var(--sans); color: var(--pf-strong); background: var(--pf-field); border: 2px solid var(--pf-line); border-radius: 5px; }
+.personaForm input.wh-search { display: block; width: 100%; min-height: 40px; margin: 0 0 8px; padding: 9px 12px; font: 400 13.5px/22px var(--sans, 'Google Sans', sans-serif); color: var(--pf-strong); background: var(--pf-field); border: 2px solid var(--pf-line); border-radius: 5px; }
 .personaForm input.wh-search:focus { outline: none; border-color: var(--pf-strong); }
 .personaForm .wh-picks { display: grid; gap: 4px; max-height: 300px; overflow: auto; padding: 4px; background: var(--b3, #dfdad2); border-radius: 5px; scrollbar-width: thin; }
-.personaForm .wh-pick { display: grid; grid-template-columns: auto 170px 110px minmax(0, 1fr); gap: 4px 12px; align-items: center; margin: 0; padding: 9px 12px; font: 400 13px/19px var(--sans); letter-spacing: 0; text-transform: none; color: var(--pf-ink); background: var(--pf-field); border: 2px solid transparent; border-radius: 5px; cursor: pointer; }
+.personaForm .wh-pick { display: grid; grid-template-columns: auto 170px 110px minmax(0, 1fr); gap: 4px 12px; align-items: center; margin: 0; padding: 9px 12px; font: 400 13px/19px var(--sans, 'Google Sans', sans-serif); letter-spacing: 0; text-transform: none; color: var(--pf-ink); background: var(--pf-field); border: 2px solid transparent; border-radius: 5px; cursor: pointer; }
 .personaForm .wh-pick:hover { border-color: var(--pf-line); }
 .personaForm .wh-pick:has(input:checked), .personaForm .wh-pick:has(select:not([value="0"]) option:checked:not([value="0"])) { border-color: var(--pf-strong); }
 .personaForm .wh-pick input { width: 16px; height: 16px; margin: 0; accent-color: var(--pf-strong); cursor: pointer; }
 .personaForm .wh-pick__n { margin: 0; font: italic 900 16px/1.2 var(--serif, "Playfair Display", Georgia, serif); letter-spacing: 0; text-transform: none; color: var(--pf-strong); }
-.personaForm .wh-pick__v { font: 800 9px/12px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--pf-soft); }
+.personaForm .wh-pick__v { font: 800 9px/12px var(--sans, 'Google Sans', sans-serif); letter-spacing: 1px; text-transform: uppercase; color: var(--pf-soft); }
 .personaForm .wh-pick--step { grid-template-columns: 130px 170px minmax(0, 1fr) 84px; cursor: default; }
 .personaForm .wh-pick--step select { min-height: 32px; padding: 4px 8px; font-size: 12.5px; }
 .personaForm .wh-pick--step .wh-select select { padding-right: 28px; }
 .personaForm .wh-pick--step .wh-select > i { right: 8px; }
-.personaForm .wh-check { margin: 0 0 14px; padding: 10px 14px; font: 600 12.5px/18px var(--sans); color: var(--pf-strong); background: var(--b3, #dfdad2); border-radius: 5px; }
+.personaForm .wh-check { margin: 0 0 14px; padding: 10px 14px; font: 600 12.5px/18px var(--sans, 'Google Sans', sans-serif); color: var(--pf-strong); background: var(--b3, #dfdad2); border-radius: 5px; }
 .personaForm .wh-check[data-state="error"] { color: #fff; background: var(--a1, #bf5531); }
 .personaForm .wh-check:empty { display: none; }
 /* ==== FIN PERSONA ==== */
@@ -3081,6 +3081,50 @@ button.persona-options-button { float: right; display: flex; justify-content: ce
 .lgdc-sc .hide { display: none !important; }
 .lgdc-sc .err { color: var(--ko); font-weight: 700; }
 @media (max-width: 640px) { .lgdc-sc .grid2, .lgdc-sc .dice { grid-template-columns: 1fr 1fr; } .lgdc-sc .grid2 { grid-template-columns: 1fr; } .lgdc-sc .lgdc-sc__title { font-size: 32px; } }
+/* Guidebook : les remèdes, un onglet par territoire */
+#lgdc-gbr-crepuscule:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-crepuscule"],
+#lgdc-gbr-hetre:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-hetre"],
+#lgdc-gbr-orchidee:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-orchidee"],
+#lgdc-gbr-brouillard:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-brouillard"],
+#lgdc-gbr-partout:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-partout"] { color: color-mix(in srgb, var(--g1) 55%, var(--ink-strong)); }
+#lgdc-gbr-crepuscule:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-crepuscule"]::after,
+#lgdc-gbr-hetre:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-hetre"]::after,
+#lgdc-gbr-orchidee:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-orchidee"]::after,
+#lgdc-gbr-brouillard:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-brouillard"]::after,
+#lgdc-gbr-partout:checked ~ .lgdc-gbc__tabs [for="lgdc-gbr-partout"]::after { transform: none; }
+#lgdc-gbr-crepuscule:checked ~ .lgdc-gbr__panels [data-cat="crepuscule"],
+#lgdc-gbr-hetre:checked ~ .lgdc-gbr__panels [data-cat="hetre"],
+#lgdc-gbr-orchidee:checked ~ .lgdc-gbr__panels [data-cat="orchidee"],
+#lgdc-gbr-brouillard:checked ~ .lgdc-gbr__panels [data-cat="brouillard"],
+#lgdc-gbr-partout:checked ~ .lgdc-gbr__panels [data-cat="partout"] { display: block; }
+.lgdc-gbr .lgdc-gbc__tabs { flex-wrap: wrap; gap: 10px 26px; }
+.lgdc .lgdc-gb__page .lgdc-gbr__where { margin: 6px 0 14px; color: var(--ink-soft); }
+.lgdc-gbr__list { display: grid; gap: 12px; margin: 0; padding: 16px 18px; list-style: none; background: var(--b1); border: 2px solid var(--line); border-left: 6px solid var(--g1); border-radius: 6px; }
+.lgdc-gbr__item { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; padding-bottom: 12px; border-bottom: 2px solid var(--b3); }
+.lgdc-gbr__item:last-child { padding-bottom: 0; border-bottom: 0; }
+.lgdc-gbr__thumb { width: 64px; height: 64px; overflow: hidden; background: #ece7df; border: 2px solid var(--line); border-radius: 5px; }
+.lgdc-gbr__thumb img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.lgdc .lgdc-gb__page .lgdc-gbr__body p { margin: 0; }
+.lgdc .lgdc-gb__page .lgdc-gbr__top { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.lgdc-gbr__top b { font: italic 900 20px/1.15 var(--serif); color: var(--ink-strong); }
+.lgdc-gbr__tag { padding: 1px 7px; font: 800 11px/1.6 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); background: var(--b3); border-radius: 3px; }
+.lgdc-gbr__tag--poisons { color: #fff; background: #a8483a; }
+.lgdc-gbr__top .lgdc-gbr__lat { font: italic 400 14px/1.3 var(--serif); color: var(--ink-soft); }
+.lgdc-gbr__facts { display: grid; gap: 6px; margin: 8px 0 0; }
+.lgdc-gbr__facts div { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 12px; }
+.lgdc-gbr__facts dt { padding-top: 3px; font: 800 11px/1.4 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: color-mix(in srgb, var(--g1) 55%, var(--ink-soft)); }
+.lgdc .lgdc-gbr__facts dd { margin: 0; font-size: 15px; line-height: 1.55; color: var(--ink); }
+.lgdc-gbr__more img { display: block; margin-top: 10px; }
+@media (max-width: 560px) { .lgdc-gbr__facts div { grid-template-columns: 1fr; gap: 0; } }
+.lgdc .lgdc-gb__page .lgdc-gbr__eff { margin-top: 4px; font-size: 15px; line-height: 1.55; color: var(--ink); }
+.lgdc .lgdc-gb__page .lgdc-gbr__how { margin-top: 2px; font-size: 15px; line-height: 1.55; color: var(--ink-soft); }
+.lgdc-gbr__more { margin-top: 6px; }
+.lgdc-gbr__more summary { cursor: pointer; font: 700 13px/1.4 var(--sans); color: var(--ink-strong); }
+.lgdc-gbr__more summary i { font-weight: 400; color: var(--ink-soft); }
+.lgdc-gbr__more > div { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 14px; margin-top: 10px; }
+.lgdc-gbr__more img { width: 140px; background: #ece7df; border: 2px solid var(--line); border-radius: 5px; }
+.lgdc .lgdc-gb__page .lgdc-gbr__more p { font-size: 15px; line-height: 1.55; }
+@media (max-width: 560px) { .lgdc-gbr__more > div { grid-template-columns: 1fr; } }
 /* Lisibilité : textes de lecture à 15 px minimum, infos d’appoint à 13 px, étiquettes en capitales à 11 px.
    Ce bloc vient après les règles d’origine : il ne change que la taille et l’interligne. */
 .lgdc,
