@@ -79,6 +79,12 @@
     report(error);
   }));
 
+  var combat = document.getElementById('lgdc-combat-mount');
+  if (combat) page.push(load(base + 'lgdc-combat.js').catch(function (error) {
+    combat.textContent = 'Le suivi de combat est momentanément indisponible. Rechargez la page pour réessayer.';
+    report(error);
+  }));
+
   if (document.querySelector('.lgdc-fa-home')) {
     page.push(load('https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js').catch(report));
   }
