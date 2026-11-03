@@ -331,6 +331,33 @@ function whFormRules(form) {
   update();
 }
 
+// rangs au féminin, pour le titre du sujet
+const WH_RANGS_F = {
+  Apprenti: "apprentie", "Apprenti guérisseur": "apprentie guérisseuse", Guerrier: "guerrière",
+  Guérisseur: "guérisseuse", Lieutenant: "lieutenante", Chef: "cheffe", Ancien: "ancienne",
+};
+
+// le titre du sujet suit le formulaire (Nom, rang du Clan), tant que le membre ne l'a pas réécrit
+function whFicheTitre(form) {
+  const subject = document.querySelector('input[name="subject"]');
+  if (!subject) return;
+  const champ = (name) => (form.querySelector(`[name="${name}"]`)?.value || "").trim();
+  let auto = subject.value;
+  function titre() {
+    const clan = WH_CLANS[champ("clan")] || WH_CLANS.crepuscule;
+    const r = champ("rang") || "Guerrier";
+    const rang = (champ("genre") === "Femelle" && WH_RANGS_F[r]) || r.toLowerCase();
+    return `${champ("nom") || "Nom du chat"}, ${rang} du ${clan.nom}`;
+  }
+  function sync() {
+    if (subject.value !== auto && subject.value.trim()) return;
+    auto = subject.value = titre();
+  }
+  form.addEventListener("input", sync);
+  form.addEventListener("change", sync);
+  if (!subject.value.trim()) sync();
+}
+
   var area = document.querySelector('textarea#text_editor_textarea');
   var writing = location.href.indexOf('/post?f=' + FORUM + '&mode=newtopic') >= 0
     || (area && area.value.indexOf('<div class="persona">{"name":"' + NAME + '"') >= 0);
@@ -355,7 +382,7 @@ function whFormRules(form) {
       personaHTML: whFiche
     });
     var form = document.querySelector('.personaForm[data-persona-name="' + NAME + '"]');
-    if (form) whFormRules(form);
+    if (form) { whFormRules(form); whFicheTitre(form); }
   }
   if (typeof Persona !== 'undefined') start();
   else {
