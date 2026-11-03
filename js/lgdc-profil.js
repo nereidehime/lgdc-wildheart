@@ -7,15 +7,90 @@
   if (!page) return;
   var raw = document.getElementById('lgdc-prof-raw');
 
-  // sur son propre profil, un bouton mène au panneau Avatar natif, sans lien ailleurs dans le forum
+  // sur son propre profil : « Changer d'avatar » ouvre une fenêtre où l'on colle l'adresse de l'image.
+  // Elle remplit le formulaire natif du panneau Avatar et l'envoie ; le lien mène à ce panneau si la fenêtre échoue.
   var me = window._userdata;
   var avatar = page.querySelector('.lgdc-prof__av');
   if (avatar && me && Number(me.session_logged_in) === 1 && String(me.user_id) === page.dataset.user) {
+    var PANEL = '/profile?mode=editprofile&page_profil=avatars';
     var change = document.createElement('a');
     change.className = 'lgdc-prof__avedit';
-    change.href = '/profile?mode=editprofile&page_profil=avatars';
+    change.href = PANEL;
     change.innerHTML = '<i class="ph-light ph-camera" aria-hidden="true"></i>Changer d’avatar';
     avatar.appendChild(change);
+
+    var dialog = document.createElement('dialog');
+    dialog.className = 'lgdc lgdc-avdlg';
+    dialog.setAttribute('aria-labelledby', 'lgdc-avdlg-title');
+    dialog.innerHTML = '<form method="dialog" class="lgdc-avdlg__in">'
+      + '<h2 id="lgdc-avdlg-title" class="lgdc-avdlg__title">Changer d’avatar</h2>'
+      + '<label class="lgdc-micro" for="lgdc-avdlg-url">Adresse de l’image</label>'
+      + '<input type="url" id="lgdc-avdlg-url" class="lgdc-avdlg__url" placeholder="https://" required autocomplete="off">'
+      + '<p class="lgdc-avdlg__help">Une image carrée, de 250 × 250 pixels au minimum.</p>'
+      + '<div class="lgdc-avdlg__preview" aria-hidden="true"><img alt=""></div>'
+      + '<p class="lgdc-avdlg__msg" role="status" aria-live="polite"></p>'
+      + '<div class="lgdc-avdlg__bar"><button type="submit" class="lgdc-avdlg__ok" value="ok">Valider</button>'
+      + '<button type="button" class="lgdc-avdlg__cancel">Annuler</button></div>'
+      + '<a class="lgdc-micro lgdc-avdlg__full" href="' + PANEL + '">Ouvrir le panneau complet</a>'
+      + '</form>';
+    document.body.appendChild(dialog);
+    var url = dialog.querySelector('.lgdc-avdlg__url');
+    var preview = dialog.querySelector('.lgdc-avdlg__preview img');
+    var msg = dialog.querySelector('.lgdc-avdlg__msg');
+    var ok = dialog.querySelector('.lgdc-avdlg__ok');
+
+    change.addEventListener('click', function (event) {
+      if (typeof dialog.showModal !== 'function') return; // vieux navigateur : le lien ouvre le panneau
+      event.preventDefault();
+      url.value = '';
+      preview.removeAttribute('src');
+      dialog.classList.remove('has-preview');
+      msg.textContent = '';
+      dialog.showModal();
+      url.focus();
+    });
+    dialog.querySelector('.lgdc-avdlg__cancel').addEventListener('click', function () { dialog.close(); });
+    dialog.addEventListener('click', function (event) { if (event.target === dialog) dialog.close(); });
+
+    url.addEventListener('input', function () {
+      msg.textContent = '';
+      var v = url.value.trim();
+      if (/^https?:\/\/\S+$/i.test(v)) preview.src = v; else { preview.removeAttribute('src'); dialog.classList.remove('has-preview'); }
+    });
+    preview.addEventListener('load', function () {
+      dialog.classList.add('has-preview');
+      var w = preview.naturalWidth, h = preview.naturalHeight;
+      msg.textContent = w !== h ? 'L’image n’est pas carrée (' + w + ' × ' + h + ') : elle sera recadrée.'
+        : w < 250 ? 'L’image fait ' + w + ' pixels de côté : 250 au minimum.' : '';
+    });
+    preview.addEventListener('error', function () {
+      dialog.classList.remove('has-preview');
+      msg.textContent = 'Cette adresse ne mène pas à une image.';
+    });
+
+    dialog.querySelector('form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      var v = url.value.trim();
+      if (!/^https?:\/\/\S+$/i.test(v)) { msg.textContent = 'Colle l’adresse complète de l’image, en https://'; return; }
+      ok.disabled = true;
+      msg.textContent = 'Envoi…';
+      fetch(PANEL, { credentials: 'same-origin' }).then(function (r) { return r.text(); }).then(function (html) {
+        var form = new DOMParser().parseFromString(html, 'text/html').getElementById('ucp');
+        var field = form && (form.querySelector('[name="avatarurl"]') || form.querySelector('[name="avatarremoteurl"]'));
+        if (!field) throw new Error('panneau Avatar introuvable');
+        var data = new FormData(form);
+        data.set(field.name, v);
+        data.set('submit', 'Valider');
+        return fetch(form.getAttribute('action') || PANEL, { method: 'POST', body: data, credentials: 'same-origin' });
+      }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        location.reload();
+      }).catch(function (error) {
+        console.warn('Wildheart : avatar', error);
+        ok.disabled = false;
+        msg.textContent = 'L’avatar n’a pas pu être changé ici. Essaie avec le panneau complet.';
+      });
+    });
   }
 
   // couleurs du groupe : dégradé, symbole et nom, comme sur les sujets
