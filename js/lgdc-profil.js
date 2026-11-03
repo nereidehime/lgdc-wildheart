@@ -7,6 +7,17 @@
   if (!page) return;
   var raw = document.getElementById('lgdc-prof-raw');
 
+  // sur son propre profil, un bouton mène au panneau Avatar natif, sans lien ailleurs dans le forum
+  var me = window._userdata;
+  var avatar = page.querySelector('.lgdc-prof__av');
+  if (avatar && me && Number(me.session_logged_in) === 1 && String(me.user_id) === page.dataset.user) {
+    var change = document.createElement('a');
+    change.className = 'lgdc-prof__avedit';
+    change.href = '/profile?mode=editprofile&page_profil=avatars';
+    change.innerHTML = '<i class="ph-light ph-camera" aria-hidden="true"></i>Changer d’avatar';
+    avatar.appendChild(change);
+  }
+
   // couleurs du groupe : dégradé, symbole et nom, comme sur les sujets
   var probe = document.createElement('span');
   var GROUPS = [

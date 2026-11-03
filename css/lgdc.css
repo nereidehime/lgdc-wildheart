@@ -1386,9 +1386,14 @@ section.lgdc-posts { display: flex; flex-direction: column; gap: 26px; }
 .lgdc--dark .lgdc-prof__id { box-shadow: inset 0 0 0 2px var(--line); }
 .lgdc-prof__av { grid-row: span 2; aspect-ratio: 1; overflow: hidden; border-radius: 5px; box-shadow: 0 0 0 4px var(--d2), 0 0 0 6px color-mix(in srgb, var(--g1) 70%, transparent); background: #100f0e; }
 .lgdc-prof__av img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* bouton « Changer d’avatar », sur son propre profil seulement */
+.lgdc-prof__av { position: relative; }
+.lgdc .lgdc-prof__avedit { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; white-space: nowrap; font: 800 11px/1 var(--sans); letter-spacing: 1px; text-transform: uppercase; color: #ece7df; text-decoration: none; background: rgba(18, 17, 16, .82); border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(236, 231, 223, .14); opacity: .9; transition: opacity var(--t), background var(--t); }
+.lgdc .lgdc-prof__avedit i { font-size: 15px; }
+.lgdc .lgdc-prof__avedit:hover, .lgdc .lgdc-prof__avedit:focus-visible { opacity: 1; background: color-mix(in srgb, var(--g1, #cb7a53) 70%, #121110); }
 .lgdc-prof__name { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
 .lgdc .lgdc-prof__rank { color: color-mix(in srgb, var(--g1) 60%, #ece7df); }
-.lgdc .lgdc-prof__name h1 { font: italic 900 clamp(44px, 4.4vw, 64px)/.95 var(--serif); letter-spacing: -1px; color: color-mix(in srgb, var(--g1) 55%, #ece7df); }
+.lgdc .lgdc-prof__name h1 { font: italic 900 clamp(34px, 3.2vw, 46px)/.95 var(--serif); letter-spacing: -1px; color: color-mix(in srgb, var(--g1) 55%, #ece7df); text-align: left; }
 .lgdc .lgdc-prof__clan {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 7px 12px 7px 8px;
