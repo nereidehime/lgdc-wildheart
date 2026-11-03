@@ -6,6 +6,23 @@
   var root = document.getElementById('lgdc-header');
   if (!root) return;
 
+  // un chat sous la lune pour qui ouvre la console (Forumactif aplatit les commentaires du HTML)
+  console.log('%c' + [
+    '                         .-~~~~-.',
+    '       .        *      .\'        \'.      .',
+    '                      /   o   .    \\',
+    '   *                 |  .     o  .  |    *',
+    '                     |    o   .     |',
+    '                      \\  .    o    /',
+    '     .                 \'.        .\'      .',
+    '                         \'-....-\'',
+    '      /\\_/\\',
+    '     ( o.o )      w  i  l  d  h  e  a  r  t',
+    '      ) ^ (',
+    '     /     \\         la guerre des clans',
+    '   _(  | |  )_________________________________'
+  ].join('\n'), 'font: 12px/1.25 monospace; color: #cb7a53');
+
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasGsap = typeof window.gsap !== 'undefined';
   var skip = /lgdc-static/.test(location.search);
