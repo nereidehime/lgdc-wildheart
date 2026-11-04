@@ -26,7 +26,7 @@
       + '<h2 id="lgdc-avdlg-title" class="lgdc-avdlg__title">Changer d’avatar</h2>'
       + '<label class="lgdc-micro" for="lgdc-avdlg-url">Adresse de l’image</label>'
       + '<input type="url" id="lgdc-avdlg-url" class="lgdc-avdlg__url" placeholder="https://" required autocomplete="off">'
-      + '<p class="lgdc-avdlg__help">Une image carrée, de 250 × 250 pixels au minimum.</p>'
+      + '<p class="lgdc-avdlg__help">Elle sera recadrée en carré.</p>'
       + '<div class="lgdc-avdlg__preview" aria-hidden="true"><img alt=""></div>'
       + '<p class="lgdc-avdlg__msg" role="status" aria-live="polite"></p>'
       + '<div class="lgdc-avdlg__bar"><button type="submit" class="lgdc-avdlg__ok" value="ok">Valider</button>'
@@ -60,8 +60,7 @@
     preview.addEventListener('load', function () {
       dialog.classList.add('has-preview');
       var w = preview.naturalWidth, h = preview.naturalHeight;
-      msg.textContent = w !== h ? 'L’image n’est pas carrée (' + w + ' × ' + h + ') : elle sera recadrée.'
-        : w < 250 ? 'L’image fait ' + w + ' pixels de côté : 250 au minimum.' : '';
+      msg.textContent = w !== h ? 'L’image n’est pas carrée (' + w + ' × ' + h + ') : seul son centre sera gardé.' : '';
     });
     preview.addEventListener('error', function () {
       dialog.classList.remove('has-preview');
@@ -76,7 +75,7 @@
       msg.textContent = 'Envoi…';
       fetch(PANEL, { credentials: 'same-origin' }).then(function (r) { return r.text(); }).then(function (html) {
         var form = new DOMParser().parseFromString(html, 'text/html').getElementById('ucp');
-        var field = form && (form.querySelector('[name="avatarurl"]') || form.querySelector('[name="avatarremoteurl"]'));
+        var field = form && form.querySelector('[name="avatarremoteurl"]');
         if (!field) throw new Error('panneau Avatar introuvable');
         var data = new FormData(form);
         data.set(field.name, v);

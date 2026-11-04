@@ -230,7 +230,7 @@ html:has(#lgdc-header) { scroll-padding-top: 70px; }
 .lgdc .lgdc-topic__last img {
   background: var(--g1, var(--a1));
 }
-.lgdc .lgdc-avatar--contain { object-fit: contain; object-position: center; }
+.lgdc .lgdc-avatar--contain { object-fit: cover; object-position: center; }
 
 /* carte à double cadre */
 .lgdc-frame {
